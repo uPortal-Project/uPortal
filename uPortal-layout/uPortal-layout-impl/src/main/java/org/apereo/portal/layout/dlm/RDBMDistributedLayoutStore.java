@@ -33,10 +33,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import net.sf.ehcache.Ehcache;
 import org.apache.commons.lang.StringUtils;
-import org.apereo.portal.AuthorizationException;
-import org.apereo.portal.IUserIdentityStore;
-import org.apereo.portal.IUserProfile;
-import org.apereo.portal.PortalException;
+import org.apereo.portal.*;
 import org.apereo.portal.io.xml.IPortalDataHandlerService;
 import org.apereo.portal.jdbc.RDBMServices;
 import org.apereo.portal.layout.LayoutStructure;
@@ -1871,6 +1868,33 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         boolean detect(org.dom4j.Document layout);
 
         String getMessage();
+    }
+
+    /**
+     * Provides a {@link Tuple} containing the &quot;fragmentized&quot; version of a DLM fragment
+     * owner's layout, together with the username. This version of the layout consistent with what
+     * DLM uses internally for fragments, and is created by FragmentActivator.fragmentizeLayout.
+     * It's important that the version returned by this method matches what DLM uses internally
+     * because it will be used to establish relationships between fragment layout nodes and user
+     * customizations of DLM fragments.
+     *
+     * @param userName The username of the user for whom the layout is retrieved.
+     * @param userId The unique identifier of the user.
+     * @return A {@link Tuple} containing the username and the "fragmentized" version of the DLM
+     *     fragment owner's layout.
+     */
+    @Override
+    public Tuple<String, DistributedUserLayout> getUserLayoutTuple(String userName, int userId) {
+        final PersonImpl person = new PersonImpl();
+        person.setUserName(userName);
+        person.setID(userId);
+        person.setSecurityContext(new BrokenSecurityContext());
+
+        final IUserProfile profile =
+                this.getUserProfileByFname(person, UserProfile.DEFAULT_PROFILE_FNAME);
+        final DistributedUserLayout userLayout = this.getUserLayout(person, profile);
+
+        return new Tuple<>(userName, userLayout);
     }
 
     private static final List<FormOfLayoutCorruption> KNOWN_FORMS_OF_LAYOUT_CORRUPTION =

@@ -38,6 +38,7 @@ import org.apereo.portal.groups.ILockableEntityGroup;
 import org.apereo.portal.groups.pags.IPersonTester;
 import org.apereo.portal.groups.pags.PagsGroup;
 import org.apereo.portal.groups.pags.TestGroup;
+import org.apereo.portal.groups.pags.dao.jpa.PagsGroupService;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.security.provider.RestrictedPerson;
@@ -111,7 +112,7 @@ public class EntityPersonAttributesGroupStore
         if (member.isGroup()) {
             // PAGS groups may only contain other PAGS groups (and people, of course)
             final IEntityGroup ieg = (IEntityGroup) member;
-            if (!PagsService.SERVICE_NAME_PAGS.equals(ieg.getServiceName().toString())) {
+            if (!PagsGroupService.SERVICE_NAME_PAGS.equals(ieg.getServiceName().toString())) {
                 return false;
             }
         }
@@ -233,7 +234,7 @@ public class EntityPersonAttributesGroupStore
         if (member.isGroup()) {
             // PAGS groups may only contain other PAGS groups (and people, of course)
             final IEntityGroup ieg = (IEntityGroup) member;
-            if (PagsService.SERVICE_NAME_PAGS.equals(ieg.getServiceName().toString())) {
+            if (PagsGroupService.SERVICE_NAME_PAGS.equals(ieg.getServiceName().toString())) {
                 result = findParentGroupsForGroup((IEntityGroup) member);
             }
         } else {

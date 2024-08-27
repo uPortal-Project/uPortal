@@ -14,6 +14,9 @@
  */
 package org.apereo.portal.groups.pags.dao;
 
+import static org.apereo.portal.groups.pags.dao.jpa.LocalGroupService.SERVICE_NAME_LOCAL;
+import static org.apereo.portal.groups.pags.dao.jpa.PagsGroupService.SERVICE_NAME_PAGS;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -21,6 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupConstants;
+import org.apereo.portal.groups.pags.dao.jpa.LocalGroupService;
+import org.apereo.portal.groups.pags.dao.jpa.PagsGroupService;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
@@ -42,9 +47,8 @@ import org.springframework.stereotype.Service;
 @Service
 public final class PagsService {
 
-    // These 2 should be (public) constants on their respective service classes, not here
-    private static final String SERVICE_NAME_LOCAL = "local";
-    public static final String SERVICE_NAME_PAGS = "pags";
+    @Autowired private PagsGroupService pagsGroupService;
+    @Autowired private LocalGroupService localGroupService;
 
     private static final String GROUP_NAME_VALIDATOR_REGEX = "^[\\w ]{5,500}$"; // 5-500 characters
     private static final Pattern GROUP_NAME_VALIDATOR_PATTERN =
@@ -152,29 +156,15 @@ public final class PagsService {
         IPersonAttributesGroupDefinition result =
                 pagsGroupDefDao.createPersonAttributesGroupDefinition(groupName, description);
         if (parent != null) {
-            // Should refactor this switch to instead choose a service and invoke a method on it
+
             switch (parent.getServiceName().toString()) {
                 case SERVICE_NAME_LOCAL:
-                    IEntityGroup member =
-                            GroupService.findGroup(
-                                    result.getCompositeEntityIdentifierForGroup().getKey());
-                    if (member == null) {
-                        String msg =
-                                "The specified group was created, but is not present in the store:  "
-                                        + result.getName();
-                        throw new RuntimeException(msg);
-                    }
-                    parent.addChild(member);
-                    parent.updateMembers();
+                    localGroupService.addMember(parent, result);
                     break;
                 case SERVICE_NAME_PAGS:
                     IPersonAttributesGroupDefinition parentDef =
                             getPagsGroupDefByName(parent.getName());
-                    Set<IPersonAttributesGroupDefinition> members =
-                            new HashSet<>(parentDef.getMembers());
-                    members.add(result);
-                    parentDef.setMembers(members);
-                    pagsGroupDefDao.updatePersonAttributesGroupDefinition(parentDef);
+                    pagsGroupService.addMember(parentDef, result);
                     break;
                 default:
                     String msg =

@@ -14,23 +14,15 @@
  */
 package org.apereo.portal.url;
 
+import static org.apereo.portal.url.PortalConstants.*;
+
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.portlet.PortletMode;
@@ -66,39 +58,11 @@ import org.springframework.web.util.UrlPathHelper;
  */
 @Component("portalUrlProvider")
 public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
-    static final String SEPARATOR = "_";
-    static final String PORTAL_PARAM_PREFIX = "u" + SEPARATOR;
-
-    static final String PORTLET_CONTROL_PREFIX = "pC";
-    static final String PORTLET_PARAM_PREFIX = "pP" + SEPARATOR;
-    static final String PORTLET_PUBLIC_RENDER_PARAM_PREFIX = "pG" + SEPARATOR;
-    static final String PARAM_TARGET_PORTLET = PORTLET_CONTROL_PREFIX + "t";
-    static final String PARAM_ADDITIONAL_PORTLET = PORTLET_CONTROL_PREFIX + "a";
-    static final String PARAM_DELEGATE_PARENT = PORTLET_CONTROL_PREFIX + "d";
-    static final String PARAM_RESOURCE_ID = PORTLET_CONTROL_PREFIX + "r";
-    static final String PARAM_CACHEABILITY = PORTLET_CONTROL_PREFIX + "c";
-    static final String PARAM_WINDOW_STATE = PORTLET_CONTROL_PREFIX + "s";
-    static final String PARAM_PORTLET_MODE = PORTLET_CONTROL_PREFIX + "m";
-    static final String PARAM_COPY_PARAMETERS = PORTLET_CONTROL_PREFIX + "p";
 
     static final Set<String> LEGACY_URL_PATHS =
             ImmutableSet.of(
                     "/render.userLayoutRootNode.uP",
                     "/tag.idempotent.render.userLayoutRootNode.uP");
-    static final String LEGACY_PARAM_PORTLET_FNAME = "uP_fname";
-    static final String LEGACY_PARAM_PORTLET_REQUEST_TYPE = "pltc_type";
-    static final String LEGACY_PARAM_PORTLET_STATE = "pltc_state";
-    static final String LEGACY_PARAM_PORTLET_MODE = "pltc_mode";
-    static final String LEGACY_PARAM_PORTLET_PARAM_PREFX = "pltp_";
-    static final String LEGACY_PARAM_LAYOUT_ROOT = "root";
-    static final String LEGACY_PARAM_LAYOUT_ROOT_VALUE = "uP_root";
-    static final String LEGACY_PARAM_LAYOUT_STRUCT_PARAM = "uP_sparam";
-    static final String LEGACY_PARAM_LAYOUT_TAB_ID = "activeTab";
-
-    static final String SLASH = "/";
-    static final String PORTLET_PATH_PREFIX = "p";
-    static final String FOLDER_PATH_PREFIX = "f";
-    static final String REQUEST_TYPE_SUFFIX = ".uP";
 
     private static final Pattern SLASH_PATTERN = Pattern.compile(SLASH);
     private static final String PORTAL_CANONICAL_URL =
@@ -115,7 +79,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
      * may not be suffixed with the portlet's window id
      */
     private enum SuffixedPortletParameter {
-        RESOURCE_ID(UrlSyntaxProviderImpl.PARAM_RESOURCE_ID, UrlType.RESOURCE) {
+        RESOURCE_ID(PortalConstants.PARAM_RESOURCE_ID, UrlType.RESOURCE) {
             @Override
             public void updateRequestInfo(
                     HttpServletRequest request,
@@ -126,7 +90,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 portletRequestInfo.setResourceId(values.get(0));
             }
         },
-        CACHEABILITY(UrlSyntaxProviderImpl.PARAM_CACHEABILITY, UrlType.RESOURCE) {
+        CACHEABILITY(PortalConstants.PARAM_CACHEABILITY, UrlType.RESOURCE) {
             @Override
             public void updateRequestInfo(
                     HttpServletRequest request,
@@ -138,7 +102,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             }
         },
         DELEGATE_PARENT(
-                UrlSyntaxProviderImpl.PARAM_DELEGATE_PARENT,
+                PortalConstants.PARAM_DELEGATE_PARENT,
                 UrlType.RENDER,
                 UrlType.ACTION,
                 UrlType.RESOURCE) {
@@ -165,7 +129,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 }
             }
         },
-        WINDOW_STATE(UrlSyntaxProviderImpl.PARAM_WINDOW_STATE, UrlType.RENDER, UrlType.ACTION) {
+        WINDOW_STATE(PortalConstants.PARAM_WINDOW_STATE, UrlType.RENDER, UrlType.ACTION) {
             @Override
             public void updateRequestInfo(
                     HttpServletRequest request,
@@ -176,7 +140,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 portletRequestInfo.setWindowState(PortletUtils.getWindowState(values.get(0)));
             }
         },
-        PORTLET_MODE(UrlSyntaxProviderImpl.PARAM_PORTLET_MODE, UrlType.RENDER, UrlType.ACTION) {
+        PORTLET_MODE(PortalConstants.PARAM_PORTLET_MODE, UrlType.RENDER, UrlType.ACTION) {
             @Override
             public void updateRequestInfo(
                     HttpServletRequest request,
@@ -187,7 +151,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 portletRequestInfo.setPortletMode(PortletUtils.getPortletMode(values.get(0)));
             }
         },
-        COPY_PARAMETERS(UrlSyntaxProviderImpl.PARAM_COPY_PARAMETERS, UrlType.RENDER) {
+        COPY_PARAMETERS(PortalConstants.PARAM_COPY_PARAMETERS, UrlType.RENDER) {
             @Override
             public void updateRequestInfo(
                     HttpServletRequest request,
