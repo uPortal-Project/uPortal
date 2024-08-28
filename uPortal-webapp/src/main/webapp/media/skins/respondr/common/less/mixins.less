@@ -51,10 +51,7 @@
   -moz-border-radius-bottomright: @bottomright;
   -moz-border-radius-bottomleft: @bottomleft;
   -moz-border-radius-topleft: @topleft;
-  border-top-right-radius: @topright;
-  border-bottom-right-radius: @bottomright;
-  border-bottom-left-radius: @bottomleft;
-  border-top-left-radius: @topleft;
+  border-radius: @topleft @topright @bottomright @bottomleft;
   background-clip: padding;
   background-clip: padding-box;
   background-clip: padding-box;
@@ -109,7 +106,7 @@
 }
 .gradient(@background, @gradient) when (@gradient = true) {
   // Only applies solid background
-  #gradient > .vertical(darken(@background, 0), darken(@background, 10%), 0%, 100%);;;
+  #gradient > .vertical(darken(@background, 0), darken(@background, 10%), 0%, 100%);
 }
 
 .animation (@name, @duration: 300ms, @delay: 0, @ease: ease) {
@@ -146,7 +143,7 @@
 
 .pretty-buttons(@color, @background, @text-shadow: none) {
   .contrasted(lighten(@background, 5%), @light: @color);
-  #gradient > .vertical(lighten(@background, 5%), darken(@background, 10%), 0%, 100%);;;
+  #gradient > .vertical(lighten(@background, 5%), darken(@background, 10%), 0%, 100%);
 
   border-color: darken(@background, 10%);
   border-bottom-color: darken(@background, 20%);
@@ -157,7 +154,7 @@
   &:focus,
   &:active,
   &.active {
-    #gradient > .vertical(darken(@background, 0), darken(@background, 10%), 0%, 100%);;;
+    #gradient > .vertical(darken(@background, 0), darken(@background, 10%), 0%, 100%);
 
     border-color: darken(@background, 20%);
     color: @color;
