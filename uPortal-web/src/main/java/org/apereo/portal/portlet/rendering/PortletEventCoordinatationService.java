@@ -115,13 +115,13 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
         this.portletEntityRegistry = portletEntityRegistry;
     }
 
-    protected final PortletEventCoordinationHelper portletEventCoordinationHelper =
-            new PortletEventCoordinationHelper(
-                    this.xmlUtilities,
-                    this.portletContextService,
-                    this.portletWindowRegistry,
-                    this.supportedEventCache,
-                    this.portletDefinitionRegistry);
+    protected PortletEventCoordinationHelper portletEventCoordinationHelper;
+
+    @Autowired
+    public void setPortletEventCoordinationHelper(
+            PortletEventCoordinationHelper portletEventCoordinationHelper) {
+        this.portletEventCoordinationHelper = portletEventCoordinationHelper;
+    }
 
     /**
      * Returns a request scoped PortletEventQueue used to track events to process and events to

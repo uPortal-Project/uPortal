@@ -28,6 +28,8 @@ import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.utils.Tuple;
 import org.apereo.portal.xml.XmlUtilities;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,21 +39,34 @@ public class PortletEventCoordinationHelper {
     private PortletContextService portletContextService;
     private IPortletWindowRegistry portletWindowRegistry;
     private Ehcache supportedEventCache;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
 
-    public PortletEventCoordinationHelper(
-            XmlUtilities xmlUtilities,
-            PortletContextService portletContextService,
-            IPortletWindowRegistry portletWindowRegistry,
-            Ehcache supportedEventCache,
-            IPortletDefinitionRegistry portletDefinitionRegistry) {
-        this.xmlUtilities = xmlUtilities;
-        this.portletContextService = portletContextService;
-        this.portletWindowRegistry = portletWindowRegistry;
+    @Autowired
+    public void setSupportedEventCache(
+            @Qualifier("org.apereo.portal.portlet.rendering.SupportedEventCache")
+                    Ehcache supportedEventCache) {
         this.supportedEventCache = supportedEventCache;
-        this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
 
-    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    @Autowired
+    public void setXmlUtilities(XmlUtilities xmlUtilities) {
+        this.xmlUtilities = xmlUtilities;
+    }
+
+    @Autowired
+    public void setPortletContextService(PortletContextService portletContextService) {
+        this.portletContextService = portletContextService;
+    }
+
+    @Autowired
+    public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
+        this.portletWindowRegistry = portletWindowRegistry;
+    }
+
+    @Autowired
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
+    }
 
     protected Event unmarshall(IPortletWindow portletWindow, Event event) {
         // TODO make two types of Event impls, one for marshalled data and one for unmarshalled data
