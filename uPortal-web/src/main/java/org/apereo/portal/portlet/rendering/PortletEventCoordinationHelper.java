@@ -35,38 +35,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class PortletEventCoordinationHelper {
     public static final String GLOBAL_EVENT__CONTAINER_OPTION = "org.apereo.portal.globalEvent";
-    private XmlUtilities xmlUtilities;
-    private PortletContextService portletContextService;
-    private IPortletWindowRegistry portletWindowRegistry;
+    @Autowired private XmlUtilities xmlUtilities;
+    @Autowired private PortletContextService portletContextService;
+    @Autowired private IPortletWindowRegistry portletWindowRegistry;
+
+    @Autowired
+    @Qualifier("org.apereo.portal.portlet.rendering.SupportedEventCache")
     private Ehcache supportedEventCache;
-    private IPortletDefinitionRegistry portletDefinitionRegistry;
 
-    @Autowired
-    public void setSupportedEventCache(
-            @Qualifier("org.apereo.portal.portlet.rendering.SupportedEventCache")
-                    Ehcache supportedEventCache) {
-        this.supportedEventCache = supportedEventCache;
-    }
-
-    @Autowired
-    public void setXmlUtilities(XmlUtilities xmlUtilities) {
-        this.xmlUtilities = xmlUtilities;
-    }
-
-    @Autowired
-    public void setPortletContextService(PortletContextService portletContextService) {
-        this.portletContextService = portletContextService;
-    }
-
-    @Autowired
-    public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
-        this.portletWindowRegistry = portletWindowRegistry;
-    }
-
-    @Autowired
-    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
-        this.portletDefinitionRegistry = portletDefinitionRegistry;
-    }
+    @Autowired private IPortletDefinitionRegistry portletDefinitionRegistry;
 
     protected Event unmarshall(IPortletWindow portletWindow, Event event) {
         // TODO make two types of Event impls, one for marshalled data and one for unmarshalled data
