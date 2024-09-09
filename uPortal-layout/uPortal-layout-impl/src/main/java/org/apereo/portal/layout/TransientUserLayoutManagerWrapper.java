@@ -390,7 +390,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                                 + fname
                                 + "\" : "
                                 + e);
-                subId = null;
+                throw e;
             }
         }
         return subId;
