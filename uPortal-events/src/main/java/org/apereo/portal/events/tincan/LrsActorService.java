@@ -64,7 +64,7 @@ public class LrsActorService implements ILrsActorService {
 
         final String email;
         final String name;
-        final IPersonAttributes person = personAttributeDao.getPerson(userName);
+        final IPersonAttributes person = personAttributeDao.getPerson(userName, null);
         if (person == null) {
             email = userName;
             name = userName + "@example.com";

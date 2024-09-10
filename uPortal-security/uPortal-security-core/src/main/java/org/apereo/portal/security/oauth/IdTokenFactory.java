@@ -286,7 +286,7 @@ public class IdTokenFactory {
                         .setExpiration(expires)
                         .setIssuedAt(now);
 
-        final IPersonAttributes person = personAttributeDao.getPerson(username);
+        final IPersonAttributes person = personAttributeDao.getPerson(username, null);
 
         // Attribute mappings
         mappings.stream()

@@ -100,7 +100,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         } else {
             // If no prefs try the 'possibleUserAttributeNames' from the IPersonAttributeDao
             final Set<String> possibleAttributes =
-                    this.portalRootPersonAttributeDao.getPossibleUserAttributeNames();
+                    this.portalRootPersonAttributeDao.getPossibleUserAttributeNames(null);
             if (possibleAttributes != null) {
                 swappableAttributes = new TreeSet<String>(possibleAttributes);
             }
@@ -135,7 +135,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     public IPersonAttributes getOriginalUserAttributes(String uid) {
         final IPersonAttributeDao delegatePersonAttributeDao =
                 this.portalRootPersonAttributeDao.getDelegatePersonAttributeDao();
-        return delegatePersonAttributeDao.getPerson(uid);
+        return delegatePersonAttributeDao.getPerson(uid, null);
     }
 
     /* (non-Javadoc)
@@ -146,7 +146,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
             ExternalContext externalContext, AttributeSwapRequest attributeSwapRequest) {
         final Principal currentUser = externalContext.getCurrentUser();
         final String uid = currentUser.getName();
-        final IPersonAttributes person = this.portalRootPersonAttributeDao.getPerson(uid);
+        final IPersonAttributes person = this.portalRootPersonAttributeDao.getPerson(uid, null);
 
         final Map<String, Attribute> currentAttributes =
                 attributeSwapRequest.getCurrentAttributes();
