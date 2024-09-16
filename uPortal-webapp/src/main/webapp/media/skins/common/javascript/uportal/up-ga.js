@@ -48,14 +48,16 @@ var uportal = uportal || {};
     /**
      * Set the defaultConfig.config array as global settings
      */
-    var configureDefaults = function(propertyConfig) {
+    var configureDefaults = function (propertyConfig) {
         const defaults = propertyConfig.config;
-        defaults.forEach(function(setting) {
-            Object.entries(setting).forEach(function([key, value]) {
-                gtag('set', key, value);
-            })
-        });
-    }
+        for (const setting of defaults) {
+        /*
+            for (const [key, value] of Object.entries(setting)) {
+                up.gtag('set', key, value);
+            }
+        */
+        }
+    };
 
     /**
      * Set the dimensions that apply to the current user
