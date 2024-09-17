@@ -78,6 +78,7 @@ public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
                 // Both methods that take a Map argument can just have the first argument returned
             case PEOPLE_MAP:
             case PEOPLE_MULTIVALUED_MAP:
+            case PEOPLE_MULTIVALUED_MAP_FILTER:
             case MULTIVALUED_USER_ATTRIBUTES__MAP:
             case USER_ATTRIBUTES__MAP:
                 {
@@ -250,6 +251,10 @@ public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
         PERSON_STR("getPerson", String.class),
         PEOPLE_MAP("getPeople", Map.class),
         PEOPLE_MULTIVALUED_MAP("getPeopleWithMultivaluedAttributes", Map.class),
+        PEOPLE_MULTIVALUED_MAP_FILTER(
+                "getPeopleWithMultivaluedAttributes",
+                Map.class,
+                org.apereo.services.persondir.IPersonAttributeDaoFilter.class),
         POSSIBLE_USER_ATTRIBUTE_NAMES("getPossibleUserAttributeNames"),
         AVAILABLE_QUERY_ATTRIBUTES("getAvailableQueryAttributes");
 

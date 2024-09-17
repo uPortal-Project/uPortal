@@ -5,6 +5,6 @@
     "compile-less": "lessc build/generated-sources/skin/main/webapp/media/skins/respondr/defaultSkin.less build/generated-sources/skin/main/webapp/media/skins/respondr/defaultSkin.css"
   },
   "devDependencies": {
-    "less": "^3.13.0"
+    "less": "^4.2.0"
   }
 }
