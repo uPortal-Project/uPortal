@@ -49,14 +49,15 @@ var uportal = uportal || {};
      * Set the defaultConfig.config array as global settings
      */
     var configureDefaults = function (propertyConfig) {
-        const defaults = propertyConfig.config;
-        for (const setting of defaults) {
-        /*
-            for (const [key, value] of Object.entries(setting)) {
-                up.gtag('set', key, value);
-            }
-        */
-        }
+        //console.log(propertyConfig);
+        var defaults = propertyConfig.config || [];
+        _.each(defaults, function(setting) {
+            // each setting is an object that might have more than 1 key-value pair
+            //console.log(setting);
+            _.each(Object.keys(setting), function(key) {
+                up.gtag('set', key, setting[key]);
+            });
+        });
     };
 
     /**
