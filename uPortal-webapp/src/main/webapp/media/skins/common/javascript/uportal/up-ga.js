@@ -51,10 +51,10 @@ var uportal = uportal || {};
     var configureDefaults = function (propertyConfig) {
         //console.log(propertyConfig);
         var defaults = propertyConfig.config || [];
-        _.each(defaults, function(setting) {
+        _.each(defaults, function (setting) {
             // each setting is an object that might have more than 1 key-value pair
             //console.log(setting);
-            _.each(Object.keys(setting), function(key) {
+            _.each(Object.keys(setting), function (key) {
                 up.gtag('set', key, setting[key]);
             });
         });
