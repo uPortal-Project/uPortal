@@ -36,7 +36,7 @@
     .fl-reorderer-dropMarker {
       // required for drag and drop styling to work
       @media (min-width: @@interpolate-media-query) {
-        width: percentage(1 / @number-of-columns);
+        width: percentage( (1/@number-of-columns) );
       }
     }
   }
