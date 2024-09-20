@@ -46,6 +46,21 @@ var uportal = uportal || {};
     };
 
     /**
+     * Set the defaultConfig.config array as global settings
+     */
+    var configureDefaults = function (propertyConfig) {
+        //console.log(propertyConfig);
+        var defaults = propertyConfig.config || [];
+        _.each(defaults, function (setting) {
+            // each setting is an object that might have more than 1 key-value pair
+            //console.log(setting);
+            _.each(Object.keys(setting), function (key) {
+                up.gtag('set', key, setting[key]);
+            });
+        });
+    };
+
+    /**
      * Set the dimensions that apply to the current user
      */
     var getDimensions = function (propertyConfig) {
@@ -370,6 +385,9 @@ var uportal = uportal || {};
         if (propertyConfig == null) {
             return;
         }
+
+        // Set default config
+        configureDefaults(propertyConfig);
 
         // Create the tracker
         createTracker(propertyConfig);
