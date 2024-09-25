@@ -17,7 +17,8 @@ There are 3 prerequisites to cutting releases:
 
 Export your secret keyring via `gpg2 --keyring secring.gpg --export-secret-keys > ~/.gnupg/secring.gpg`
 
-In `$HOME/.gradle/gradle.properties` place your credentials for the Sonatype OSS Repository Hosting and your configuration information for signing artifacts with GNU Privacy Guard (GnuPG).  Use the key ID from the PGP prerequisite and the keyring file. ([details](https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials)).
+In `$HOME/.gradle/gradle.properties` place your credentials for the Sonatype OSS Repository Hosting and your configuration information for signing artifacts with GNU Privacy Guard (GnuPG).  Use the key ID from the PGP prerequisite and the keyring file. ([details](https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials)). NOTE: you cannot
+use your login credentials for Sonatype OSSRH. You need to log in, navigate to profile and generate a token.
 
 ```properties
 ossrhUsername={username}
