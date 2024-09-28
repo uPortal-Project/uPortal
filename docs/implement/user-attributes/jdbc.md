@@ -30,7 +30,7 @@ The following configuration shows the JDBC-based user attribute source beans for
         </bean>
     </property>
 </bean>
-<!-- myunivCachingPersonDbJdbcAttributeSource Bean Definition -->
+<!-- myunivCachingPersonDbJdbcAttributeSource Bean Definition as well -->
 <bean id="myunivCachingPersonDbJdbcAttributeSource">
     <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
     <property name="cacheNullResults" value="true" />
