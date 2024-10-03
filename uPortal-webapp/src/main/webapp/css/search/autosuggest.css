@@ -16,40 +16,65 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+/**
+ * Updated version of the CSS file to directly adopt uPortal CSS variables for web-components,
+ * reducing the need to redefine variables in each component and allowing them to inherit
+ * styles from the uPortal skin (as done for portlets).
+ * 
+ * Defined variables in the :root scope:
+ *   --autocomplete-header-color: The color for the autocomplete header.
+ *   --autocomplete-background-color: The background color for focused autocomplete items.
+ *   --autocomplete-hover-text-color: The text color when hovering over autocomplete items.
+ *   --autocomplete-border-color: The border color for autocomplete items.
+ *   --autocomplete-item-padding: The padding inside each autocomplete item.
+ * 
+ */
+
+ :root {
+    --autocomplete-header-color: rgb(123, 34, 64); /* Header text color */
+    --autocomplete-background-color: rgb(62, 70, 79); /* Background color for focused items */
+    --autocomplete-hover-text-color: #fff; /* Text color when hovering over items */
+    --autocomplete-border-color: #efefef; /* Border color for autocomplete items */
+    --autocomplete-item-padding: 0.5em; /* Padding for autocomplete items */
+}
+
 .ui-autocomplete.ui-menu {
     padding: 0;
     overflow: hidden;
 }
+
 .ui-autocomplete li {
     list-style: none;
-    max-width: 315px; /* Fixes Autocomplete on 1st search after page render would have very wide results box off side of window */
-    /*max-height: 75px;*/ /* Limiting # of chars sent tends to keep description to 2 lines in autocomplete results so don't need max-height. */
-    overflow:hidden;
+    max-width: 315px; /* Fixes Autocomplete on 1st search after page render would have very wide results box */
+    overflow: hidden;
 }
 
 .ui-autocomplete .ui-menu-item a {
-    border-bottom: 1px solid #efefef;
-    padding: .5em;
+    border-bottom: 1px solid var(--autocomplete-border-color); /* Uses the defined border color */
+    padding: var(--autocomplete-item-padding); /* Uses the defined item padding */
 }
 
 .ui-autocomplete .ui-menu-item a:hover {
     cursor: pointer;
 }
+
 .ui-autocomplete a.ui-state-focus .autocomplete-header {
-    color: #fff;
+    color: var(--autocomplete-hover-text-color); /* Uses the defined hover text color */
 }
 
 .ui-autocomplete a.ui-state-focus {
     border: 0;
-    background: rgb(62, 70, 79);
-    color: #fff;
+    background: var(--autocomplete-background-color); /* Uses the defined background color */
+    color: var(--autocomplete-hover-text-color); /* Uses the defined hover text color */
 }
+
 .ui-autocomplete a.ui-corner-all {
     -webkit-border-radius: 0 0 0 0;
     border-radius: 0 0 0 0;
 }
+
 .ui-autocomplete .autocomplete-header {
     font-weight: 800;
-    color: rgb(123, 34, 64);
+    color: var(--autocomplete-header-color); /* Uses the defined header color */
 }
-
