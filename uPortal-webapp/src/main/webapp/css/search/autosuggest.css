@@ -4,7 +4,7 @@
  * for additional information regarding copyright ownership.
  * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
+ * except in compliance with the License. You may obtain a
  * copy of the License at the following location:
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,28 +17,13 @@
  * under the License.
  */
 
-/**
- * Updated version of the CSS file to directly adopt uPortal CSS variables for web-components,
- * reducing the need to redefine variables in each component and allowing them to inherit
- * styles from the uPortal skin (as done for portlets).
- * 
- * Defined variables in the :root scope:
- *   --autocomplete-header-color: The color for the autocomplete header.
- *   --autocomplete-background-color: The background color for focused autocomplete items.
- *   --autocomplete-hover-text-color: The text color when hovering over autocomplete items.
- *   --autocomplete-border-color: The border color for autocomplete items.
- *   --autocomplete-item-padding: The padding inside each autocomplete item.
- * 
- */
-
- :root {
-    --autocomplete-header-color: rgb(123, 34, 64); /* Header text color */
-    --autocomplete-background-color: rgb(62, 70, 79); /* Background color for focused items */
-    --autocomplete-hover-text-color: #fff; /* Text color when hovering over items */
-    --autocomplete-border-color: #efefef; /* Border color for autocomplete items */
-    --autocomplete-item-padding: 0.5em; /* Padding for autocomplete items */
+/* Define CSS variables in :root and map them to LESS variables */
+:root {
+    --portlet-header-text-color: @portlet-titlebar-link-color; /* CSS variable that references a LESS variable */
+    --portlet-content-bg-color: #d0d0d0; /* Define background color */
 }
 
+/* UI Autocomplete Styles */
 .ui-autocomplete.ui-menu {
     padding: 0;
     overflow: hidden;
@@ -46,27 +31,28 @@
 
 .ui-autocomplete li {
     list-style: none;
-    max-width: 315px; /* Fixes Autocomplete on 1st search after page render would have very wide results box */
+    max-width: 315px; /* Fixes wide results box issue */
     overflow: hidden;
 }
 
 .ui-autocomplete .ui-menu-item a {
-    border-bottom: 1px solid var(--autocomplete-border-color); /* Uses the defined border color */
-    padding: var(--autocomplete-item-padding); /* Uses the defined item padding */
+    border-bottom: 1px solid var(--portlet-header-text-color);
+    padding: .5em;
 }
 
 .ui-autocomplete .ui-menu-item a:hover {
     cursor: pointer;
 }
 
+/* focused state styling */
 .ui-autocomplete a.ui-state-focus .autocomplete-header {
-    color: var(--autocomplete-hover-text-color); /* Uses the defined hover text color */
+    color: #fff;
 }
 
 .ui-autocomplete a.ui-state-focus {
     border: 0;
-    background: var(--autocomplete-background-color); /* Uses the defined background color */
-    color: var(--autocomplete-hover-text-color); /* Uses the defined hover text color */
+    background: rgb(62, 70, 79);
+    color: #fff;
 }
 
 .ui-autocomplete a.ui-corner-all {
@@ -76,5 +62,14 @@
 
 .ui-autocomplete .autocomplete-header {
     font-weight: 800;
-    color: var(--autocomplete-header-color); /* Uses the defined header color */
+    color: rgb(123, 34, 64);
+}
+
+/* Link Styles */
+a {
+    color: var(--portlet-header-text-color); /* Link color using the CSS variable */
+}
+
+a:hover {
+    color: darken(var(--portlet-header-text-color), 20%); /* Darken the CSS variable on hover */
 }
