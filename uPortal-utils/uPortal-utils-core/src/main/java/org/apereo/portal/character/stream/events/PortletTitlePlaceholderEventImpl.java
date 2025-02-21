@@ -21,8 +21,6 @@ public final class PortletTitlePlaceholderEventImpl extends PortletPlaceholderEv
         implements PortletTitlePlaceholderEvent {
     private static final long serialVersionUID = 1L;
 
-    private int hash = 0;
-
     public PortletTitlePlaceholderEventImpl(IPortletWindowId portletWindowId) {
         super(portletWindowId);
     }
@@ -33,30 +31,6 @@ public final class PortletTitlePlaceholderEventImpl extends PortletPlaceholderEv
     @Override
     public CharacterEventTypes getEventType() {
         return CharacterEventTypes.PORTLET_TITLE;
-    }
-
-    @Override
-    public int hashCode() {
-        int h = hash;
-        if (h == 0) {
-            h = internalHashCode();
-            hash = h;
-        }
-        return h;
-    }
-
-    private int internalHashCode() {
-        final int prime = 31;
-        int result = 1;
-        result =
-                prime * result
-                        + ((this.getPortletWindowId() == null)
-                                ? 0
-                                : this.getPortletWindowId().hashCode());
-        result =
-                prime * result
-                        + ((this.getEventType() == null) ? 0 : this.getEventType().hashCode());
-        return result;
     }
 
     @Override
@@ -72,13 +46,5 @@ public final class PortletTitlePlaceholderEventImpl extends PortletPlaceholderEv
             if (other.getPortletWindowId() != null) return false;
         } else if (!this.getPortletWindowId().equals(other.getPortletWindowId())) return false;
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return "PortletTitlePlaceholderEvent ["
-                + "portletWindowId="
-                + this.getPortletWindowId()
-                + "]";
     }
 }
