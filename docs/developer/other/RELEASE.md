@@ -4,10 +4,14 @@
 
 There are 3 prerequisites to cutting releases:
 
-1. [JIRA Account at Sonatype](https://issues.sonatype.org/secure/Signup!default.jspa)
-2. Permissions to release projects
-    - This is granted via a Jira ticket from a uPortal committer
-3. [Set up public PGP key on a server](https://central.sonatype.org/pages/working-with-pgp-signatures.html)
+1. [Sonatype Account at Sonatype Central](https://central.sonatype.com/)
+    - NOTE!! Do not link a social account -- create a local account!
+    - See first part of [Register to Publish Via the Central Portal](https://central.sonatype.org/register/central-portal/)
+3. Permissions to release projects
+    - This is granted via a email from a uPortal committer to [Central Support](mailto:central-support@sonatype.com)
+    - See [Add or remove permissions to your project](https://central.sonatype.org/register/legacy/#add-or-remove-permissions-to-your-project)
+    - Expect approval to take a few days to complete
+4. [Set up public PGP key on a server](https://central.sonatype.org/pages/working-with-pgp-signatures.html)
     - Generate a key pair `gpg2 --gen-key`
     - If you choose to have an expiration date, edit the key via `gpg2 --edit-key {key ID}`
     - Determine the key ID and keyring file `gpg2 --list-keys` (the key ID is the `pub` ID)
@@ -19,6 +23,9 @@ Export your secret keyring via `gpg2 --keyring secring.gpg --export-secret-keys 
 
 In `$HOME/.gradle/gradle.properties` place your credentials for the Sonatype OSS Repository Hosting and your configuration information for signing artifacts with GNU Privacy Guard (GnuPG).  Use the key ID from the PGP prerequisite and the keyring file. ([details](https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials)).
 
+NOTE: you cannot
+use your login credentials for Sonatype OSSRH. You need to log in, navigate to profile and generate a token. See publishing guide links below for help.
+
 ```properties
 ossrhUsername={username}
 ossrhPassword={secret}
@@ -28,6 +35,9 @@ signing.password={secret}
 signing.secretKeyRingFile={keyring file}
 ```
 Setup is only required to be done once.
+
+See the [publishing guide](https://central.sonatype.org/publish/publish-guide/#introduction) and
+the [Gradle publishing guide](https://central.sonatype.org/publish/publish-gradle/) for more assistance.
 
 ## Which Repo?
 

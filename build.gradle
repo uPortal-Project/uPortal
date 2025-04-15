@@ -1,8 +1,8 @@
 plugins {
     // Top level plugins
     id 'com.github.kt3k.coveralls' version '2.12.2'
-    id 'com.github.node-gradle.node' version '7.0.2'
-    id 'net.researchgate.release' version '3.0.2'
+    id 'com.github.node-gradle.node' version '7.1.0'
+    id 'net.researchgate.release' version '3.1.0'
     // Records all tasks in task graph, generates `build/reports/visteg.dot`
     // dot file can be converted to an image using graphviz. `dot -Tsvg -O -v visteg.dot`
     // id 'cz.malohlava.visteg' version '1.0.5'
@@ -10,7 +10,7 @@ plugins {
     // Sub project plugins
     id 'com.github.sherter.google-java-format' version '0.9' apply false
     id 'nebula.lint' version '17.8.0' apply false
-    id 'net.ltgt.errorprone' version '4.0.1' apply false
+    id 'net.ltgt.errorprone' version '4.1.0' apply false
     id 'com.github.spotbugs' version '4.8.0' apply false
 }
 
@@ -55,7 +55,7 @@ allprojects {
     }
 
     codenarc {
-        toolVersion = '3.5.0'
+        toolVersion = '3.6.0'
         reportFormat = 'console'
     }
 
@@ -72,7 +72,7 @@ allprojects {
 
     /*======== Static Analysis ========*/
     spotbugs {
-        toolVersion = '4.8.6'
+        toolVersion = '4.9.1'
         // allow build to continue to other sub projects
         ignoreFailures = true
     }
