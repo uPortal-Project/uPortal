@@ -107,7 +107,7 @@ public class PersonalizerImpl implements IPersonalizer {
                 log.debug("Person attribute pair added for key: [{}], [{}]", key, value);
                 replacements.put(key, value);
             } else {
-                log.warn("Person attribute value is not a string!! : [{}]", key);
+                log.debug("Person attribute value is not a string : [{}]", key);
             }
         }
         return replacements;
