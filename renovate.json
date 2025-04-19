@@ -1,80 +1,84 @@
 {
   "extends": [
-    "config:base",
+    "config:recommended",
     ":preserveSemverRanges",
-    ":masterIssue"
+    ":dependencyDashboard"
   ],
-  "gradle": { "enabled": true },
-  "major": { "masterIssueApproval": true },
-  "renovateFork": true,
+  "gradle": {
+    "enabled": true
+  },
+  "major": {
+    "dependencyDashboardApproval": true
+  },
+  "forkProcessing": "enabled",
   "packageRules": [
     {
       "groupName": "uPortal",
-      "packagePatterns": ["^org.jasig.portal:"]
+      "matchPackageNames": ["/^org.jasig.portal:/"]
     },
     {
       "groupName": "uPortal web components",
-      "packagePatterns": ["^org.webjars.npm:uportal"]
+      "matchPackageNames": ["/^org.webjars.npm:uportal/"]
     },
     {
       "groupName": "Person Directory",
-      "packagePatterns": ["^org.apereo.service.persondir"]
+      "matchPackageNames": ["/^org.apereo.service.persondir/"]
     },
     {
       "groupName": "Lucene",
-      "packagePatterns": ["^org.apache.lucene"]
+      "matchPackageNames": ["/^org.apache.lucene/"]
     },
     {
       "groupName": "Mockito",
-      "packagePatterns": ["^org.mockito"]
+      "matchPackageNames": ["/^org.mockito/"]
     },
     {
       "groupName": "User Type",
-      "packagePatterns": ["^org.jadira.usertype:usertype.core"]
+      "matchPackageNames": ["/^org.jadira.usertype:usertype.core/"]
     },
     {
       "groupName": "JAXB2",
-      "packagePatterns": ["^org.jvnet.jaxb2_commons"]
+      "matchPackageNames": ["/^org.jvnet.jaxb2_commons/"]
     },
     {
       "groupName": "Resource Server",
-      "packagePatterns": ["^org.jasig.resourceserver"]
+      "matchPackageNames": ["/^org.jasig.resourceserver/"]
     },
     {
       "groupName": "Notification Portlet",
-      "packagePatterns": ["^org.jasig.portlet.notification"]
+      "matchPackageNames": ["/^org.jasig.portlet.notification/"]
     },
     {
       "groupName": "AspectJ",
-      "packagePatterns": ["^org.aspectj"]
+      "matchPackageNames": ["/^org.aspectj/"]
     },
     {
-      "packagePatterns": ["^com.amazonaws"],
-      "schedule": "on Monday"
+      "schedule": "on Monday",
+      "matchPackageNames": ["/^com.amazonaws/"]
     },
     {
       "groupName": "SLF4J",
-      "packagePatterns": ["^org.slf4j"]
+      "matchPackageNames": ["/^org.slf4j/"]
     },
     {
       "groupName": "Groovy",
-      "packagePatterns": ["^org.codehaus.groovy"]
+      "matchPackageNames": ["/^org.codehaus.groovy/"]
     },
     {
       "groupName": "JSON Web Token",
-      "packagePatterns": ["^io.jsonwebtoken"]
+      "matchPackageNames": ["/^io.jsonwebtoken/"]
     },
     {
       "groupName": "Apache Pluto",
-      "packagePatterns": ["^org.apache.portals.pluto"]
+      "matchPackageNames": ["/^org.apache.portals.pluto/"]
     },
     {
       "groupName": "JAXB",
-      "packagePatterns": ["^com.sun.xml.bind"]
+      "matchPackageNames": ["/^com.sun.xml.bind/"]
     },
     {
       "groupName": "Jadira Usertype",
-      "packagePatterns": ["^org.jadira.usertype"]
+      "matchPackageNames": ["/^org.jadira.usertype/"]
     }
   ]
 }
