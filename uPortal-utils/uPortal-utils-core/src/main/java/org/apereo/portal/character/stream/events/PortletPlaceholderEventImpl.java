@@ -20,6 +20,8 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 public abstract class PortletPlaceholderEventImpl implements PortletPlaceholderEvent {
     private static final long serialVersionUID = 1L;
 
+    private int hash = 0;
+
     private final IPortletWindowId portletWindowId;
 
     public PortletPlaceholderEventImpl(IPortletWindowId portletWindowId) {
@@ -29,5 +31,38 @@ public abstract class PortletPlaceholderEventImpl implements PortletPlaceholderE
     @Override
     public final IPortletWindowId getPortletWindowId() {
         return this.portletWindowId;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = hash;
+        if (h == 0) {
+            h = internalHashCode();
+            hash = h;
+        }
+        return h;
+    }
+
+    protected int internalHashCode() {
+        final int prime = 31;
+        int result = 1;
+        result =
+                prime * result
+                        + ((this.getPortletWindowId() == null)
+                                ? 0
+                                : this.getPortletWindowId().hashCode());
+        result =
+                prime * result
+                        + ((this.getEventType() == null) ? 0 : this.getEventType().hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName()
+                + " ["
+                + "portletWindowId="
+                + this.getPortletWindowId()
+                + "]";
     }
 }
