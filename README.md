@@ -1,64 +1,28 @@
-![uPortal logo](docs/images/uPortal-logo.jpg)
+![uPortal logo](docs/images/uPortal.png)
 
-<table border="0">
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.portal/uPortal-web/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jasig.portal/uPortal-web)
+[![CI](https://github.com/uPortal-Project/uPortal/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/uPortal-Project/uPortal/actions/workflows/CI.yml)
+
+
+<table>
   <tr>
     <td>
       <table>
         <tr>
-          <th>
-            Version
-          </th>
-          <th>
-            Linux
-          </th>
-          <th>
-            Windows
-          </th>
-          <th>
-            Coverage
-          </th>
-        </tr>
-        <tr>
           <td>
-            <a href="https://github.com/uPortal-Project/uPortal/tree/master">
-              uPortal 5
-            </a>
+            Quick links
           </td>
           <td>
-            <a href="https://github.com/uPortal-Project/uPortal/actions?query=branch%3Amaster">
-              <img src="https://github.com/uPortal-Project/uPortal/workflows/CI/badge.svg?branch=master" alt="Linux Build Status">
+            <a href="https://www.w3.org/TR/WCAG20/">
+              <img src="https://www.w3.org/WAI/wcag2AA-blue-v.svg" alt="WCAG 2 AA Badge">
             </a>
-          </td>
-          <td>
-            <a href="https://github.com/uPortal-Project/uPortal/actions?query=branch%3Amaster">
-              <img src="https://github.com/uPortal-Project/uPortal/workflows/CI/badge.svg?branch=master" alt="Windows Build Status">
+            <br>
+            <a href="https://source.android.com/setup/contribute/code-style">
+              <img src="https://img.shields.io/badge/code_style-AOSP-green.svg?style=flat" alt="AOSP Code Style">
             </a>
-          </td>
-          <td>
-            <a href="https://coveralls.io/github/uPortal-Project/uPortal?branch=master">
-              <img src="https://coveralls.io/repos/github/uPortal-Project/uPortal/badge.svg?branch=master" alt="Coverage Status">
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a href="https://github.com/uPortal-Project/uPortal/tree/rel-4-3-patches">
-              uPortal 4.3
-            </a>
-          </td>
-          <td>
-            <a href="https://travis-ci.org/uPortal-Project/uPortal">
-              <img src="https://travis-ci.org/uPortal-Project/uPortal.svg?branch=rel-4-3-patches" alt="Linux Build Status">
-            </a>
-          </td>
-          <td>
-            <a href="https://ci.appveyor.com/project/drewwills/uportal/branch/rel-4-3-patches">
-              <img src="https://ci.appveyor.com/api/projects/status/8t95sjt090mf62dh/branch/rel-4-3-patches?svg=true" alt="Windows Build Status">
-            </a>
-          </td>
-          <td>
-            <a href="https://coveralls.io/github/uPortal-Project/uPortal?branch=rel-4-3-patches">
-              <img src="https://coveralls.io/repos/github/uPortal-Project/uPortal/badge.svg?branch=rel-4-3-patches" alt="Coverage Status">
+            <br>
+            <a href="https://github.com/search?q=topic%3Auportal+topic%3Aportlet&type=Repositories">
+              <img src="https://img.shields.io/badge/discover-portlets-blue.svg?style=flat" alt="Discover Portlets">
             </a>
           </td>
         </tr>
@@ -66,28 +30,6 @@
     </td>
     <td>
       <table>
-        <tr>
-            <td>
-                Quick links
-            </td>
-            <td>
-                <a href="https://www.w3.org/TR/WCAG20/">
-                  <img src="https://www.w3.org/WAI/wcag2AA-blue-v.svg" alt="WCAG 2 AA Badge">
-                </a>
-                <br>
-                <a href="https://source.android.com/setup/contribute/code-style">
-                  <img src="https://img.shields.io/badge/code_style-AOSP-green.svg?style=flat" alt="AOSP Code Style">
-                </a>
-                <br>
-                <a href="https://github.com/search?q=topic%3Auportal+topic%3Asoffit&type=Repositories">
-                  <img src="https://img.shields.io/badge/discover-soffits-blue.svg?style=flat" alt="Discover Soffits">
-                </a>
-                <br>
-                <a href="https://github.com/search?q=topic%3Auportal+topic%3Aportlet&type=Repositories">
-                  <img src="https://img.shields.io/badge/discover-portlets-blue.svg?style=flat" alt="Discover Portlets">
-                </a>
-            </td>
-        </tr>
         <tr>
           <td>
             Join the Conversation
@@ -114,6 +56,7 @@
     </td>
   </tr>
 </table>
+
 
 ## About
 
