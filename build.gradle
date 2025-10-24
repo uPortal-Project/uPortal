@@ -28,6 +28,10 @@ node {
     download = true
 }
 
+if (!rootProject.ext.has('testModuleSummaries')) {
+    rootProject.ext.testModuleSummaries = []
+}
+
 allprojects {
     apply plugin: 'java'
     apply plugin: 'java-library'
@@ -98,6 +102,38 @@ allprojects {
         description = 'Provides a complete report on project dependencies;  use option (e.g.) --configuration compile to narrow'
     }
 
+    tasks.withType(Test).configureEach { testTask ->
+        afterSuite { desc, result ->
+            if (!desc.parent) {
+                // Store summary; do not print now
+                rootProject.ext.testModuleSummaries << [
+                        projectPath: project.path,
+                        taskPath   : testTask.path,
+                        resultType : result.resultType,
+                        executed   : result.testCount,
+                        passed     : result.successfulTestCount,
+                        failed     : result.failedTestCount,
+                        skipped    : result.skippedTestCount,
+                        durationMs : (result.endTime - result.startTime)
+                ]
+            }
+        }
+    }
+}
+
+gradle.buildFinished { buildResult ->
+    def summaries = rootProject.ext.has('testModuleSummaries') ? rootProject.ext.testModuleSummaries : []
+    if (!summaries || summaries.isEmpty()) {
+        return
+    }
+    println "=== All Module Test Summaries (${buildResult.failure ? 'BUILD FAILURE' : 'BUILD SUCCESS'}) ==="
+    summaries.sort { it.projectPath }.each { s ->
+        println "Module ${s.projectPath} (${s.taskPath}): ${s.resultType} - ${s.executed} executed, ${s.passed} passed, ${s.failed} failed, ${s.skipped} skipped in ${s.durationMs} ms"
+    }
+    def total = summaries.inject([e:0,p:0,f:0,s:0,d:0]) { acc, m ->
+        acc.e += m.executed; acc.p += m.passed; acc.f += m.failed; acc.s += m.skipped; acc.d += m.durationMs; acc
+    }
+    println "=== Aggregate Test Summary: ${total.e} executed, ${total.p} passed, ${total.f} failed, ${total.s} skipped (sum durations ${total.d} ms) ==="
 }
 
 /*======== Child Projects ========*/
