@@ -289,3 +289,571 @@ coveralls {
     jacocoReportPath = "${buildDir}/reports/jacoco/jacocoAggregateReport/jacocoAggregateReport.xml"
     sourceDirs = files(allprojects.sourceSets.main.allSource.srcDirs).files.absolutePath
 }
+
+/**
+ * CRAP Score Analysis Task
+ * ========================
+ * Add this to the end of your root build.gradle file
+ * 
+ * Calculates CRAP (Change Risk Anti-Patterns) score for all methods
+ * CRAP = complexity² × (1 - coverage)³ + complexity
+ * 
+ * Methods with CRAP > 30 are considered high-risk and should be:
+ *   - Tested thoroughly before modification, OR
+ *   - Refactored to reduce complexity first
+ * 
+ * Usage: ./gradlew crapAnalysis
+ * Output: build/reports/crap-analysis/
+ */
+
+task crapAnalysis {
+    group = 'verification'
+    description = 'Analyzes code coverage gaps using CRAP score to prioritize testing efforts'
+    dependsOn jacocoAggregateReport
+    
+    doLast {
+        def jacocoXml = file("${buildDir}/reports/jacoco/jacocoAggregateReport/jacocoAggregateReport.xml")
+        
+        if (!jacocoXml.exists()) {
+            throw new GradleException("JaCoCo report not found. Run 'jacocoAggregateReport' first.")
+        }
+        
+        def outputDir = file("${buildDir}/reports/crap-analysis")
+        outputDir.mkdirs()
+        
+        println "Parsing JaCoCo report: ${jacocoXml}"
+
+        // Load the Jacoco XML as text and remove any DOCTYPE to avoid parser restrictions
+        def xmlText = jacocoXml.getText('UTF-8')
+        xmlText = xmlText.replaceAll(/(?s)<!DOCTYPE.*?>/, '')
+        def report = new XmlSlurper(false, false).parseText(xmlText)
+        def methods = []
+        def packageStats = [:]
+        
+        // Parse JaCoCo XML structure
+        report.package.each { pkg ->
+            def packageName = pkg.@name.text().replace('/', '.')
+            
+            if (!packageStats[packageName]) {
+                packageStats[packageName] = [
+                    name: packageName,
+                    totalComplexity: 0,
+                    coveredComplexity: 0,
+                    methodCount: 0,
+                    uncoveredMethods: 0,
+                    files: [] as Set
+                ]
+            }
+            
+            pkg.sourcefile.each { srcFile ->
+                def fileName = srcFile.@name.text()
+                packageStats[packageName].files.add(fileName)
+                
+                def className = fileName.replaceAll('\\.java$', '').replaceAll('\\.groovy$', '')
+                
+                srcFile.line.each { line ->
+                    def lineNum = line.@nr.text()
+                    def missedInstructions = (line.@mi.text() ?: '0') as int
+                    def coveredInstructions = (line.@ci.text() ?: '0') as int
+                    def missedBranches = (line.@mb.text() ?: '0') as int
+                    def coveredBranches = (line.@cb.text() ?: '0') as int
+                    
+                    // Estimate complexity from branches (rough approximation)
+                    def totalBranches = missedBranches + coveredBranches
+                    if (totalBranches > 0) {
+                        def complexity = totalBranches + 1
+                        def totalInstructions = missedInstructions + coveredInstructions
+                        def coverage = totalInstructions > 0 ? (coveredInstructions / totalInstructions) : 0.0
+                        def crapScore = calculateCrap(complexity, coverage)
+                        
+                        methods.add([
+                            package: packageName,
+                            class: className,
+                            line: lineNum,
+                            complexity: complexity,
+                            coverage: coverage * 100,
+                            coveredBranches: coveredBranches,
+                            missedBranches: missedBranches,
+                            crapScore: crapScore
+                        ])
+                        
+                        packageStats[packageName].totalComplexity += complexity
+                        packageStats[packageName].coveredComplexity += complexity * coverage
+                        packageStats[packageName].methodCount++
+                        if (coverage < 0.5) {
+                            packageStats[packageName].uncoveredMethods++
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Sort by CRAP score (highest first)
+        methods.sort { -it.crapScore }
+        
+        // Generate reports
+        generateHtmlReport(methods, packageStats, outputDir)
+        generateCsvReport(methods, outputDir)
+        
+        // Print summary
+        printSummary(methods, packageStats, outputDir)
+    }
+}
+
+def calculateCrap(int complexity, double coverage) {
+    // CRAP = complexity² × (1 - coverage)³ + complexity
+    def uncoverage = 1.0 - coverage
+    return (complexity * complexity * Math.pow(uncoverage, 3)) + complexity
+}
+
+def printSummary(methods, packageStats, outputDir) {
+    println "\n" + "=".multiply(80)
+    println "CRAP ANALYSIS SUMMARY"
+    println "=".multiply(80)
+    println "Total decision points analyzed: ${methods.size()}"
+    println "High-risk (CRAP > 30): ${methods.count { it.crapScore > 30 }}"
+    println "Medium-risk (CRAP 10-30): ${methods.count { it.crapScore > 10 && it.crapScore <= 30 }}"
+    println "Low-risk (CRAP < 10): ${methods.count { it.crapScore <= 10 }}"
+    
+    println "\n📊 Top 10 highest CRAP scores:"
+    methods.take(10).eachWithIndex { m, idx ->
+        println sprintf("  %2d. CRAP: %6.1f | Complexity: %3d | Coverage: %5.1f%% | %s.%s:%s",
+            idx + 1, m.crapScore, m.complexity, m.coverage, m.package, m.class, m.line)
+    }
+    
+    println "\n📦 Packages with most untested complexity:"
+    packageStats.values()
+        .sort { -(it.totalComplexity - it.coveredComplexity) }
+        .take(5).eachWithIndex { pkg, idx ->
+            def uncoveredComplexity = pkg.totalComplexity - pkg.coveredComplexity
+            def uncoveredComplexityInt = (uncoveredComplexity as int)
+            def coveragePercent = pkg.totalComplexity > 0 ?
+                (pkg.coveredComplexity / (pkg.totalComplexity as double) * 100.0) : 0.0
+            println sprintf("  %d. %s", idx + 1, pkg.name)
+            println sprintf("     Uncovered complexity: %d points (%.1f%% coverage, %d decision points)",
+                uncoveredComplexityInt, coveragePercent, pkg.methodCount)
+        }
+    
+    println "\n📄 Reports generated:"
+    println "  HTML: ${outputDir}/crap-report.html"
+    println "  CSV:  ${outputDir}/crap-report.csv"
+    println "\n💡 Next steps:"
+    println "  1. Open the HTML report in your browser"
+    println "  2. Focus on methods with CRAP > 30 (high-risk)"
+    println "  3. Either add tests OR refactor to reduce complexity"
+    println "=".multiply(80) + "\n"
+}
+
+def generateCsvReport(methods, outputDir) {
+    def csvFile = new File(outputDir, "crap-report.csv")
+    
+    csvFile.withWriter { writer ->
+        writer.writeLine("Rank,CRAP Score,Complexity,Coverage %,Covered Branches,Missed Branches,Package,Class,Line")
+        methods.eachWithIndex { m, idx ->
+            writer.writeLine("${idx + 1},${String.format('%.2f', m.crapScore)},${m.complexity},${String.format('%.1f', m.coverage)},${m.coveredBranches},${m.missedBranches},\"${m.package}\",\"${m.class}\",${m.line}")
+        }
+    }
+}
+
+def generateHtmlReport(methods, packageStats, outputDir) {
+    def htmlFile = new File(outputDir, "crap-report.html")
+    
+    htmlFile.text = """<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>CRAP Score Analysis Report</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            color: #333; 
+            border-bottom: 3px solid #4CAF50; 
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        h2 { 
+            color: #555; 
+            margin-top: 30px; 
+            border-bottom: 2px solid #ddd; 
+            padding-bottom: 8px; 
+        }
+        
+        .summary { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; 
+            margin: 20px 0; 
+        }
+        .summary-card { 
+            background: #f9f9f9; 
+            padding: 20px; 
+            border-radius: 8px; 
+            border-left: 4px solid #4CAF50;
+            transition: transform 0.2s;
+        }
+        .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .summary-card.high { border-left-color: #f44336; }
+        .summary-card.medium { border-left-color: #ff9800; }
+        .summary-card h3 { 
+            margin: 0 0 8px 0; 
+            font-size: 14px; 
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .summary-card .value { 
+            font-size: 32px; 
+            font-weight: bold; 
+            color: #333; 
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: white;
+        }
+        th { 
+            background: #4CAF50; 
+            color: white; 
+            padding: 12px; 
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        td { 
+            padding: 10px 12px; 
+            border-bottom: 1px solid #eee; 
+        }
+        tr:hover { 
+            background: #f5f5f5;
+            transition: background 0.2s;
+        }
+        
+        .crap-high { 
+            color: #f44336; 
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .crap-medium { 
+            color: #ff9800; 
+            font-weight: bold; 
+        }
+        .crap-low { 
+            color: #4CAF50; 
+        }
+        
+        .coverage-bad { background: #ffebee; }
+        .coverage-medium { background: #fff3e0; }
+        .coverage-good { background: #e8f5e9; }
+        
+        .pkg-name { 
+            font-family: 'Courier New', monospace; 
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .filter { 
+            margin: 20px 0; 
+            padding: 15px; 
+            background: #f9f9f9; 
+            border-radius: 6px; 
+        }
+        .filter input { 
+            padding: 10px; 
+            width: 300px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .filter input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .tab:hover {
+            background: #e8e8e8;
+        }
+        .tab.active {
+            background: #4CAF50;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        
+        .guide {
+            background: #f9f9f9; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin: 20px 0;
+            border-left: 4px solid #2196F3;
+        }
+        .guide h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .guide ul {
+            margin: 10px 0;
+        }
+        .guide li {
+            margin: 5px 0;
+        }
+        
+        .formula {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            border-left: 4px solid #2196F3;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .summary {
+                grid-template-columns: 1fr;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+    <script>
+        function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById('methodsTable');
+            const tr = table.getElementsByTagName('tr');
+            
+            for (let i = 1; i < tr.length; i++) {
+                const row = tr[i];
+                const text = row.textContent || row.innerText;
+                row.style.display = text.toUpperCase().indexOf(filter) > -1 ? '' : 'none';
+            }
+        }
+        
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+
+            const btn = document.querySelector('.tab[data-tab="' + tabName + '"]');
+            if (btn) btn.classList.add('active');
+            const content = document.getElementById(tabName);
+            if (content) content.classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.tab[data-tab]').forEach(function (b) {
+                b.addEventListener('click', function () { showTab(b.getAttribute('data-tab')); });
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <h1>🎯 CRAP Score Analysis Report</h1>
+    <p><strong>Generated:</strong> ${new Date().format('yyyy-MM-dd HH:mm:ss')}</p>
+    
+    <div class="formula">
+        <strong>CRAP Formula:</strong> complexity² × (1 - coverage)³ + complexity
+    </div>
+    
+    <div class="summary">
+        <div class="summary-card high">
+            <h3>High Risk</h3>
+            <div class="value">${methods.count { it.crapScore > 30 }}</div>
+            <div style="font-size: 12px; color: #666; margin-top: 5px;">CRAP > 30</div>
+        </div>
+        <div class="summary-card medium">
+            <h3>Medium Risk</h3>
+            <div class="value">${methods.count { it.crapScore > 10 && it.crapScore <= 30 }}</div>
+            <div style="font-size: 12px; color: #666; margin-top: 5px;">CRAP 10-30</div>
+        </div>
+        <div class="summary-card">
+            <h3>Low Risk</h3>
+            <div class="value">${methods.count { it.crapScore <= 10 }}</div>
+            <div style="font-size: 12px; color: #666; margin-top: 5px;">CRAP < 10</div>
+        </div>
+        <div class="summary-card">
+            <h3>Total Analyzed</h3>
+            <div class="value">${methods.size()}</div>
+            <div style="font-size: 12px; color: #666; margin-top: 5px;">Decision points</div>
+        </div>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab active" data-tab="methods">Methods by CRAP Score</button>
+        <button class="tab" data-tab="packages">Packages Overview</button>
+        <button class="tab" data-tab="guide">How to Use</button>
+    </div>
+    
+    <div id="methods" class="tab-content active">
+        <h2>Methods Ranked by CRAP Score</h2>
+        
+        <div class="filter">
+            <input type="text" id="searchInput" onkeyup="filterTable()" 
+                   placeholder="🔍 Filter by package, class, or line number...">
+        </div>
+        
+        <table id="methodsTable">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>CRAP Score</th>
+                    <th>Complexity</th>
+                    <th>Coverage %</th>
+                    <th>Branches (✓/✗)</th>
+                    <th>Package</th>
+                    <th>Class</th>
+                    <th>Line</th>
+                </tr>
+            </thead>
+            <tbody>
+${methods.take(500).withIndex().collect { m, idx ->
+    def crapClass = m.crapScore > 30 ? 'crap-high' : (m.crapScore > 10 ? 'crap-medium' : 'crap-low')
+    def coverageClass = m.coverage < 30 ? 'coverage-bad' : (m.coverage < 70 ? 'coverage-medium' : 'coverage-good')
+    """                <tr>
+                    <td>${idx + 1}</td>
+                    <td class="${crapClass}">${String.format('%.2f', m.crapScore)}</td>
+                    <td>${m.complexity}</td>
+                    <td class="${coverageClass}">${String.format('%.1f', m.coverage)}%</td>
+                    <td>${m.coveredBranches}/${m.missedBranches}</td>
+                    <td class="pkg-name">${m.package}</td>
+                    <td>${m.class}</td>
+                    <td>${m.line}</td>
+                </tr>"""
+}.join('\n')}
+            </tbody>
+        </table>
+        ${methods.size() > 500 ? "<p><em>Showing top 500 of ${methods.size()} decision points. See CSV for complete data.</em></p>" : ""}
+    </div>
+    
+    <div id="packages" class="tab-content">
+        <h2>Package-Level Coverage Overview</h2>
+        <p>Packages sorted by uncovered complexity (best opportunities for broad coverage expansion)</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Package</th>
+                    <th>Files</th>
+                    <th>Decision Points</th>
+                    <th>Total Complexity</th>
+                    <th>Coverage %</th>
+                    <th>Uncovered Complexity</th>
+                    <th>Methods < 50% Coverage</th>
+                </tr>
+            </thead>
+            <tbody>
+${packageStats.values().sort { -(it.totalComplexity - it.coveredComplexity) }.collect { pkg ->
+    def coveragePercent = pkg.totalComplexity > 0 ? (pkg.coveredComplexity / (pkg.totalComplexity as double) * 100.0) : 0.0
+    def uncoveredComplexity = pkg.totalComplexity - pkg.coveredComplexity
+    def coverageClass = coveragePercent < 30 ? 'coverage-bad' : (coveragePercent < 70 ? 'coverage-medium' : 'coverage-good')
+    """                <tr>
+                    <td class="pkg-name">${pkg.name}</td>
+                    <td>${pkg.files.size()}</td>
+                    <td>${pkg.methodCount}</td>
+                    <td>${Math.round(pkg.totalComplexity)}</td>
+                    <td class="${coverageClass}">${String.format('%.1f', coveragePercent)}%</td>
+                    <td><strong>${Math.round(uncoveredComplexity)}</strong></td>
+                    <td>${pkg.uncoveredMethods}</td>
+                </tr>"""
+}.join('\n')}
+            </tbody>
+        </table>
+    </div>
+    
+    <div id="guide" class="tab-content">
+        <h2>📖 How to Use This Report</h2>
+        
+        <div class="guide">
+            <h3>🔴 Priority 1: CRAP > 30 (High Risk)</h3>
+            <p>These methods are <strong>dangerous to modify</strong>. Before touching them:</p>
+            <ul>
+                <li><strong>Option A:</strong> Add comprehensive tests to bring CRAP below 30</li>
+                <li><strong>Option B:</strong> Refactor to reduce complexity (break into smaller methods)</li>
+                <li><strong>Don't:</strong> Modify without doing A or B first</li>
+            </ul>
+            <p><em>Even 100% test coverage won't eliminate risk if complexity stays above 30</em></p>
+        </div>
+        
+        <div class="guide">
+            <h3>🟠 Priority 2: CRAP 10-30 (Medium Risk)</h3>
+            <p>These methods need attention before major changes:</p>
+            <ul>
+                <li>Add tests to cover the most critical paths</li>
+                <li>Consider refactoring if complexity is particularly high</li>
+                <li>Safe for minor bug fixes, risky for major refactoring</li>
+            </ul>
+        </div>
+        
+        <div class="guide">
+            <h3>🟢 Priority 3: CRAP < 10 (Low Risk)</h3>
+            <p>These methods are relatively safe:</p>
+            <ul>
+                <li>Can be modified with reasonable confidence</li>
+                <li>More tests are always beneficial but not urgent</li>
+            </ul>
+        </div>
+        
+        <div class="guide">
+            <h3>📦 For Broad Coverage Expansion</h3>
+            <p>Use the "Packages Overview" tab to:</p>
+            <ul>
+                <li>Identify entire packages with high uncovered complexity</li>
+                <li>Focus testing efforts on packages with the most uncovered decision points</li>
+                <li>Track progress by monitoring "Uncovered Complexity" decreasing over time</li>
+            </ul>
+            <p><strong>Strategy:</strong> Pick packages with high uncovered complexity and work through their high-CRAP methods systematically</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>"""
+}
