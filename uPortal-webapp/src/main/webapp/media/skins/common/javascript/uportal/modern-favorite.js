@@ -26,11 +26,7 @@ class ModernFavoriteManager {
             }
 
             const result = await response.json();
-            
-            if (window.up?.notify) {
-                window.up.notify(result.response, 'TopCenter', 'success');
-            }
-            
+            if (window.up?.notify) window.up.notify(result.response, 'TopCenter', 'success');
             return result;
         } catch (error) {
             console.error('Error adding to favorites:', error);
@@ -61,11 +57,7 @@ class ModernFavoriteManager {
             }
 
             const result = await response.json();
-            
-            if (window.up?.notify) {
-                window.up.notify(result.response, 'TopCenter', 'success');
-            }
-            
+            if (window.up?.notify) window.up.notify(result.response, 'TopCenter', 'success');
             return result;
         } catch (error) {
             console.error('Error removing from favorites:', error);
@@ -98,8 +90,6 @@ class ModernFavoriteManager {
         const url = `${context}/api/layout?action=movePortletAjax&sourceId=${sourceId}&previousNodeId=${previousNodeId}&nextNodeId=${nextNodeId}`;
         
         try {
-            console.log('Moving portlet:', url);
-            
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -111,7 +101,6 @@ class ModernFavoriteManager {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
-            console.log('Layout move successful.');
             return await response.json();
         } catch (error) {
             console.error('Error persisting move:', url, error);
@@ -125,8 +114,6 @@ class ModernFavoriteManager {
         const url = `${context}/api/layout?action=moveTab&sourceID=${sourceId}&method=${method}&elementID=${elementId}`;
         
         try {
-            console.log('Moving favorite group:', url);
-            
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -138,7 +125,6 @@ class ModernFavoriteManager {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
-            console.log('Favorite group move successful.');
             return await response.json();
         } catch (error) {
             console.error('Error persisting favorite group reorder:', url, error);

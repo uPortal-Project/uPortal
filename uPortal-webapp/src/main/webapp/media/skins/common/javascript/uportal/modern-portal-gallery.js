@@ -6,13 +6,10 @@
 
 class PortalGallery {
     constructor(container, options = {}) {
-        console.log('PortalGallery constructor called with options:', options);
         this.container = typeof container === 'string' ? document.querySelector(container) : container;
         this.options = { ...this.defaults, ...options };
-        console.log('Final options after merge:', this.options);
         this.panes = new Map();
         this.isOpen = false;
-        console.log('Initial isOpen set to false in constructor');
         this.init();
     }
 
@@ -25,48 +22,21 @@ class PortalGallery {
     }
 
     init() {
-        console.log('PortalGallery.init() called');
-        console.log('Initial options:', this.options);
-        console.log('Initial isOpen state:', this.isOpen);
-        
         this.createPanes();
         this.bindEvents();
         
-        // Ensure gallery starts closed
         this.isOpen = false;
-        console.log('Set isOpen to false');
         
         const outer = document.querySelector('#customizeOptions');
         const inner = this.container.querySelector('.gallery-inner');
         
-        console.log('Found outer element:', !!outer, outer ? outer.style.display : 'null');
-        console.log('Found inner element:', !!inner, inner ? inner.style.display : 'null');
+        if (outer) outer.style.display = 'none';
+        if (inner) inner.style.display = 'none';
         
-        if (outer) {
-            outer.style.display = 'none';
-            console.log('Set outer display to none');
-        }
-        if (inner) {
-            inner.style.display = 'none';
-            console.log('Set inner display to none');
-        }
-        
-        // Remove any handle arrow up class that might be set
         const handle = this.container.querySelector('.handle span');
-        if (handle) {
-            handle.classList.remove('handle-arrow-up');
-            console.log('Removed handle-arrow-up class');
-        }
+        if (handle) handle.classList.remove('handle-arrow-up');
         
-        // Only open if explicitly requested (should not happen on admin page)
-        if (this.options.isOpen) {
-            console.log('Opening gallery because options.isOpen is true');
-            this.openGallery();
-        } else {
-            console.log('Gallery should remain closed');
-        }
-        
-        console.log('PortalGallery.init() completed');
+        if (this.options.isOpen) this.openGallery();
     }
 
     createPanes() {
@@ -117,21 +87,11 @@ class PortalGallery {
         // Customize button click
         setTimeout(() => {
             const customizeBtn = document.getElementById('customizeButton');
-            console.log('Looking for customizeButton:', !!customizeBtn);
             if (customizeBtn) {
                 customizeBtn.addEventListener('click', (e) => {
-                    console.log('Customize button clicked');
                     e.preventDefault();
                     e.stopPropagation();
-                    
-                    // Use the proper gallery methods instead of direct DOM manipulation
-                    if (this.isOpen) {
-                        console.log('Closing drawer via customize button');
-                        this.closeGallery();
-                    } else {
-                        console.log('Opening drawer via customize button');
-                        this.openGallery();
-                    }
+                    this.isOpen ? this.closeGallery() : this.openGallery();
                 });
             }
         }, 100);
@@ -144,41 +104,28 @@ class PortalGallery {
     }
 
     openGallery() {
-        console.log('FLOW: openGallery() called');
         this.isOpen = true;
         const handle = this.container.querySelector('.handle span');
         const outer = document.querySelector('#customizeOptions');
         const inner = this.container.querySelector('.gallery-inner');
         
-        console.log('FLOW: Setting up loading spinner before animation');
-        
-        // Show loading spinner BEFORE opening drawer
         const canAddChildren = document.querySelector('#portalPageBodyColumns .portal-page-column.canAddChildren, #portalPageBodyColumns .portal-page-column.up-fragment-admin');
         if (canAddChildren) {
-            console.log('FLOW: Pre-initializing add-content pane with loading');
             this.panes.get('add-content').showLoadingOnly();
         } else {
-            console.log('FLOW: Pre-initializing use-content pane with loading');
             this.panes.get('use-content').showLoadingOnly();
             this.hidePaneLink('add-content');
         }
         
-        console.log('FLOW: Starting drawer animation - outer:', !!outer, 'inner:', !!inner);
-        
         if (handle) handle.classList.add('handle-arrow-up');
         
-        // Update customize button arrow
         const customizeBtn = document.getElementById('customizeButton');
         const arrow = customizeBtn?.querySelector('i');
-        if (arrow) {
-            arrow.className = 'fa fa-caret-up';
-        }
+        if (arrow) arrow.className = 'fa fa-caret-up';
 
         if (outer && inner) {
             inner.style.display = 'block';
             up.jQuery(outer).slideDown(300, 'swing', () => {
-                console.log('FLOW: Animation complete, initializing content');
-                // Now initialize the actual content
                 if (canAddChildren) {
                     this.panes.get('add-content').initializeContent();
                 } else {
@@ -189,29 +136,22 @@ class PortalGallery {
     }
 
     closeGallery() {
-        console.log('closeGallery() called');
         this.isOpen = false;
         const handle = this.container.querySelector('.handle span');
         const outer = document.querySelector('#customizeOptions');
         const inner = this.container.querySelector('.gallery-inner');
         
-        console.log('Closing gallery - handle:', !!handle, 'outer:', !!outer, 'inner:', !!inner);
-        
         if (handle) handle.classList.remove('handle-arrow-up');
         
-        // Update customize button arrow
         const customizeBtn = document.getElementById('customizeButton');
         const arrow = customizeBtn?.querySelector('i');
-        if (arrow) {
-            arrow.className = 'fa fa-caret-down';
-        }
+        if (arrow) arrow.className = 'fa fa-caret-down';
+
         if (outer && inner) {
             up.jQuery(outer).slideUp(300, 'swing', () => {
                 inner.style.display = 'none';
             });
         }
-        
-        console.log('closeGallery() completed');
     }
 
     showPane(key) {
@@ -239,12 +179,9 @@ class PortalGallery {
     }
 
     showLoading() {
-        console.log('FLOW: showLoading() called');
-        // Find the portlet list container
         const portletList = this.container.querySelector('#addContentPortletList, #useContentPortletList, .portlet-list');
         
         if (portletList) {
-            console.log('FLOW: Found portlet list, showing loading spinner');
             portletList.innerHTML = `
                 <div class="loading-indicator" style="
                     width: 100%;
@@ -274,15 +211,11 @@ class PortalGallery {
                     }
                 </style>
             `;
-        } else {
-            console.log('FLOW: No portlet list found for loading indicator');
         }
     }
 
     hideLoading() {
-        console.log('FLOW: hideLoading() called');
         // The loading indicator will be replaced by actual content in PortletListView.renderPortlets()
-        // No need to explicitly hide it since renderPortlets() clears innerHTML
     }
 }
 
@@ -351,7 +284,6 @@ class BrowseContentPane extends GalleryPane {
     }
 
     showLoadingOnly() {
-        console.log('FLOW: BrowseContentPane.showLoadingOnly()');
         const pane = this.container.querySelector(this.options.selectors.pane);
         const paneLink = this.container.querySelector(this.options.selectors.paneLink);
         
@@ -364,7 +296,6 @@ class BrowseContentPane extends GalleryPane {
     }
     
     initializeContent() {
-        console.log('FLOW: BrowseContentPane.initializeContent()');
         if (!this.initialized) {
             const pane = this.container.querySelector(this.options.selectors.pane);
             const startTime = Date.now();
@@ -374,15 +305,8 @@ class BrowseContentPane extends GalleryPane {
                 buttonText: 'Add',
                 buttonAction: 'add',
                 onLoad: () => {
-                    const elapsed = Date.now() - startTime;
-                    const minTime = 1000; // Minimum 1000ms spinner display
-                    const delay = Math.max(0, minTime - elapsed);
-                    
-                    console.log('FLOW: Content ready, enforcing minimum spinner time:', delay + 'ms');
-                    setTimeout(() => {
-                        console.log('FLOW: Hiding spinner after minimum time');
-                        this.gallery.hideLoading();
-                    }, delay);
+                    const delay = Math.max(0, 1000 - (Date.now() - startTime));
+                    setTimeout(() => this.gallery.hideLoading(), delay);
                 }
             });
             this.initialized = true;
@@ -406,7 +330,6 @@ class UseContentPane extends GalleryPane {
     }
 
     showLoadingOnly() {
-        console.log('FLOW: UseContentPane.showLoadingOnly()');
         const pane = this.container.querySelector(this.options.selectors.pane);
         const paneLink = this.container.querySelector(this.options.selectors.paneLink);
         
@@ -419,7 +342,6 @@ class UseContentPane extends GalleryPane {
     }
     
     initializeContent() {
-        console.log('FLOW: UseContentPane.initializeContent()');
         if (!this.initialized) {
             const pane = this.container.querySelector(this.options.selectors.pane);
             const startTime = Date.now();
@@ -429,15 +351,8 @@ class UseContentPane extends GalleryPane {
                 buttonText: 'Use',
                 buttonAction: 'use',
                 onLoad: () => {
-                    const elapsed = Date.now() - startTime;
-                    const minTime = 1000; // Minimum 1000ms spinner display
-                    const delay = Math.max(0, minTime - elapsed);
-                    
-                    console.log('FLOW: Content ready, enforcing minimum spinner time:', delay + 'ms');
-                    setTimeout(() => {
-                        console.log('FLOW: Hiding spinner after minimum time');
-                        this.gallery.hideLoading();
-                    }, delay);
+                    const delay = Math.max(0, 1000 - (Date.now() - startTime));
+                    setTimeout(() => this.gallery.hideLoading(), delay);
                 }
             });
             this.initialized = true;
@@ -539,12 +454,7 @@ class LayoutPane extends GalleryPane {
                             widths: widths
                         };
                         
-                        console.log('Sending layout update:', options);
-                        console.log('Layout columns array:', layout.columns);
-                        console.log('Widths array length:', layout.columns.length);
-                        
                         persistence.update(options, (data) => {
-                            console.log('Layout update response:', data);
                             if (data && data.error) {
                                 console.error('Layout update error:', data.error);
                             } else {
@@ -708,42 +618,22 @@ class LayoutSelector {
         const columns = [];
         const columnElements = document.querySelectorAll('#portalPageBodyColumns > [id^=column_]');
         
-        console.log('DEBUG: Found', columnElements.length, 'column elements');
-        
-        columnElements.forEach((col, index) => {
-            console.log('DEBUG: Column', index, 'classes:', col.className);
-            
-            // Try Bootstrap col-md-* classes first
+        columnElements.forEach((col) => {
             const colMdClass = col.className.match(/col-md-([0-9]+)/);
             if (colMdClass) {
-                // Convert Bootstrap 12-column grid to percentage
-                const bootstrapCols = Number(colMdClass[1]);
-                const width = Math.round((bootstrapCols / 12) * 100);
-                columns.push(width);
-                console.log('DEBUG: Column', index, 'Bootstrap cols:', bootstrapCols, 'width:', width);
+                columns.push(Math.round((Number(colMdClass[1]) / 12) * 100));
             } else {
-                // Fallback to fl-container-flex classes
                 const flClass = col.className.match(/fl-container-flex([0-9]+)/);
-                if (flClass) {
-                    const width = Number(flClass[1]);
-                    columns.push(width);
-                    console.log('DEBUG: Column', index, 'flex width:', width);
-                }
+                if (flClass) columns.push(Number(flClass[1]));
             }
         });
         
-        // If no flex classes found but columns exist, assume equal distribution
         if (columns.length === 0 && columnElements.length > 0) {
             const equalWidth = Math.floor(100 / columnElements.length);
-            console.log('DEBUG: No flex classes found, using equal width:', equalWidth);
-            for (let i = 0; i < columnElements.length; i++) {
-                columns.push(equalWidth);
-            }
+            for (let i = 0; i < columnElements.length; i++) columns.push(equalWidth);
         }
         
-        const result = columns.length > 0 ? columns : [100];
-        console.log('DEBUG: getCurrentLayout returning:', result);
-        return result;
+        return columns.length > 0 ? columns : [100];
     }
 
     init() {
@@ -765,31 +655,15 @@ class LayoutSelector {
         const layoutsList = this.container.querySelector('.layouts-list');
         if (!layoutsList) return;
 
-        // Refresh current layout before rendering
         this.currentLayout = this.getCurrentLayout().slice();
-        
-        console.log('DEBUG: Rendering', this.layouts.length, 'layouts');
-        console.log('DEBUG: Current layout is:', this.currentLayout);
-        
         layoutsList.innerHTML = '';
-        
-        this.layouts.forEach((layout, index) => {
-            console.log('DEBUG: Layout', index, ':', layout.columns, 'nameKey:', layout.nameKey);
-            const layoutEl = this.createLayoutElement(layout);
-            layoutsList.appendChild(layoutEl);
+        this.layouts.forEach(layout => {
+            layoutsList.appendChild(this.createLayoutElement(layout));
         });
     }
 
     createLayoutElement(layout) {
         const layoutEl = document.createElement('li');
-        const currentLayoutString = this.currentLayout.join('-');
-        const layoutString = layout.columns.join('-');
-        
-        // Debug logging
-        console.log('Current layout:', this.currentLayout, 'string:', currentLayoutString);
-        console.log('Layout:', layout.columns, 'string:', layoutString);
-        
-        // More flexible matching - check if layouts are approximately the same
         const isSelected = this.layoutsMatch(this.currentLayout, layout.columns);
         
         layoutEl.className = `results-item layout ${isSelected ? 'selected' : ''}`;
@@ -817,13 +691,7 @@ class LayoutSelector {
                 e.preventDefault();
                 
                 // Check if this is already the current layout
-                console.log('DEBUG: User clicked layout:', layout.columns, 'nameKey:', layout.nameKey);
-                console.log('DEBUG: Current layout before click:', this.currentLayout);
-                
-                if (this.layoutsMatch(this.currentLayout, layout.columns)) {
-                    console.log('DEBUG: Layout is already current, skipping update');
-                    return;
-                }
+                if (this.layoutsMatch(this.currentLayout, layout.columns)) return;
                 
                 // Remove selected class from all layouts
                 this.container.querySelectorAll('.layout.selected').forEach(el => {

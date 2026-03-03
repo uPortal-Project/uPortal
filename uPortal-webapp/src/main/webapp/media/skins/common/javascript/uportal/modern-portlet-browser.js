@@ -19,12 +19,9 @@ class PortletBrowser {
     }
 
     async init() {
-        console.log('FLOW: PortletBrowser.init() starting');
         try {
-            console.log('FLOW: Loading portlet registry');
             this.registry = new PortletRegistry(this.options.portletListUrl);
             await this.registry.load();
-            console.log('FLOW: Registry loaded, initializing components');
             
             // Initialize drag manager for Add Content tab
             if (this.options.buttonAction === 'add') {
@@ -42,13 +39,8 @@ class PortletBrowser {
             // Set up search
             this.setupSearch();
             
-            console.log('FLOW: Components initialized, calling onLoad after delay');
-            // Add delay to show loading spinner before hiding it
             setTimeout(() => {
-                console.log('FLOW: Content ready, calling onLoad callback');
-                if (this.options.onLoad) {
-                    this.options.onLoad();
-                }
+                if (this.options.onLoad) this.options.onLoad();
             }, 1000);
             
         } catch (error) {
@@ -189,9 +181,12 @@ class PortletRegistry {
             });
         }
         
-        if (data.registry && data.registry.channels) {
-            data.registry.channels.forEach(channel => {
-                this.portlets.push(this.createPortlet(channel));
+        if (data.registry && (data.registry.channels || data.registry.portlets)) {
+            const existingIds = new Set(this.portlets.map(p => p.id));
+            (data.registry.channels || data.registry.portlets).forEach(channel => {
+                if (!existingIds.has(channel.id)) {
+                    this.portlets.push(this.createPortlet(channel));
+                }
             });
         }
     }
@@ -204,20 +199,20 @@ class PortletRegistry {
             deepPortlets: []
         };
         
-        if (categoryData.channels) {
-            categoryData.channels.forEach(channel => {
-                const portlet = this.createPortlet(channel);
-                portlet.categoryId = categoryData.id; // Add category reference
+        const channels = categoryData.channels || categoryData.portlets || [];
+        const existingIds = new Set(this.portlets.map(p => p.id));
+        channels.forEach(channel => {
+            const portlet = this.createPortlet(channel);
+            portlet.categoryId = categoryData.id;
+            if (!existingIds.has(channel.id)) {
                 this.portlets.push(portlet);
-                category.deepPortlets.push(portlet);
-            });
-        }
+                existingIds.add(channel.id);
+            }
+            category.deepPortlets.push(portlet);
+        });
         
-        if (categoryData.categories) {
-            categoryData.categories.forEach(subCat => {
-                this.processCategory(subCat);
-            });
-        }
+        const subcats = categoryData.categories || categoryData.subcategories || [];
+        subcats.forEach(subCat => this.processCategory(subCat));
         
         this.categories.push(category);
     }
@@ -229,7 +224,7 @@ class PortletRegistry {
             name: channel.name,
             fname: channel.fname,
             description: channel.description,
-            iconUrl: channel.iconUrl || '/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png'
+            iconUrl: channel.iconUrl || channel.parameters?.iconUrl?.value || '/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png'
         };
     }
 

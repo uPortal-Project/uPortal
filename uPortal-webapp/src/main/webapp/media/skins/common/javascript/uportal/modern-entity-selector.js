@@ -35,11 +35,6 @@ class ModernEntitySelector {
     }
     
     async init() {
-        console.log('=== MODERN ENTITY SELECTOR INIT ===');
-        console.log('Allowed entity types:', this.options.entityTypes);
-        console.log('Initial focused entity:', this.options.initialFocusedEntity);
-        console.log('Select multiple:', this.options.selectMultiple);
-        
         this.setupSearch();
         this.setupCurrentEntityButton();
         this.fixModalDisplay();
@@ -222,10 +217,8 @@ class ModernEntitySelector {
                 
                 results.forEach(entity => {
                     const entityType = entity.entityType.toLowerCase();
-                    console.log('Search result:', entity.name, 'type:', entityType, 'allowed types:', this.options.entityTypes);
-                    
                     const key = `${entity.entityType}:${entity.id}`;
-                    this.entities.set(key, entity); // Cache entity
+                    this.entities.set(key, entity);
                     
                     const li = document.createElement('li');
                     li.className = entityType;
@@ -300,8 +293,6 @@ class ModernEntitySelector {
             const objectType = child.entityType.toLowerCase();
             const isAllowedType = this.options.entityTypes.includes(objectType);
             const childKey = `${child.entityType}:${child.id}`;
-            
-            console.log('Child entity:', child.name, 'type:', objectType, 'allowed:', isAllowedType);
             
             // Create row elements (exactly like Fluid)
             const tr = document.createElement('tr');
@@ -408,37 +399,18 @@ class ModernEntitySelector {
     }
     
     async loadEntity(key) {
-        console.log('=== LOADING ENTITY ===');
-        console.log('Key:', key);
-        
-        if (this.entities.has(key)) {
-            console.log('Entity found in cache');
-            return this.entities.get(key);
-        }
+        if (this.entities.has(key)) return this.entities.get(key);
         
         const [type, id] = key.split(':');
-        console.log('Parsed type:', type, 'id:', id);
         
         try {
             const url = `${this.options.entitiesUrl}/${type}/${id}.json`;
-            console.log('Fetching from URL:', url);
-            
             const response = await fetch(url);
-            console.log('Response status:', response.status);
-            
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
-            console.log('Response data:', data);
-            
             const entity = data.jsonEntityBean;
-            console.log('Extracted entity:', entity);
-            
-            if (entity) {
-                this.entities.set(key, entity);
-                console.log('Entity cached with key:', key);
-            }
-            
+            if (entity) this.entities.set(key, entity);
             return entity;
         } catch (error) {
             console.error('Load entity error:', error);
@@ -447,67 +419,31 @@ class ModernEntitySelector {
     }
     
     async selectEntity(key) {
-        console.log('=== SELECTING ENTITY ===');
-        console.log('Entity key:', key);
-        
-        // Add to selected array if not already there
         if (!this.options.selected.includes(key)) {
             this.options.selected.push(key);
-            
-            // ALWAYS load from API to ensure complete entity data
-            console.log('Loading entity from API to ensure complete data');
             const entity = await this.loadEntity(key);
-            console.log('API loaded entity:', entity);
-            
             if (entity && entity.id && entity.name && entity.entityType) {
-                console.log('Entity is valid, adding to basket');
                 this.addToSelectionBasket(entity, key);
             } else {
-                console.error('Entity invalid or failed to load:', {
-                    key: key,
-                    entity: entity,
-                    hasId: !!entity?.id,
-                    hasName: !!entity?.name,
-                    hasEntityType: !!entity?.entityType
-                });
-                // Remove from selected if loading failed
+                console.error('Entity invalid or failed to load:', { key, entity });
                 this.options.selected.pop();
                 alert('Failed to load entity data. Please try again.');
             }
-        } else {
-            console.log('Entity already selected:', key);
         }
-        
         this.updateButtonStates();
     }
     
     addToSelectionBasket(entity, key) {
-        console.log('=== ADDING TO SELECTION BASKET ===');
-        console.log('Entity:', entity);
-        console.log('Key:', key);
-        
-        // Validate entity has required fields
         if (!entity || !entity.id || !entity.name) {
-            console.error('Entity missing required fields:', {
-                entity: entity,
-                hasId: !!entity?.id,
-                hasName: !!entity?.name,
-                entityType: entity?.entityType
-            });
+            console.error('Entity missing required fields:', { entity });
             return;
         }
         
         const basket = document.querySelector(this.options.selectors.selectionBasket);
-        if (!basket) {
-            console.error('Selection basket not found!');
-            return;
-        }
+        if (!basket) { console.error('Selection basket not found!'); return; }
         
         const ul = basket.querySelector('ul');
-        if (!ul) {
-            console.error('UL element not found in basket!');
-            return;
-        }
+        if (!ul) { console.error('UL element not found in basket!'); return; }
         
         const li = document.createElement('li');
         li.innerHTML = `
@@ -515,19 +451,12 @@ class ModernEntitySelector {
             <input type="hidden" name="groups" value="${key}"/>
         `;
         
-        console.log('Created LI with key:', key, 'for entity:', entity.name);
-        
-        const link = li.querySelector('a');
-        link.addEventListener('click', (e) => {
+        li.querySelector('a').addEventListener('click', (e) => {
             e.preventDefault();
             this.deselectEntity(key);
         });
         
         ul.appendChild(li);
-        
-        // Verify the hidden input was created correctly
-        const hiddenInput = li.querySelector('input[name="groups"]');
-        console.log('Hidden input value:', hiddenInput?.value);
     }
     
     deselectEntity(key) {
@@ -639,7 +568,6 @@ class ModernEntitySelector {
         };
         
         const json = JSON.stringify(pagsGroup);
-        console.log('Submitting PAGS group:', json);
         
         // Use XMLHttpRequest like original
         const xmlhttp = new XMLHttpRequest();
@@ -696,82 +624,6 @@ class ModernEntitySelector {
 window.up = window.up || {};
 window.up.entityselection = function(container, options) {
     const selector = new ModernEntitySelector(container, options);
-    
-    // Add global reference for console testing
-    window.modernEntitySelector = selector;
-    
-    // Add debug helper functions
-    window.debugEntitySelector = {
-        getSelectedEntities: () => selector.options.selected,
-        getSelectedCount: () => selector.options.selected.length,
-        getCachedEntities: () => Array.from(selector.entities.keys()),
-        getCurrentEntity: () => selector.currentEntity,
-        logSelectedEntities: () => {
-            console.log('=== CURRENT SELECTED ENTITIES ===');
-            selector.options.selected.forEach((key, index) => {
-                const entity = selector.entities.get(key);
-                console.log(`${index}: ${key}`, entity ? {
-                    id: entity.id,
-                    name: entity.name,
-                    entityType: entity.entityType
-                } : 'NOT CACHED');
-            });
-        },
-        testFormSubmission: () => {
-            console.log('=== TESTING FORM SUBMISSION ===');
-            const form = selector.container.querySelector('form');
-            if (form) {
-                const formData = new FormData(form);
-                console.log('Form data:');
-                for (let [key, value] of formData.entries()) {
-                    console.log(`  ${key}: [${value}] (type: ${typeof value}, length: ${value ? value.length : 'N/A'})`);
-                }
-                
-                // Check hidden inputs specifically
-                const hiddenInputs = form.querySelectorAll('input[name="groups"]');
-                console.log('Groups hidden inputs:', hiddenInputs.length);
-                hiddenInputs.forEach((input, index) => {
-                    console.log(`  groups[${index}]: [${input.value}] (type: ${typeof input.value}, length: ${input.value ? input.value.length : 'N/A'})`);
-                    if (!input.value || input.value.trim() === '') {
-                        console.error(`  ERROR: Empty or null value at index ${index}!`);
-                    }
-                });
-                
-                // Check for any null or undefined values
-                const allInputs = form.querySelectorAll('input');
-                console.log('All form inputs:');
-                allInputs.forEach((input, index) => {
-                    console.log(`  Input ${index}: name=[${input.name}] value=[${input.value}] type=[${input.type}]`);
-                });
-            } else {
-                console.error('Form not found!');
-            }
-        },
-        simulateSelection: async (entityKey) => {
-            console.log('=== SIMULATING SELECTION ===');
-            console.log('Entity key:', entityKey);
-            await selector.selectEntity(entityKey);
-        },
-        checkBasketState: () => {
-            console.log('=== BASKET STATE ===');
-            const basket = document.querySelector(selector.options.selectors.selectionBasket);
-            if (basket) {
-                const items = basket.querySelectorAll('li');
-                console.log('Basket items:', items.length);
-                items.forEach((item, index) => {
-                    const link = item.querySelector('a');
-                    const input = item.querySelector('input');
-                    console.log(`Item ${index}:`, {
-                        key: link?.getAttribute('key'),
-                        name: link?.textContent,
-                        hiddenValue: input?.value
-                    });
-                });
-            } else {
-                console.error('Basket not found!');
-            }
-        }
-    };
     
     return selector;
 };
