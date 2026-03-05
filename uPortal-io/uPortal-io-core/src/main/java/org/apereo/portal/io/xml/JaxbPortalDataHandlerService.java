@@ -532,9 +532,6 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             final MediaType type = detector.detect(tikaInputStream, metadata);
             logger.debug("Determined '{}' for '{}'", type, fileName);
             return type;
-        } catch (IOException e) {
-            logger.warn("Failed to determine media type for '" + fileName + "' assuming XML", e);
-            return MediaType.APPLICATION_XML;
         } finally {
             // Reset the buffered stream to make up for anything read by the detector
             inputStream.reset();

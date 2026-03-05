@@ -1,6 +1,7 @@
 package org.apereo.portal.io.xml;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -83,7 +84,7 @@ public class JaxbPortalDataHandlerServiceTest {
     }
 
     @Test
-    public void testGetMediaTypeIoExceptionFallsBackToApplicationXml() throws Exception {
+    public void testGetMediaTypeIoExceptionRethrows() {
         final InputStream throwing =
                 new InputStream() {
                     @Override
@@ -93,7 +94,9 @@ public class JaxbPortalDataHandlerServiceTest {
                 };
         try (final BufferedInputStream stream = new BufferedInputStream(throwing)) {
             stream.mark(1);
-            assertEquals(MediaType.APPLICATION_XML, service.getMediaType(stream, "test.xml"));
+            assertThrows(IOException.class, () -> service.getMediaType(stream, "test.xml"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
