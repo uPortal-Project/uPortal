@@ -49,7 +49,7 @@ Run `./gradlew :module-name:test` to confirm. Do not claim "done" without runnin
 
 ## Tech stack
 
-- **Java 8** source compatibility (sourceCompatibility 1.8) — CI-tested on both **Java 8 and Java 11** runtimes
+- **Java 11** source compatibility (sourceCompatibility 11) — CI-tested on **Java 11** runtime
 - **Gradle** multi-project build (~45 subprojects), Groovy DSL
 - **Spring Framework 4.3.30.RELEASE** — XML and annotation-based DI; no Spring Boot
 - **Hibernate 4.2.21.Final** with JPA
@@ -66,7 +66,7 @@ Run `./gradlew :module-name:test` to confirm. Do not claim "done" without runnin
 
 ### Java version details
 
-Source code MUST compile under Java 8 — no Java 9+ language features or APIs. The CI matrix tests builds on both Java 8 and Java 11 JVMs across three distributions (AdoptOpenJDK Hotspot, Eclipse Temurin, Azul Zulu) and three platforms (Linux, Windows, macOS). uPortal-start (the deployment tool) requires JDK 8.
+Source code MUST compile under Java 11. The CI matrix tests builds on Java 11 JVMs across three distributions (AdoptOpenJDK Hotspot, Eclipse Temurin, Azul Zulu) and three platforms (Linux, Windows, macOS).
 
 ## Running uPortal locally
 
