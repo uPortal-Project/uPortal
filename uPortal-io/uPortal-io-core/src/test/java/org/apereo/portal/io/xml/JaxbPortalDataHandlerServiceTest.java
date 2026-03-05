@@ -5,14 +5,13 @@ import static org.junit.Assert.assertEquals;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.compress.archivers.jar.JarArchiveEntry;
 import org.apache.commons.compress.archivers.jar.JarArchiveOutputStream;
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.tika.mime.MediaType;
 import org.junit.Test;
 
@@ -64,19 +63,17 @@ public class JaxbPortalDataHandlerServiceTest {
     }
 
     @Test
-    public void testGetMediaTypeGzip() throws Exception {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (GzipCompressorOutputStream gzos = new GzipCompressorOutputStream(baos);
-                TarArchiveOutputStream tos = new TarArchiveOutputStream(gzos)) {
-            final byte[] content = "<root/>".getBytes(StandardCharsets.UTF_8);
-            final TarArchiveEntry entry = new TarArchiveEntry("test.xml");
-            entry.setSize(content.length);
-            tos.putArchiveEntry(entry);
-            tos.write(content);
-            tos.closeArchiveEntry();
+    public void testGetMediaTypeIoExceptionFallsBackToApplicationXml() throws Exception {
+        final InputStream throwing =
+                new InputStream() {
+                    @Override
+                    public int read() throws IOException {
+                        throw new IOException("simulated read failure");
+                    }
+                };
+        try (final BufferedInputStream stream = new BufferedInputStream(throwing)) {
+            stream.mark(1);
+            assertEquals(MediaType.APPLICATION_XML, service.getMediaType(stream, "test.xml"));
         }
-        assertEquals(
-                MediaType.application("gzip"),
-                invokeGetMediaType(baos.toByteArray(), "test.tar.gz"));
     }
 }

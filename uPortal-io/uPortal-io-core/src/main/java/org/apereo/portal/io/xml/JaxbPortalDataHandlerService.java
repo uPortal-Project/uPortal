@@ -14,6 +14,7 @@
  */
 package org.apereo.portal.io.xml;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
 import java.io.BufferedInputStream;
@@ -520,23 +521,21 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         }
     }
 
+    @VisibleForTesting
     MediaType getMediaType(BufferedInputStream inputStream, String fileName) throws IOException {
-        final TikaInputStream tikaInputStreamStream =
-                TikaInputStream.get(new CloseShieldInputStream(inputStream));
-        try {
+        try (final TikaInputStream tikaInputStream =
+                TikaInputStream.get(new CloseShieldInputStream(inputStream))) {
             final Detector detector = new DefaultDetector();
             final Metadata metadata = new Metadata();
             metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, fileName);
 
-            final MediaType type = detector.detect(tikaInputStreamStream, metadata);
+            final MediaType type = detector.detect(tikaInputStream, metadata);
             logger.debug("Determined '{}' for '{}'", type, fileName);
             return type;
         } catch (IOException e) {
             logger.warn("Failed to determine media type for '" + fileName + "' assuming XML", e);
             return MediaType.APPLICATION_XML;
         } finally {
-            IOUtils.closeQuietly(tikaInputStreamStream);
-
             // Reset the buffered stream to make up for anything read by the detector
             inputStream.reset();
         }
