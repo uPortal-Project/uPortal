@@ -12,6 +12,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.compress.archivers.jar.JarArchiveEntry;
 import org.apache.commons.compress.archivers.jar.JarArchiveOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.tika.mime.MediaType;
 import org.junit.Test;
 
@@ -60,6 +63,23 @@ public class JaxbPortalDataHandlerServiceTest {
         assertEquals(
                 MediaType.application("java-archive"),
                 invokeGetMediaType(baos.toByteArray(), "test.jar"));
+    }
+
+    @Test
+    public void testGetMediaTypeGzip() throws Exception {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (GzipCompressorOutputStream gzos = new GzipCompressorOutputStream(baos);
+                TarArchiveOutputStream tos = new TarArchiveOutputStream(gzos)) {
+            final byte[] content = "<root/>".getBytes(StandardCharsets.UTF_8);
+            final TarArchiveEntry entry = new TarArchiveEntry("test.xml");
+            entry.setSize(content.length);
+            tos.putArchiveEntry(entry);
+            tos.write(content);
+            tos.closeArchiveEntry();
+        }
+        assertEquals(
+                MediaType.application("gzip"),
+                invokeGetMediaType(baos.toByteArray(), "test.tar.gz"));
     }
 
     @Test
