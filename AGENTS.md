@@ -66,7 +66,7 @@ Run `./gradlew :module-name:test` to confirm. Do not claim "done" without runnin
 
 ### Java version details
 
-Source code MUST compile under Java 11. The CI matrix tests builds on Java 11 JVMs across three distributions (AdoptOpenJDK Hotspot, Eclipse Temurin, Azul Zulu) and three platforms (Linux, Windows, macOS).
+Source code MUST compile under Java 11. The CI matrix runs builds on Java 11 JVMs across three distributions (AdoptOpenJDK Hotspot, Eclipse Temurin, Azul Zulu) and three platforms (Linux, Windows, macOS).
 
 ## Running uPortal locally
 
