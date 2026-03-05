@@ -523,6 +523,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
 
     @VisibleForTesting
     MediaType getMediaType(BufferedInputStream inputStream, String fileName) throws IOException {
+        IOException detectionException = null;
         try (final TikaInputStream tikaInputStream =
                 TikaInputStream.get(new CloseShieldInputStream(inputStream))) {
             final Detector detector = new DefaultDetector();
@@ -532,9 +533,21 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             final MediaType type = detector.detect(tikaInputStream, metadata);
             logger.debug("Determined '{}' for '{}'", type, fileName);
             return type;
+        } catch (IOException e) {
+            logger.warn("Failed to determine media type for '{}'", fileName, e);
+            detectionException = e;
+            throw e;
         } finally {
             // Reset the buffered stream to make up for anything read by the detector
-            inputStream.reset();
+            try {
+                inputStream.reset();
+            } catch (IOException resetException) {
+                if (detectionException != null) {
+                    detectionException.addSuppressed(resetException);
+                } else {
+                    throw resetException;
+                }
+            }
         }
     }
 
