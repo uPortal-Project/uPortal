@@ -520,7 +520,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         }
     }
 
-    private MediaType getMediaType(BufferedInputStream inputStream, String fileName)
+    MediaType getMediaType(BufferedInputStream inputStream, String fileName)
             throws IOException {
         final TikaInputStream tikaInputStreamStream =
                 TikaInputStream.get(new CloseShieldInputStream(inputStream));
@@ -534,7 +534,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             return type;
         } catch (IOException e) {
             logger.warn("Failed to determine media type for '" + fileName + "' assuming XML", e);
-            return null;
+            return MediaType.TEXT_XML;
         } finally {
             IOUtils.closeQuietly(tikaInputStreamStream);
 

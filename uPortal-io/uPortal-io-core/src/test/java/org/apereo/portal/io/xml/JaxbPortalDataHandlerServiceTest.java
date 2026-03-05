@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -19,15 +18,14 @@ import org.junit.Test;
 
 public class JaxbPortalDataHandlerServiceTest {
 
+    private final JaxbPortalDataHandlerService service = new JaxbPortalDataHandlerService();
+
     private MediaType invokeGetMediaType(byte[] data, String filename) throws Exception {
-        final JaxbPortalDataHandlerService service = new JaxbPortalDataHandlerService();
-        final Method method =
-                JaxbPortalDataHandlerService.class.getDeclaredMethod(
-                        "getMediaType", BufferedInputStream.class, String.class);
-        method.setAccessible(true);
-        final BufferedInputStream stream = new BufferedInputStream(new ByteArrayInputStream(data));
-        stream.mark(data.length);
-        return (MediaType) method.invoke(service, stream, filename);
+        try (final BufferedInputStream stream =
+                new BufferedInputStream(new ByteArrayInputStream(data))) {
+            stream.mark(data.length);
+            return service.getMediaType(stream, filename);
+        }
     }
 
     @Test
