@@ -68,6 +68,29 @@ Run `./gradlew :module-name:test` to confirm. Do not claim "done" without runnin
 
 Source code MUST compile under Java 8 — no Java 9+ language features or APIs. The CI matrix tests builds on both Java 8 and Java 11 JVMs across three distributions (AdoptOpenJDK Hotspot, Eclipse Temurin, Azul Zulu) and three platforms (Linux, Windows, macOS). uPortal-start (the deployment tool) requires JDK 8.
 
+### SDKMAN for Java version management
+
+This project uses [SDKMAN](https://sdkman.io/) to manage Java versions. Common commands:
+
+```bash
+# List installed Java versions
+sdk list java
+
+# Install Java 8 (required for uPortal-start)
+sdk install java 8.0.472-amzn
+
+# Switch Java version in the current shell
+sdk use java 8.0.472-amzn
+
+# Set a default Java version across all shells
+sdk default java 8.0.472-amzn
+
+# Verify active version
+java -version
+```
+
+Use `sdk use java 8.0.472-amzn` before running uPortal-start commands (`portalInit`, `tomcatStart`, etc.).
+
 ## Running uPortal locally
 
 This repository contains the uPortal framework source code. To actually **run** a portal instance, you need [uPortal-start](https://github.com/uPortal-Project/uPortal-start), which provides Tomcat, HSQLDB, data import, and deployment tooling.
@@ -115,22 +138,118 @@ If using CAS authentication (default in uPortal-start), the login flow redirects
 
 ### Testing changes against a running portal
 
-```bash
-# If you modified uPortal source code and want to test in uPortal-start:
+uPortal source code is published as Maven artifacts (~48 JARs + 1 WAR). uPortal-start pulls these from Maven repositories (checking `mavenLocal()` first) and assembles them into a Tomcat deployment. To test local changes:
 
-# 1. In the uPortal repo — install to local Maven
+```bash
+# 1. In the uPortal repo — build and install to local Maven (~/.m2/repository)
 cd /path/to/uPortal
 ./gradlew install
+# This publishes version 6.0.0-SNAPSHOT (from gradle.properties) to ~/.m2/repository/org/jasig/portal/
 
-# 2. In uPortal-start — set uPortalVersion to the SNAPSHOT version from gradle.properties
-#    Edit uPortal-start/gradle.properties:
-#    uPortalVersion=6.0.0-SNAPSHOT
-
-# 3. Rebuild and redeploy
+# 2. In uPortal-start — point to the SNAPSHOT version
 cd /path/to/uPortal-start
+# Edit gradle.properties:
+#   uPortalVersion=6.0.0-SNAPSHOT
+
+# 3. Stop Tomcat if running, rebuild, and redeploy
+./gradlew tomcatStop
 ./gradlew tomcatDeploy
 ./gradlew tomcatStart
 ```
+
+### Verifying your changes are deployed
+
+After `tomcatDeploy`, check the JAR filenames in the deployed WAR — they include the version number:
+
+```bash
+# List deployed uPortal JARs and their versions
+ls .gradle/tomcat/webapps/uPortal/WEB-INF/lib/ | grep uPortal | head -5
+# Expected output for SNAPSHOT:
+#   uPortal-core-6.0.0-SNAPSHOT.jar
+#   uPortal-rendering-6.0.0-SNAPSHOT.jar
+#   ...
+# If you see 5.17.1 instead of 6.0.0-SNAPSHOT, the install didn't work
+
+# Check the timestamp on a specific JAR to confirm it was just built
+ls -la .gradle/tomcat/webapps/uPortal/WEB-INF/lib/uPortal-core-*.jar
+
+# Verify the local Maven cache has your SNAPSHOT
+ls ~/.m2/repository/org/jasig/portal/uPortal-core/6.0.0-SNAPSHOT/
+```
+
+**Common problems:**
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| JARs still show old version (e.g., `5.17.1`) | `uPortalVersion` not changed in uPortal-start `gradle.properties` | Set `uPortalVersion=6.0.0-SNAPSHOT` |
+| `./gradlew install` fails | Java version mismatch | Use `sdk use java 8.0.472-amzn` |
+| Changes not visible after deploy | Tomcat serving cached classes | Run `./gradlew tomcatStop` then `./gradlew tomcatDeploy` (not just `tomcatStart`) |
+| Gradle resolves from Maven Central instead of local | `mavenLocal()` missing from repositories | Already configured in uPortal-start — check `overlays/build.gradle` |
+
+## Playwright end-to-end tests
+
+End-to-end tests live in the [uPortal-start](https://github.com/uPortal-Project/uPortal-start) repository under `tests/`. They use **Playwright for Node.js** (TypeScript) and require a running portal instance.
+
+### Test structure
+
+```
+tests/
+  general-config.ts          # Shared config (base URL, user credentials)
+  uportal-pw.config.ts        # Playwright configuration
+  api/                        # API-level tests (no browser)
+    analytics.spec.ts
+    portlet-list.spec.ts
+    search-v5-0.spec.ts
+    utils/api-portlet-list-utils.ts
+  ux/                         # Browser-based UI tests
+    auth/uportal-auth.spec.ts
+    smoke/guest-page.spec.ts
+    smoke/per-role-pages.spec.ts
+    smoke/web-components.spec.ts
+    utils/ux-general-utils.ts   # Login/logout helpers
+```
+
+### Prerequisites
+
+1. Portal must be running (`./gradlew tomcatStart` in uPortal-start)
+2. Node.js and npm installed
+3. Install dependencies (from uPortal-start root):
+
+```bash
+npm install
+npx playwright install chromium
+npx playwright install-deps chromium
+```
+
+### Running tests
+
+```bash
+cd /path/to/uPortal-start
+
+# Run all tests
+npx playwright test --config=tests/uportal-pw.config.ts
+
+# Run a specific test file
+npx playwright test --config=tests/uportal-pw.config.ts tests/ux/smoke/guest-page.spec.ts
+
+# Run tests matching a grep pattern
+npx playwright test --config=tests/uportal-pw.config.ts -g "Admin smoke"
+
+# Run with headed browser (visible)
+npx playwright test --config=tests/uportal-pw.config.ts --headed
+
+# Run with debug inspector
+npx playwright test --config=tests/uportal-pw.config.ts --debug
+```
+
+### Writing new tests
+
+- Place API tests in `tests/api/`, UI tests in `tests/ux/`
+- Import shared config: `import { config } from "../../general-config";`
+- Use `loginUrl()` / `logout()` helpers from `tests/ux/utils/ux-general-utils.ts`
+- Available users: `config.users.admin`, `config.users.student`, `config.users.faculty`, `config.users.staff`
+- For portlet assertions, use `.up-portlet-titlebar` scoped selectors (e.g., `page.locator(".up-portlet-titlebar").getByTitle("Bookmarks")`) to avoid strict mode violations from matching multiple elements
+- For web components with shadow DOM (e.g., `waffle-menu`, `notification-icon`), use Playwright's built-in shadow DOM piercing
 
 ## Commands
 
