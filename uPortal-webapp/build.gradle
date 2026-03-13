@@ -19,6 +19,13 @@ apply plugin: 'com.github.node-gradle.node'
 
 description = "Apereo uPortal Webapp (WAR)"
 
+// The google-java-format plugin scans the project directory which overlaps with
+// the node plugin's nodeSetup/npmInstall output directory.  Declare ordering to
+// satisfy Gradle 8's implicit-dependency validation.
+tasks.named('verifyGoogleJavaFormat') {
+    mustRunAfter tasks.named('nodeSetup'), tasks.named('npmInstall')
+}
+
 /*
  * TODO:  Groovy-based tests (in src/test/groovy) are not currently run by the Gradle build.
  */
@@ -94,28 +101,26 @@ processResources {
 }
 
 task prepareSkinResources {
-    // Unpack WebJars (part of the skin)
-    configurations.webjars.allDependencies.each {
-        String webjarName = it.name
-        String webjarVersion = it.version
-        String webjarFile = configurations.webjars.files(it).getAt(0)
-        // Stage 1:  Exploded WebJar
-        doLast {
+    inputs.files configurations.webjars
+    outputs.dir "${buildDir}/generated-sources/skin/main/webapp"
+    doLast {
+        // Unpack WebJars (part of the skin)
+        configurations.webjars.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            String webjarName = artifact.moduleVersion.id.name
+            String webjarVersion = artifact.moduleVersion.id.version
+            File webjarFile = artifact.file
+            // Stage 1:  Exploded WebJar
             copy {
                 from zipTree(webjarFile)
                 into "${buildDir}/webjars/${webjarName}-${webjarVersion}"
             }
-        }
-        // Stage 2:  Contents of the WebJar included in the skin
-        doLast {
+            // Stage 2:  Contents of the WebJar included in the skin
             copy {
                 from "${buildDir}/webjars/${webjarName}-${webjarVersion}/META-INF/resources/webjars/${webjarName}/${webjarVersion}"
                 into "${buildDir}/generated-sources/skin/main/webapp/webjars/${webjarName}"
             }
         }
-    }
-    // Add Respondr LESS sources
-    doLast {
+        // Add Respondr LESS sources
         copy {
             from 'src/main/webapp/media/skins/respondr'
             into "${buildDir}/generated-sources/skin/main/webapp/media/skins/respondr"
@@ -157,6 +162,7 @@ aggregateRespondrSkins.dependsOn('npm_run_compile-less')
 processResources.dependsOn(aggregateRespondrSkins)
 
 war {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     // Add generated CSS for Respondr skins to the war file
     with {
         from "${buildDir}/generated-sources/skin/main/webapp"

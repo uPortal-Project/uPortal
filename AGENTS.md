@@ -50,7 +50,7 @@ Run `./gradlew :module-name:test` to confirm. Do not claim "done" without runnin
 ## Tech stack
 
 - **Java 8** source compatibility (sourceCompatibility 1.8) — CI-tested on both **Java 8 and Java 11** runtimes
-- **Gradle** multi-project build (~45 subprojects), Groovy DSL
+- **Gradle 8.5** multi-project build (~45 subprojects), Groovy DSL
 - **Spring Framework 4.3.30.RELEASE** — XML and annotation-based DI; no Spring Boot
 - **Hibernate 4.2.21.Final** with JPA
 - **Portlet API 2.1** (JSR-286)

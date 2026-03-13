@@ -18,7 +18,6 @@ description = "Apereo uPortal $version"
 
 /*======== Dependency Management ========**/
 repositories {
-    jcenter()
     mavenCentral()
     mavenLocal()
 }
@@ -141,7 +140,6 @@ subprojects {
 
     /*======== Plugins ========*/
     apply plugin: 'maven-publish'
-    apply plugin: 'maven'
     apply plugin: 'signing'
 
     /*======== Dependency Management ========**/
@@ -171,10 +169,7 @@ subprojects {
         publishingRepositoryUrl = project.hasProperty('ossrhUrl') ? project.getProperty('ossrhUrl') : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
         publishingRepositoryUrlSnapshot = project.hasProperty('ossrhUrlSnapshot') ? project.getProperty('ossrhUrlSnapshot') : "https://oss.sonatype.org/content/repositories/snapshots/"
     }
-    signing {
-        required { gradle.taskGraph.hasTask('uploadArchives') }
-        sign configurations.archives
-    }
+
     tasks.withType(Javadoc).all {
         // disable JavaDocs until we start using them again in our website
         enabled = false
@@ -186,66 +181,75 @@ subprojects {
         }
     }
     task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier 'sources'
+        archiveClassifier.set('sources')
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         from sourceSets.main.allSource
     }
     task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
+        archiveClassifier.set('javadoc')
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         from javadoc.destinationDir
     }
-    artifacts {
-        archives javadocJar, sourcesJar
-    }
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                from components.java
-            }
-        }
-    }
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                repository(url: publishingRepositoryUrl) {
-                    authentication(userName: publishingUsername, password: publishingPassword)
-                }
-
-                snapshotRepository(url: publishingRepositoryUrlSnapshot) {
-                    authentication(userName: publishingUsername, password: publishingPassword)
-                }
-
-                pom.project {
-                    name 'uPortal'
-                    packaging 'jar'
-                    // optionally artifactId can be defined here
-                    description 'Enterprise open source portal built by and for the higher education community.'
-                    url 'https://github.com/uPortal-Project/uPortal'
-
-                    scm {
-                        connection 'scm:git@github.com:uPortal-Project/uPortal.git'
-                        url 'https://github.com/uPortal-Project/uPortal'
+    // Defer publishing configuration so subproject plugins (e.g., 'war') are applied first
+    afterEvaluate {
+        publishing {
+            publications {
+                maven(MavenPublication) {
+                    // WAR projects use components.web; all others use components.java
+                    if (plugins.hasPlugin('war')) {
+                        from components.web
+                    } else {
+                        from components.java
                     }
-
-                    licenses {
-                        license {
-                            name 'The Apache License, Version 2.0'
-                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    artifact sourcesJar
+                    artifact javadocJar
+                    pom {
+                        name = 'uPortal'
+                        packaging = plugins.hasPlugin('war') ? 'war' : 'jar'
+                        description = 'Enterprise open source portal built by and for the higher education community.'
+                        url = 'https://github.com/uPortal-Project/uPortal'
+                        scm {
+                            connection = 'scm:git@github.com:uPortal-Project/uPortal.git'
+                            url = 'https://github.com/uPortal-Project/uPortal'
                         }
-                    }
-
-                    developers {
-                        developer {
-                            organization 'uPortal Developers'
-                            organizationUrl 'https://github.com/uPortal-Project/uPortal/graphs/contributors'
+                        licenses {
+                            license {
+                                name = 'The Apache License, Version 2.0'
+                                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            }
+                        }
+                        developers {
+                            developer {
+                                organization = 'uPortal Developers'
+                                organizationUrl = 'https://github.com/uPortal-Project/uPortal/graphs/contributors'
+                            }
                         }
                     }
                 }
             }
+            repositories {
+                maven {
+                    def isSnapshot = version.toString().endsWith('SNAPSHOT')
+                    url = isSnapshot ? publishingRepositoryUrlSnapshot : publishingRepositoryUrl
+                    credentials {
+                        username = publishingUsername
+                        password = publishingPassword
+                    }
+                }
+            }
+        }
+        signing {
+            required { gradle.taskGraph.hasTask('publish') }
+            sign publishing.publications.maven
         }
     }
-    afterReleaseBuild.dependsOn uploadArchives
+    // Backward-compatible alias: './gradlew install' continues to work
+    task install {
+        dependsOn publishToMavenLocal
+        group = 'publishing'
+        description = 'Alias for publishToMavenLocal (backward compatibility)'
+    }
+    afterReleaseBuild.dependsOn publish
 
     def jacocoExecutionDataFiles = fileTree(buildDir).include("/jacoco/*.exec")
     jacocoTestReport {
@@ -269,19 +273,17 @@ task jacocoAggregateReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
     getAdditionalSourceDirs().setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
     getSourceDirectories().setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
     getClassDirectories().setFrom(files(subprojects.sourceSets.main.output))
-    getExecutionData().setFrom(files(subprojects.jacocoTestReport.executionData))
+    // Use a filtered file tree that lazily excludes non-existent files
+    getExecutionData().setFrom(files(subprojects.collect {
+        fileTree(dir: "${it.buildDir}/jacoco", include: '*.exec')
+    }))
 
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml.required = true
+        html.required = true
     }
     onlyIf = {
         true
-    }
-    doFirst {
-        getExecutionData().setFrom(files(getExecutionData().findAll {
-            it.exists()
-        }))
     }
 }
 
