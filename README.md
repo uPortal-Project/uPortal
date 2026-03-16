@@ -121,7 +121,7 @@ Additional information about uPortal is available in the Manual.
 
 ## Requirements
 
--   JDK 1.8 - The JRE alone is NOT sufficient, a full JDK is required
+-   JDK 11 - The JRE alone is NOT sufficient, a full JDK is required
 -   GIT
 
 ## uPortal-start
