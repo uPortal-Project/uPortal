@@ -142,7 +142,7 @@
 
   <div class="uptrans-entities-wrapper">
     <div id="${ns}entities" class="uptrans-entities">
-      <button class="btn btn-secondary" id="${ns}entityList" class="uptrans-entity"></button>
+      <button class="btn btn-secondary uptrans-entity" id="${ns}entityList"></button>
     </div>
     <div class="ui-helper-clearfix">
       <button id="${ns}addMessage" class="btn btn-secondary" style="display:none;">
