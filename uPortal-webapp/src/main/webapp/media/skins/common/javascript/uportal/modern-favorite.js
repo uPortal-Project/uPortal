@@ -13,16 +13,12 @@ class ModernFavoriteManager {
         try {
             const response = await fetch(
                 `${this.context}/api/layout?action=addFavorite&channelId=${portletId}`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
+                { method: 'POST' }
             );
 
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const body = await response.json().catch(() => null);
+                throw new Error(body?.response || `HTTP ${response.status}: ${response.statusText}`);
             }
 
             const result = await response.json();
@@ -30,11 +26,7 @@ class ModernFavoriteManager {
             return result;
         } catch (error) {
             console.error('Error adding to favorites:', error);
-            
-            if (window.up?.notify) {
-                const message = error.response?.response || error.message || 'Error adding to favorites';
-                window.up.notify(message, 'TopCenter', 'error');
-            }
+            if (window.up?.notify) window.up.notify(error.message || 'Error adding to favorites', 'TopCenter', 'error');
             
             throw error;
         }
@@ -44,16 +36,12 @@ class ModernFavoriteManager {
         try {
             const response = await fetch(
                 `${this.context}/api/layout?action=removeFavorite&channelId=${portletId}`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
+                { method: 'POST' }
             );
 
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const body = await response.json().catch(() => null);
+                throw new Error(body?.response || `HTTP ${response.status}: ${response.statusText}`);
             }
 
             const result = await response.json();
@@ -61,11 +49,7 @@ class ModernFavoriteManager {
             return result;
         } catch (error) {
             console.error('Error removing from favorites:', error);
-            
-            if (window.up?.notify) {
-                const message = error.response?.response || error.message || 'Error removing from favorites';
-                window.up.notify(message, 'TopCenter', 'error');
-            }
+            if (window.up?.notify) window.up.notify(error.message || 'Error removing from favorites', 'TopCenter', 'error');
             
             throw error;
         }
@@ -90,15 +74,11 @@ class ModernFavoriteManager {
         const url = `${context}/api/layout?action=movePortletAjax&sourceId=${sourceId}&previousNodeId=${previousNodeId}&nextNodeId=${nextNodeId}`;
         
         try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const response = await fetch(url, { method: 'POST' });
 
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const body = await response.json().catch(() => null);
+                throw new Error(body?.response || `HTTP ${response.status}: ${response.statusText}`);
             }
 
             return await response.json();
@@ -114,15 +94,11 @@ class ModernFavoriteManager {
         const url = `${context}/api/layout?action=moveTab&sourceID=${sourceId}&method=${method}&elementID=${elementId}`;
         
         try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const response = await fetch(url, { method: 'POST' });
 
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const body = await response.json().catch(() => null);
+                throw new Error(body?.response || `HTTP ${response.status}: ${response.statusText}`);
             }
 
             return await response.json();

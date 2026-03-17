@@ -35,7 +35,7 @@
 
     <c:if test="${not empty errorMessageCode}">
       <div class="alert alert-warning alert-dismissable">
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-hidden="true">&times;</button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           <spring:message
                   code="${errorMessageCode}"
                   text="Un-defined error message."
@@ -45,7 +45,7 @@
 
     <c:if test="${not empty successMessageCode}">
       <div class="alert alert-success alert-dismissable">
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-hidden="true">&times;</button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         <spring:message
                 code="${successMessageCode}"
                 text="Un-defined success message."

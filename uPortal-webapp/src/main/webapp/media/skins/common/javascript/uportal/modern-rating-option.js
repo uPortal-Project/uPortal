@@ -28,8 +28,8 @@ class ModernRatingModal {
                     <div class="modal-header">
                         <h4 class="modal-title" style="white-space: nowrap"><strong>${title}</strong></h4>
                     </div>
-                    <div class="modal-body" style="font-size:2em; white-space:nowrap;">
-                        <div class="form-text ratingModalInstruct"></div>
+                    <div class="modal-body" style="font-size:2em;">
+                        <div class="form-text ratingModalInstruct" style="font-size:0.5em; white-space:normal; word-wrap:break-word;"></div>
                         <div class="rating-container">
                             ${this.createStarRating()}
                         </div>
@@ -97,88 +97,72 @@ class ModernRatingModal {
         });
     }
 
-    async loadCurrentRating() {
+    loadCurrentRating() {
         const saveButton = this.element.querySelector('.ratingModalSaveButton');
         const instructEl = this.element.querySelector('.ratingModalInstruct');
-        
-        saveButton.classList.add('disabled');
-        
-        try {
-            const response = await fetch(this.element.dataset.geturl, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            if (!response.ok) throw new Error('Failed to load rating');
-            
-            const data = await response.json();
-            
-            if (data.rating === null) {
-                this.ratingValue = 0;
-                this.highlightStars(0);
-                instructEl.textContent = this.element.dataset['rating.instructions.unrated'] || '';
-            } else {
-                this.ratingValue = data.rating;
-                this.highlightStars(data.rating);
-                saveButton.classList.remove('disabled');
-                instructEl.textContent = this.element.dataset['rating.instructions.rated'] || '';
-            }
-        } catch (error) {
-            console.error('Error loading rating:', error);
-            ModernNotification.show(
-                this.element.dataset['get.rating.unsucessful'] || 'Error loading rating',
-                'TopCenter',
-                'error'
-            );
-        }
+        const that = this;
 
-        // Center modal dialog
-        const dialog = this.element.querySelector('.modal-dialog');
-        dialog.style.transform = 'translate(0, 50%)';
+        saveButton.classList.add('disabled');
+
+        up.jQuery.ajax({
+            url: this.element.dataset.geturl,
+            success: function(data) {
+                if (data.rating === null) {
+                    that.ratingValue = 0;
+                    that.highlightStars(0);
+                    instructEl.textContent = that.element.dataset['rating.instructions.unrated'] || '';
+                } else {
+                    that.ratingValue = data.rating;
+                    that.highlightStars(data.rating);
+                    saveButton.classList.remove('disabled');
+                    instructEl.textContent = that.element.dataset['rating.instructions.rated'] || '';
+                }
+
+                // Center modal dialog
+                const dialog = that.element.querySelector('.modal-dialog');
+                dialog.style.transform = 'translate(0, 50%)';
+            },
+            error: function() {
+                ModernNotification.show(
+                    that.element.dataset['get.rating.unsucessful'] || 'Error loading rating',
+                    'TopCenter',
+                    'error'
+                );
+            }
+        });
     }
 
-    async saveRating() {
+    saveRating() {
         if (this.ratingValue === 0) return;
 
-        try {
-            const formData = new FormData();
-            formData.append('rating', this.ratingValue);
-
-            const response = await fetch(this.element.dataset.saveurl, {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) throw new Error('Failed to save rating');
-
-            this.modal.hide();
-            
-            ModernNotification.show(
-                this.element.dataset['rating.save.successful'] || 'Rating saved successfully',
-                'TopCenter',
-                'success'
-            );
-
-            // Update instructions after delay
-            setTimeout(() => {
-                const instructEl = this.element.querySelector('.ratingModalInstruct');
-                if (instructEl) {
-                    instructEl.textContent = this.element.dataset['rating.instructions.rated'] || '';
-                }
-            }, 1000);
-
-        } catch (error) {
-            console.error('Error saving rating:', error);
-            this.modal.hide();
-            
-            ModernNotification.show(
-                this.element.dataset['rating.save.unsuccessful'] || 'Error saving rating',
-                'TopCenter',
-                'error'
-            );
-        }
+        const that = this;
+        up.jQuery.ajax({
+            url: this.element.dataset.saveurl,
+            data: { rating: this.ratingValue },
+            type: 'POST',
+            success: function() {
+                that.modal.hide();
+                ModernNotification.show(
+                    that.element.dataset['rating.save.successful'] || 'Rating saved successfully',
+                    'TopCenter',
+                    'success'
+                );
+                setTimeout(() => {
+                    const instructEl = that.element.querySelector('.ratingModalInstruct');
+                    if (instructEl) {
+                        instructEl.textContent = that.element.dataset['rating.instructions.rated'] || '';
+                    }
+                }, 1000);
+            },
+            error: function() {
+                that.modal.hide();
+                ModernNotification.show(
+                    that.element.dataset['rating.save.unsuccessful'] || 'Error saving rating',
+                    'TopCenter',
+                    'error'
+                );
+            }
+        });
     }
 
     show() {

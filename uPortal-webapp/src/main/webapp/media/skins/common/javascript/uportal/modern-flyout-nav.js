@@ -39,17 +39,12 @@ class ModernFlyoutNav {
             return; // No flyout elements found
         }
         
-        // Hide the dropdown toggle since we're using hover instead of click
-        if (dropdownToggle) {
-            dropdownToggle.style.display = 'none';
-        }
-        
+        this.dropdownToggle = dropdownToggle;
         this.bindEvents();
     }
     
     bindEvents() {
         this.container.addEventListener('mouseenter', () => {
-            // Only open flyout if it contains content
             if (this.flyoutList.innerHTML.trim() !== '') {
                 this.openFlyout();
             }
@@ -58,6 +53,17 @@ class ModernFlyoutNav {
         this.container.addEventListener('mouseleave', () => {
             this.closeFlyout();
         });
+
+        if (this.dropdownToggle) {
+            this.dropdownToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (this.isOpen) {
+                    this.closeFlyout();
+                } else if (this.flyoutList.innerHTML.trim() !== '') {
+                    this.openFlyout();
+                }
+            });
+        }
     }
     
     openFlyout() {
@@ -65,6 +71,9 @@ class ModernFlyoutNav {
         
         this.calculatePosition();
         this.flyoutMenu.style.display = 'block';
+        if (this.dropdownToggle) {
+            this.dropdownToggle.setAttribute('aria-expanded', 'true');
+        }
         this.isOpen = true;
     }
     
@@ -72,6 +81,9 @@ class ModernFlyoutNav {
         if (!this.isOpen) return;
         
         this.flyoutMenu.style.display = 'none';
+        if (this.dropdownToggle) {
+            this.dropdownToggle.setAttribute('aria-expanded', 'false');
+        }
         this.isOpen = false;
     }
     

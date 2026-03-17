@@ -1075,11 +1075,19 @@
 
         // Submit function
         $("#${n}save_rating_form").on('submit', function (e) {
+            e.preventDefault();
+            var ratingVal = $("input[name=rating][type=radio]:checked").val();
+            if (!ratingVal) {
+                updateRatingInstructions('<spring:message code="rating.instructions.select"
+                text="Please select a star rating before submitting."
+                htmlEscape="true" />');
+                return;
+            }
             var reviewText = $("#${n}marketplace_user_review_input").val();
             $.ajax({
                 url: '${saveRatingUrl}',
                 data: {
-                    rating: $("input[name=rating][type=radio]:checked").val(),
+                    rating: ratingVal,
                     portletFName: "${marketplaceEntry.fname}",
                     review: reviewText ? reviewText.trim() : ''
                 },
@@ -1104,7 +1112,6 @@
                     });
                 }
             });
-            e.preventDefault();
         });
     });
 
