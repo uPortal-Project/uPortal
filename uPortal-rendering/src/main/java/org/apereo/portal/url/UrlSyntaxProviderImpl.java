@@ -910,10 +910,12 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         this.portletWindowRegistry.getPortletWindowId(request, additionalPortletId);
                 return new Tuple<String, IPortletWindowId>(paramName, portletWindowId);
             } catch (IllegalArgumentException e) {
-                this.logger.debug(
-                        "Failed to parse portlet window id '{}' from parameter '{}', treating as unscoped parameter",
-                        additionalPortletId,
-                        name);
+                this.logger.warn(
+                        "Failed to resolve portlet window id for parameter '{}': {}."
+                                + " This may be caused by a stale URL referencing a"
+                                + " removed portlet. The parameter will be ignored.",
+                        name,
+                        e.getMessage());
             }
         }
 
