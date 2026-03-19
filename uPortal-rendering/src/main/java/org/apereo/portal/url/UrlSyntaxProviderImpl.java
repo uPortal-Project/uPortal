@@ -905,9 +905,18 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                             PORTLET_PARAM_PREFIX.length()
                                     + additionalPortletId.length()
                                     + SEPARATOR.length());
-            final IPortletWindowId portletWindowId =
-                    this.portletWindowRegistry.getPortletWindowId(request, additionalPortletId);
-            return new Tuple<String, IPortletWindowId>(paramName, portletWindowId);
+            try {
+                final IPortletWindowId portletWindowId =
+                        this.portletWindowRegistry.getPortletWindowId(request, additionalPortletId);
+                return new Tuple<String, IPortletWindowId>(paramName, portletWindowId);
+            } catch (IllegalArgumentException e) {
+                this.logger.warn(
+                        "Failed to resolve portlet window id for parameter '{}': {}."
+                                + " This may be caused by a stale URL referencing a"
+                                + " removed portlet. The parameter will be ignored.",
+                        name,
+                        e.getMessage());
+            }
         }
 
         final String paramName = this.safeSubstringAfter(PORTLET_PARAM_PREFIX, name);

@@ -41,7 +41,6 @@ import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
 import org.apereo.portal.utils.Tuple;
 import org.apereo.portal.xml.xpath.XPathOperations;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
@@ -51,8 +50,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /** Test harness for {@link UrlSyntaxProviderImpl}. */
-@Ignore // Breaks on move to Gradle
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class UrlSyntaxProviderImplTest {
     @InjectMocks private UrlSyntaxProviderImpl urlSyntaxProvider = new UrlSyntaxProviderImpl();
     @Mock private IPortalRequestUtils portalRequestUtils;
@@ -1055,6 +1053,63 @@ public class UrlSyntaxProviderImplTest {
         assertNotNull(portletParameterInfo);
         assertEquals("pw1_foo", portletParameterInfo.first);
         assertNull(portletParameterInfo.second);
+    }
+
+    @Test
+    public void testParsePortletParameterNameWithInvalidPortletEntity() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+
+        final String staleEntityId = "27_ctf9_142032";
+        final Set<String> ids = ImmutableSet.of(staleEntityId);
+
+        when(this.portletWindowRegistry.getPortletWindowId(request, staleEntityId))
+                .thenThrow(
+                        new IllegalArgumentException(
+                                "No parent IPortletDefinition found for 27 from entity id string: "
+                                        + staleEntityId));
+
+        // Should not throw; should gracefully return the full param name with null window id
+        final Tuple<String, IPortletWindowId> portletParameterInfo =
+                this.urlSyntaxProvider.parsePortletParameterName(
+                        request,
+                        PortalConstants.PORTLET_PARAM_PREFIX
+                                + staleEntityId
+                                + PortalConstants.SEPARATOR
+                                + "implicitModel",
+                        ids);
+
+        assertNotNull(portletParameterInfo);
+        assertNull(
+                "Window id should be null when the portlet entity cannot be resolved",
+                portletParameterInfo.second);
+    }
+
+    @Test
+    public void testParsePortletWindowIdSuffixWithInvalidPortletEntity() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+
+        final String staleEntityId = "27_ctf9_142032";
+        final Set<String> ids = ImmutableSet.of(staleEntityId);
+
+        when(this.portletWindowRegistry.getPortletWindowId(request, staleEntityId))
+                .thenThrow(
+                        new IllegalArgumentException(
+                                "No parent IPortletDefinition found for 27 from entity id string: "
+                                        + staleEntityId));
+
+        // Should not throw; should gracefully return null
+        final IPortletWindowId portletWindowId =
+                this.urlSyntaxProvider.parsePortletWindowIdSuffix(
+                        request,
+                        PortalConstants.PARAM_WINDOW_STATE,
+                        ids,
+                        PortalConstants.PARAM_WINDOW_STATE
+                                + PortalConstants.SEPARATOR
+                                + staleEntityId);
+
+        assertNull(
+                "Window id should be null when the portlet entity cannot be resolved",
+                portletWindowId);
     }
 
     @Test
