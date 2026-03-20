@@ -6,7 +6,7 @@
 
 class ModernLayoutPreferencesPersistence {
     constructor(container, options = {}) {
-        this.container = container;
+        this.container = typeof container === 'string' ? document.querySelector(container) : container;
         this.options = {
             saveLayoutUrl: '/uPortal/api/layout',
             messages: {

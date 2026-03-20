@@ -97,7 +97,6 @@ processResources {
 }
 
 // Bootstrap path variables
-ext.bootstrapScssPath = "${buildDir}/generated-sources/skin/main/webapp/rs/bootstrap/${bootstrapVersion}/scss"
 ext.bootstrapJsPath = "${buildDir}/generated-sources/skin/main/webapp/rs"
 
 task prepareSkinResources {
@@ -172,7 +171,6 @@ task aggregateRespondrSkins {
                 .setOutputBaseDirectory(fullOutputDirectory)
                 .addAdditionalSourceDirectory(fullOutputDirectory)
                 .addAdditionalSourceDirectory(new File(projectDir, 'src/main/webapp/media/skins/common'))
-                .addAdditionalSourceDirectory(new File(buildDir, 'generated-sources/skin/main/webapp'))
                 .addAdditionalSourceDirectory(new File(buildDir, 'generated-sources/skin/main/webapp'))
                 .addAdditionalSourceDirectory(new File(bootstrapJsPath))
                 .setSharedJavaScriptDirectory(sharedJavaScriptDirectory);

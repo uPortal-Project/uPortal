@@ -77,11 +77,12 @@ class ModernFavoriteManager {
             const response = await fetch(url, { method: 'POST' });
 
             if (!response.ok) {
-                const body = await response.json().catch(() => null);
+                const body = await response.text().then(t => { try { return JSON.parse(t); } catch { return null; } });
                 throw new Error(body?.response || `HTTP ${response.status}: ${response.statusText}`);
             }
 
-            return await response.json();
+            const text = await response.text();
+            return text ? JSON.parse(text) : null;
         } catch (error) {
             console.error('Error persisting move:', url, error);
             throw error;
@@ -101,11 +102,12 @@ class ModernFavoriteManager {
             const response = await fetch(url, { method: 'POST' });
 
             if (!response.ok) {
-                const body = await response.json().catch(() => null);
+                const body = await response.text().then(t => { try { return JSON.parse(t); } catch { return null; } });
                 throw new Error(body?.response || `HTTP ${response.status}: ${response.statusText}`);
             }
 
-            return await response.json();
+            const text = await response.text();
+            return text ? JSON.parse(text) : null;
         } catch (error) {
             console.error('Error persisting favorite group reorder:', url, error);
             throw error;

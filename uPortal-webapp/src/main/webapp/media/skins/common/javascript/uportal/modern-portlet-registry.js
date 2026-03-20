@@ -25,6 +25,9 @@ var up = up || {};
 class ModernPortletRegistry {
     constructor(container, options = {}) {
         this.container = container;
+        if (!options.portletListUrl) {
+            throw new Error('ModernPortletRegistry: portletListUrl is required');
+        }
         this.options = {
             portletListUrl: null,
             allCategoriesName: 'All',
