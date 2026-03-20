@@ -89,6 +89,10 @@ class ModernFavoriteManager {
     }
 
     async moveFavoriteGroup(sourceId, previousNodeId, nextNodeId, context = this.context) {
+        if (previousNodeId === '' && nextNodeId === '') {
+            console.log('moveFavoriteGroup: no siblings found, skipping (item may be only element or already in position)');
+            return;
+        }
         const method = nextNodeId === '' ? 'appendAfter' : 'insertBefore';
         const elementId = nextNodeId === '' ? previousNodeId : nextNodeId;
         const url = `${context}/api/layout?action=moveTab&sourceID=${sourceId}&method=${method}&elementID=${elementId}`;

@@ -68,9 +68,12 @@ class ModernFlyoutNav {
     
     openFlyout() {
         if (this.isOpen) return;
-        
-        this.calculatePosition();
+
+        // Make measurable but invisible before positioning
+        this.flyoutMenu.style.visibility = 'hidden';
         this.flyoutMenu.style.display = 'block';
+        this.calculatePosition();
+        this.flyoutMenu.style.visibility = '';
         if (this.dropdownToggle) {
             this.dropdownToggle.setAttribute('aria-expanded', 'true');
         }

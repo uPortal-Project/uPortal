@@ -62,12 +62,12 @@
         </portlet:actionURL>
         <li class="list-group-item ${collection.moveAllowed ? '' : 'sort-disabled'}" sourceID="${collection.id}">
           <c:if test="${collection.moveAllowed}">
-            <span class="glyphicon glyphicon-sort float-start" style='padding-right: 1em; cursor: move;'></span>
+            <span class="fa fa-sort float-start" style='padding-right: 1em; cursor: move;'></span>
           </c:if>
           <c:choose>
             <c:when test="${collection.deleteAllowed}">
               <a class="up-remove-favorite" data-href="${unFavoriteCollectionUrl}" href="javascript:void(0)">
-                <span class="glyphicon glyphicon-trash float-end" aria-label="Remove favorite collection"></span>
+                <span class="fa fa-trash float-end" aria-label="Remove favorite collection"></span>
               </a>
               <a href="${renderRequest.contextPath}/f/${collection.id}/render.uP">
                 ${collection.name}
@@ -77,7 +77,7 @@
               <div data-bs-toggle="tooltip" title="<spring:message
                   code="favorites.lack.permission.to.unfavorite.collection"
                   text="You lack permission to unfavorite this collection."/>">
-                <span class="glyphicon glyphicon-lock float-end"></span>${collection.name}
+                <span class="fa fa-lock float-end"></span>${collection.name}
               </div>
               <c:set var="lockedItemListed" value="true" />
             </c:otherwise>
@@ -96,12 +96,12 @@
             <%-- That sort glyph may be shown when only one item and so nothing to re-order against is
                  deliberate, meant to communicate to the user that if he or she had more items they would then
                  be re-order-able, and meant to provide UI consistency in the one and more-than-one items cases. --%>
-            <span class="glyphicon glyphicon-sort float-start" style='padding-right: 1em; cursor: move;'></span>
+            <span class="fa fa-sort float-start" style='padding-right: 1em; cursor: move;'></span>
           </c:if>
           <c:choose>
             <c:when test="${favorite.deleteAllowed}">
               <a class="up-remove-favorite" data-href="${unFavoritePortletUrl}" href="javascript:void(0)">
-                <span class="glyphicon glyphicon-trash float-end" aria-label="Remove favorite"></span>
+                <span class="fa fa-trash float-end" aria-label="Remove favorite"></span>
               </a>
               <a href="${renderRequest.contextPath}/p/${favorite.functionalName}/render.uP">
                 ${favorite.name}
@@ -111,7 +111,7 @@
               <div data-bs-toggle="tooltip" title="<spring:message
                   code="favorites.lack.permission.to.unfavorite.portlet"
                   text="You lack permission to unfavorite this portlet."/>" >
-                <span class="glyphicon glyphicon-lock float-end"></span>${favorite.name}
+                <span class="fa fa-lock float-end"></span>${favorite.name}
               </div>
               <c:set var="lockedItemListed" value="true" />
             </c:otherwise>
