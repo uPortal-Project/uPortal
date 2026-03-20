@@ -66,6 +66,11 @@
 <script language="javascript" type="text/javascript">
 (function() { // Prevent adding to the global namespace
 
+    // Bail out if already claimed by a prior render of this JSP
+    var holder = document.getElementById('sitemap-holder');
+    if (holder.dataset.sitemapInit) return;
+    holder.dataset.sitemapInit = '1';
+
     // If a path check fails, it'll throw an error.
     function sitemapJsonCheck(jsonObj, pathChecks, errMsg) {
         return !_.every(pathChecks, function(pathCheck) {
@@ -153,10 +158,12 @@
                 }
             });
         })
-        // Let user know and log error to browser console
         .catch(function(error) {
-            // Silently fail - don't add error message to DOM or do anything that might trigger reload
             console.error('Sitemap generation failed:', error.message);
+            var msg = document.createElement('p');
+            msg.setAttribute('role', 'alert');
+            msg.textContent = '${i18n_error_loading_sitemap}';
+            document.getElementById('sitemap-holder').appendChild(msg);
         });
 
 })();
