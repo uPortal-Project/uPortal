@@ -90,7 +90,7 @@
 <script type="text/javascript">
 (function($) {
     // Deleting a tenant requires an actionURL and a POST...
-    $('#${n}tenantManager a.up-tenant-remove').click(function() {
+    $('#${n}tenantManager a.up-tenant-remove').on('click', function() {
         var confirmText = $(this).attr('data-confirm');
         if (confirm(confirmText)) {
             var url = $(this).attr('data-href');

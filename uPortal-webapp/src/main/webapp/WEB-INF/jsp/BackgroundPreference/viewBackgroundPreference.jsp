@@ -208,7 +208,7 @@
                 toggleMenu();
             });
 
-            elements.menu.find('a').click(function(e) {
+            elements.menu.find('a').on('click', function(e) {
                 e.preventDefault();
                 setBackground(this);
 

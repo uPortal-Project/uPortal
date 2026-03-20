@@ -87,7 +87,7 @@
 <script type="text/javascript">
 (function($) {
     // Tenant operations listener actions must be invoked with an actionURL and a POST...
-    $('#${n}tenantDetails a.up-tenant-listener-action').click(function() {
+    $('#${n}tenantDetails a.up-tenant-listener-action').on('click', function() {
         if (confirm('<spring:message code="tenant.manager.invoke.action.confirm" />')) {
             var url = $(this).attr('data-href');
             var form = $('<form />', {

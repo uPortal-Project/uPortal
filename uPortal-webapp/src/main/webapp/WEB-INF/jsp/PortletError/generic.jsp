@@ -40,7 +40,7 @@
 <script type="text/javascript">
 (function($) {
     // Reset requests must be an actionURL and a POST...
-    $('#${n} .breadcrumb a').click(function() {
+    $('#${n} .breadcrumb a').on('click', function() {
         var url = $(this).attr('data-href');
         var form = $('<form />', {
             action: url,
