@@ -46,8 +46,8 @@
     <js included="aggregated" resource="true">/webjars/bootstrap/js/bootstrap.bundle.min.js</js>
     <js resource="true">/webjars/bootstrap/js/bootstrap.bundle.min.js</js>
 
-    <js included="plain">/resource-server/rs/jqueryui/1.14.1/jquery-ui.js</js>
-    <js included="aggregated">/resource-server/rs/jqueryui/1.14.1/jquery-ui.min.js</js>
+    <js included="plain">/resource-server/rs/jqueryui/1.14.2/jquery-ui.js</js>
+    <js included="aggregated">/resource-server/rs/jqueryui/1.14.2/jquery-ui.min.js</js>
 
     <!-- Uncomment for internationalization.  Removed for minor efficiency especially for mobile networks. -->
     <!--
