@@ -82,7 +82,7 @@ dependencies {
     webjars "org.webjars.npm:regenerator-runtime:${regeneratorRuntimeVersion}"
     webjars "org.webjars.npm:webcomponents__webcomponentsjs:${webComponentPolyfillVersion}"
     webjars "org.webjars.npm:whatwg-fetch:${whatwgFetchPolyfillVersion}"
-    webjars "org.webjars:bootstrap:5.3.8"
+    webjars "org.webjars:bootstrap:${bootstrapVersion}"
 }
 
 node {
@@ -97,7 +97,7 @@ processResources {
 }
 
 // Bootstrap path variables
-ext.bootstrapScssPath = "${buildDir}/generated-sources/skin/main/webapp/rs/bootstrap/5.3.8/scss"
+ext.bootstrapScssPath = "${buildDir}/generated-sources/skin/main/webapp/rs/bootstrap/${bootstrapVersion}/scss"
 ext.bootstrapJsPath = "${buildDir}/generated-sources/skin/main/webapp/rs"
 
 task prepareSkinResources {
