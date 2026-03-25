@@ -114,8 +114,17 @@ $stand-along-dropdown-left: 0px;
   @extend h3;
 }
 
-.portlet-form-input-field {
+.portlet-form-input-field:not([type="radio"]):not([type="checkbox"]) {
   @extend .form-control;
+}
+
+.portlet-form-input-field[type="radio"],
+.portlet-form-input-field[type="checkbox"] {
+  display: block;
+  width: 54px;
+  height: 34px;
+  margin: 4px 0 0;
+  cursor: pointer;
 }
 
 .portlet-form-button {

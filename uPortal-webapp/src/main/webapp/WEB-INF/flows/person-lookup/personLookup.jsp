@@ -34,64 +34,99 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <style>
-#${n}personBrowser .dataTables_filter, #${n}personBrowser .first.paginate_button, #${n}personBrowser .last.paginate_button{
+#${n}personBrowser .dt-search,
+#${n}personBrowser .first.dt-paging-button,
+#${n}personBrowser .last.dt-paging-button {
     display: none;
 }
-#${n}personBrowser .dataTables-inline, #${n}personBrowser .column-filter-widgets {
-    display: inline-block;
-}
-#${n}personBrowser .view-filter {
-    padding-bottom: 15px;
-    overflow: hidden;
-}
-#${n}personBrowser .dataTables_wrapper {
+#${n}personBrowser .dt-container {
     width: 100%;
 }
-#${n}personBrowser .dataTables_paginate .paginate_button {
+#${n}personBrowser .view-filter {
+    padding: 10px 15px 15px;
+    margin-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    font-size: 14px;
+}
+#${n}personBrowser .view-filter h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: bold;
+}
+#${n}personBrowser .column-filter-widgets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+#${n}personBrowser .column-filter-widget {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+#${n}personBrowser .column-filter-widget select {
+    font-size: 14px;
+}
+#${n}personBrowser .filter-term {
+    display: inline-block;
+    margin: 2px 0;
+    padding: 2px 8px;
+    background-color: #d9edf7;
+    border: 1px solid #bce8f1;
+    border-radius: 3px;
+    color: #31708f;
+    text-decoration: none;
+    font-size: 12px;
+    cursor: pointer;
+    width: fit-content;
+}
+#${n}personBrowser .filter-term:hover {
+    background-color: #c4e3f3;
+    text-decoration: none;
+}
+#${n}personBrowser .dt-paging-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 14px;
+}
+#${n}personBrowser .dt-paging-row .dt-info {
+    white-space: nowrap;
+}
+#${n}personBrowser .dt-paging-row .dt-length {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+#${n}personBrowser .dt-paging-row .dt-length select {
+    display: inline-block !important;
+    width: auto;
+    font-size: 14px;
+}
+#${n}personBrowser .dt-paging-row .dt-length label {
+    font-weight: normal;
+    margin: 0;
+}
+#${n}personBrowser .dt-paging .page-link {
     margin: 2px;
     color: #428BCA;
     cursor: pointer;
-    *cursor: hand;
+    font-size: 14px;
 }
-#${n}personBrowser .dataTables_paginate .paginate_active {
-    margin: 2px;
-    color:#000;
+#${n}personBrowser .dt-paging .page-item.active .page-link {
+    color: #000;
+    background: none;
+    border-color: transparent;
 }
-
-#${n}personBrowser .dataTables_paginate .paginate_active:hover {
-    text-decoration: line-through;
-}
-
 #${n}personBrowser table tr td a {
     color: #428BCA;
 }
-
-#${n}personBrowser .dataTables-left {
-    float:left;
-}
-
-#${n}personBrowser .column-filter-widget {
-    vertical-align: top;
-    display: inline-block;
-    overflow: hidden;
-    margin-right: 5px;
-}
-
-#${n}personBrowser .filter-term {
-    display: block;
-    text-align:bottom;
-}
-
-#${n}personBrowser .dataTables_length label {
-    font-weight: normal;
-}
-#${n}personBrowser .dataTables_length select {
-    display: inline-block !important;
-    width: auto;
-    margin: 0 5px;
-}
 #${n}personBrowser .datatable-search-view {
-    text-align:right;
+    text-align: right;
 }
 
 /* Fix form layout to match release version */
@@ -119,7 +154,7 @@
     box-sizing: border-box !important;
 }
 #${n}searchForm .form-select {
-    padding-right: 30px !important; /* Space for caret */
+    padding-right: 30px !important;
 }
 </style>
 
@@ -170,6 +205,11 @@
             <div id="${n}searchResults" class="portlet-section" style="display:none" role="region">
                 <div class="titlebar">
                     <h3 role="heading" class="title">Search Results</h3>
+                </div>
+                <div class="row alert alert-info view-filter" id="${n}viewFilter">
+                    <h4>Filters</h4>
+                    <div class="column-filter-widgets" id="${n}columnFilterWidgets"></div>
+                    <div class="dt-paging-row" id="${n}pagingRow"></div>
                 </div>
                 <table id="${n}resultsTable" class="portlet-table table table-bordered table-hover" style="width:100%;">
                     <thead>
@@ -227,17 +267,23 @@
                 deferRender: false,
                 processing: true,
                 autoWidth: false,
-                pagingType: 'full_numbers',
                 language: {
                     lengthMenu: '_MENU_ per page',
-                    paginate: {
+                    paginator: {
+                        first: '\u00AB',
                         previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
-                        next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+                        next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>',
+                        last: '\u00BB'
                     }
                 },
+                infoCallback: function(settings, start, end, max, total, pre) {
+                    var api = this.api();
+                    var pageInfo = api.page.info();
+                    return 'Viewing page ' + (pageInfo.page + 1) + '. Showing records ' + start + ' to ' + end + ' of ' + total + ' items.';
+                },
                 columns: [
-                    { data: 'attributes.displayName', type: 'string', width: '50%' },
-                    { data: 'attributes.username', type: 'string', width: '50%' }
+                    { data: 'attributes.displayName', width: '50%' },
+                    { data: 'attributes.username', width: '50%' }
                 ],
                 initComplete: function (settings) {
                     this.api().draw();
@@ -246,71 +292,95 @@
                     $('td:eq(0)', row).html( getSelectPersonAnchorTag(data.attributes.displayName, data.attributes.username) );
                     $('td:eq(1)', row).html( getSelectPersonAnchorTag(data.attributes.username, data.attributes.username) );
                 },
-                infoCallback: function( settings, start, end, max, total, pre ) {
-                    var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
-                    var currentPage = Math.ceil(settings._iDisplayStart / settings._iDisplayLength) + 1;
-                    infoMessage = infoMessage.replace(/_START_/g, start)
-                                        .replace(/_END_/g, end)
-                                        .replace(/_TOTAL_/g, total)
-                                        .replace(/_CURRENT_PAGE_/g, currentPage);
-                    return infoMessage;
-                },
                 drawCallback: function() {
-                    // Convert pagination to match release version structure
-                    var $paginate = $('.dataTables_paginate');
-                    var $ul = $paginate.find('ul');
-                    if ($ul.length) {
-                        $ul.find('.paginate_button').each(function() {
-                            var $li = $(this);
-                            var $link = $li.find('a');
-                            if ($link.length) {
-                                var newClass = $li.attr('class').replace('page-item', 'paginate_button').replace(/\bpage-link\b/g, '');
-                                $link.attr('class', newClass);
-                                $paginate.append($link);
-                            }
-                        });
-                        $ul.remove();
-                    }
-                    
-                    // Populate column filters
                     var table = this.api();
-                    $('.column-filter-widgets').empty();
-                    
-                    var nameSelect = $('<select><option value="">Name</option></select>');
-                    table.column(0).data().unique().sort().each(function(d) {
-                        var displayName = Array.isArray(d) ? d[0] : d;
-                        nameSelect.append('<option value="' + displayName + '">' + displayName + '</option>');
-                    });
-                    nameSelect.on('change', function() {
-                        table.column(0).search(this.value).draw();
-                    });
-                    
-                    var usernameSelect = $('<select><option value="">Username</option></select>');
-                    table.column(1).data().unique().sort().each(function(d) {
-                        var username = Array.isArray(d) ? d[0] : d;
-                        usernameSelect.append('<option value="' + username + '">' + username + '</option>');
-                    });
-                    usernameSelect.on('change', function() {
-                        table.column(1).search(this.value).draw();
-                    });
-                    
-                    $('.column-filter-widgets').append(
-                        $('<div class="column-filter-widget">').append(nameSelect)
-                    ).append(
-                        $('<div class="column-filter-widget">').append(usernameSelect)
-                    );
+
+                    // Build filters once data is loaded
+                    var $widgets = $('#${n}columnFilterWidgets');
+                    if (table.data().length > 0 && $widgets.children().length === 0) {
+                        var selectedNames = [];
+                        var selectedUsernames = [];
+
+                        var nameSearchFn = function(settings, data, dataIndex) {
+                            if (selectedNames.length === 0) return true;
+                            var rowData = table.row(dataIndex).data();
+                            var val = Array.isArray(rowData.attributes.displayName) ? rowData.attributes.displayName[0] : rowData.attributes.displayName;
+                            return selectedNames.indexOf(val) !== -1;
+                        };
+                        var usernameSearchFn = function(settings, data, dataIndex) {
+                            if (selectedUsernames.length === 0) return true;
+                            var rowData = table.row(dataIndex).data();
+                            var val = Array.isArray(rowData.attributes.username) ? rowData.attributes.username[0] : rowData.attributes.username;
+                            return selectedUsernames.indexOf(val) !== -1;
+                        };
+
+                        function updateFilters() {
+                            $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(function(fn) {
+                                return fn !== nameSearchFn && fn !== usernameSearchFn;
+                            });
+                            if (selectedNames.length > 0) $.fn.dataTable.ext.search.push(nameSearchFn);
+                            if (selectedUsernames.length > 0) $.fn.dataTable.ext.search.push(usernameSearchFn);
+                            table.draw();
+                        }
+
+                        function makeWidget(selectEl, selectedArr, updateFn) {
+                            var $widget = $('<div class="column-filter-widget"></div>').append(selectEl);
+                            selectEl.on('change', function() {
+                                var val = this.value;
+                                if (val && selectedArr.indexOf(val) === -1) {
+                                    selectedArr.push(val);
+                                    var $term = $('<a class="filter-term" href="#">' + val + '</a>');
+                                    $term.on('click', function(e) {
+                                        e.preventDefault();
+                                        var text = $(this).text();
+                                        selectedArr.splice(selectedArr.indexOf(text), 1);
+                                        $(this).remove();
+                                        updateFn();
+                                    });
+                                    $widget.append($term);
+                                    updateFn();
+                                }
+                                this.value = '';
+                            });
+                            return $widget;
+                        }
+
+                        var nameSelect = $('<select class="form-select form-select-sm"><option value="">Name</option></select>');
+                        table.column(0).data().unique().sort().each(function(d) {
+                            var v = Array.isArray(d) ? d[0] : d;
+                            nameSelect.append('<option value="' + v + '">' + v + '</option>');
+                        });
+
+                        var usernameSelect = $('<select class="form-select form-select-sm"><option value="">Username</option></select>');
+                        table.column(1).data().unique().sort().each(function(d) {
+                            var v = Array.isArray(d) ? d[0] : d;
+                            usernameSelect.append('<option value="' + v + '">' + v + '</option>');
+                        });
+
+                        $widgets
+                            .append(makeWidget(nameSelect, selectedNames, updateFilters))
+                            .append(makeWidget(usernameSelect, selectedUsernames, updateFilters));
+                    }
+
+                    // Move DT-rendered info/length/paging into our static paging row
+                    var $pagingRow = $('#${n}pagingRow');
+                    $('#${n}personBrowser .dt-info').appendTo($pagingRow);
+                    $('#${n}personBrowser .dt-length').appendTo($pagingRow);
+                    $('#${n}personBrowser .dt-paging').appendTo($pagingRow);
                 },
-                dom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><"column-filter-widgets"><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><t>',
+                layout: {
+                    topStart: null,
+                    topEnd: null,
+                    top: null,
+                    bottomStart: null,
+                    bottom: {
+                        features: ['info', 'pageLength', 'paging']
+                    },
+                    bottomEnd: null
+                },
             });
             
-            // Remove Bootstrap classes from length select to fix display issues
-            $('.dataTables_length select').removeClass('form-select form-select-sm');
-            
             $("#${n}searchResults").show();
-            
-            // Adding formatting to sDom to match release version
-            $("div.toolbar-br").html('<br>');
-            $("div.toolbar-filter").html('<b>Filters</b>:');
         };
 
         $(function(){
@@ -354,9 +424,10 @@
                 // clear and destroy the original
                 if (personList_configuration.main.table != undefined && $.fn.DataTable.isDataTable('#${n}resultsTable')) {
                     $("#${n}searchResults").hide();
-                    // Properly cleanup DataTables to prevent memory leaks
+                    $('#${n}columnFilterWidgets').empty();
+                    $('#${n}pagingRow').empty();
                     personList_configuration.main.table.clear().draw();
-                    personList_configuration.main.table.destroy(); // Don't remove from DOM
+                    personList_configuration.main.table.destroy();
                     personList_configuration.main.table = null;
                 }
                 showSearchResults(queryData);

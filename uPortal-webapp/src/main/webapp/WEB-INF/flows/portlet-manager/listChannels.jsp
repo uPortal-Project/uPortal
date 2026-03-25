@@ -55,51 +55,41 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <style>
-#${n}portletBrowser .dataTables_filter, #${n}portletBrowser .first.paginate_button, #${n}portletBrowser .last.paginate_button{
+#${n}portletBrowser .dt-search {
     display: none;
 }
-#${n}portletBrowser .dataTables-inline, #${n}portletBrowser .column-filter-widgets {
-    display: inline-block;
-}
-#${n}portletBrowser .view-filter {
-    padding-bottom: 15px;
-    overflow: hidden;
-}
-#${n}portletBrowser .dataTables_wrapper {
+#${n}portletBrowser .dt-container {
     width: 100%;
 }
-#${n}portletBrowser .dataTables_paginate .paginate_button {
-    margin: 2px;
-    color: #428BCA;
-    cursor: pointer;
-    *cursor: hand;
+#${n}portletBrowser .view-filter {
+    padding: 10px 15px 15px;
+    margin-bottom: 20px;
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    font-size: 14px;
 }
-#${n}portletBrowser .dataTables_paginate .paginate_active {
-    margin: 2px;
-    color:#000;
+#${n}portletBrowser .view-filter h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: bold;
 }
-
-#${n}portletBrowser .dataTables_paginate .paginate_active:hover {
-    text-decoration: line-through;
+#${n}portletBrowser .column-filter-widgets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
 }
-
-#${n}portletBrowser table tr td a {
-    color: #428BCA;
-}
-
-#${n}portletBrowser .dataTables-left {
-    float:left;
-}
-
 #${n}portletBrowser .column-filter-widget {
-    vertical-align: top;
-    display: inline-block;
-    overflow: hidden;
-    margin-right: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
-
+#${n}portletBrowser .column-filter-widget select {
+    font-size: 14px;
+}
 #${n}portletBrowser .filter-term {
-    display: block;
+    display: inline-block;
     margin: 2px 0;
     padding: 2px 8px;
     background-color: #d9edf7;
@@ -115,17 +105,48 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     background-color: #c4e3f3;
     text-decoration: none;
 }
-
-#${n}portletBrowser .dataTables_length label {
-    font-weight: normal;
+#${n}portletBrowser .dt-paging-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 14px;
 }
-#${n}portletBrowser .dataTables_length select {
+#${n}portletBrowser .dt-paging-row .dt-info {
+    white-space: nowrap;
+}
+#${n}portletBrowser .dt-paging-row .dt-length {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+#${n}portletBrowser .dt-paging-row .dt-length select {
     display: inline-block !important;
     width: auto;
-    margin: 0 5px;
+    font-size: 14px;
+}
+#${n}portletBrowser .dt-paging-row .dt-length label {
+    font-weight: normal;
+    margin: 0;
+}
+#${n}portletBrowser .dt-paging .page-link {
+    margin: 2px;
+    color: #428BCA;
+    cursor: pointer;
+    font-size: 14px;
+}
+#${n}portletBrowser .dt-paging .page-item.active .page-link {
+    color: #000;
+    background: none;
+    border-color: transparent;
+}
+#${n}portletBrowser table tr td a {
+    color: #428BCA;
 }
 #${n}portletBrowser .datatable-search-view {
-    text-align:right;
+    text-align: right;
 }
 </style>
 
@@ -163,6 +184,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
   <!-- Portlet Content -->
   <div class="card-body content portlet-content">
+      <div class="row alert alert-info view-filter" id="${n}viewFilter">
+        <h4>Filters</h4>
+        <div class="column-filter-widgets" id="${n}columnFilterWidgets"></div>
+        <div class="dt-paging-row" id="${n}pagingRow"></div>
+      </div>
       <div>
         <table id="${n}portletsList" class="portlet-table table table-bordered table-striped table-hover" style="width:100%;">
           <thead>
@@ -226,20 +252,23 @@ up.jQuery(function() {
     };
     
     var createFilters = function(table) {
-        var $columnFilterWidgets = $('<div class="column-filter-widgets"></div>');
+        var $columnFilterWidgets = $('#${n}columnFilterWidgets');
         
         // State filter
-        var stateSelect = $('<select class="form-control"><option value="">State</option></select>');
+        var stateSelect = $('<select class="form-select form-select-sm"><option value="">State</option></select>');
         var stateData = table.column(2).data().unique().sort();
         stateData.each(function(state) {
             stateSelect.append('<option value="' + state + '">' + state + '</option>');
         });
+        if (stateData.length <= 1) {
+            stateSelect.prop('disabled', true);
+        }
         stateSelect.on('change', function() {
             table.column(2).search(this.value).draw();
         });
         
         // Category filter
-        var categorySelect = $('<select class="form-control"><option value="">Category</option></select>');
+        var categorySelect = $('<select class="form-select form-select-sm"><option value="">Category</option></select>');
         var allCategories = [];
         table.data().each(function(portlet) {
             if (portlet.categories && Array.isArray(portlet.categories)) {
@@ -251,8 +280,7 @@ up.jQuery(function() {
             categorySelect.append('<option value="' + cat + '">' + cat + '</option>');
         });
         
-        var $categoryWidget = $('<div class="column-filter-widget"></div>');
-        $categoryWidget.append(categorySelect);
+        var $categoryWidget = $('<div class="column-filter-widget"></div>').append(categorySelect);
         
         categorySelect.on('change', function() {
             var selectedValue = this.value;
@@ -276,24 +304,18 @@ up.jQuery(function() {
         });
         
         function updateCategoryFilter() {
-            // Remove existing search function
             $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(function(fn) {
                 return fn !== categorySearchFunction;
             });
-            
-            // Add it back if we have selected categories
             if (selectedCategories.length > 0) {
                 $.fn.dataTable.ext.search.push(categorySearchFunction);
             }
-            
             table.draw();
         }
         
-        $columnFilterWidgets.append(
-            $('<div class="column-filter-widget">').append(stateSelect)
-        ).append($categoryWidget);
-        
-        $('.toolbar-filter-options').append($columnFilterWidgets);
+        $columnFilterWidgets
+            .append($('<div class="column-filter-widget">').append(stateSelect))
+            .append($categoryWidget);
     };
 
     // Created as its own
@@ -312,71 +334,59 @@ up.jQuery(function() {
             deferRender: false,
             processing: true,
             autoWidth: false,
-            pagingType: 'full_numbers',
             language: {
                 lengthMenu: '_MENU_ per page',
-                paginate: {
+                paginator: {
+                    first: '\u00AB',
                     previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
-                    next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+                    next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>',
+                    last: '\u00BB'
                 }
             },
+            infoCallback: function(settings, start, end, max, total, pre) {
+                var api = this.api();
+                var pageInfo = api.page.info();
+                return 'Viewing page ' + (pageInfo.page + 1) + '. Showing records ' + start + ' to ' + end + ' of ' + total + ' items.';
+            },
             columns: [
-                { data: 'name', type: 'html', width: '30%' },
-                { data: 'type', type: 'html', width: '30%' },
-                { data: 'lifecycleState', type: 'html', width: '20%' },
-                { data: 'id', type: 'html', searchable: false, width: '10%' },
-                { data: 'id', type: 'html', searchable: false, width: '10%' }
+                { data: 'name', width: '30%' },
+                { data: 'type', width: '30%' },
+                { data: 'lifecycleState', width: '20%' },
+                { data: 'id', searchable: false, width: '10%' },
+                { data: 'id', searchable: false, width: '10%' }
             ],
             initComplete: function (settings) {
                 this.api().draw();
-                $("div.toolbar-br").html('<br>');
-                $("div.toolbar-filter").html('<h4>Filters</h4>');
             },
             rowCallback: function (row, data, displayNum, displayIndex, dataIndex) {
                 $('td:eq(3)', row).html( getEditURL(data.id) );
                 $('td:eq(4)', row).html( getDeleteURL(data.id) );
             },
-            infoCallback: function( settings, start, end, max, total, pre ) {
-                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
-                var currentPage = Math.ceil(settings._iDisplayStart / settings._iDisplayLength) + 1;
-                infoMessage = infoMessage.replace(/_START_/g, start)
-                                    .replace(/_END_/g, end)
-                                    .replace(/_TOTAL_/g, total)
-                                    .replace(/_CURRENT_PAGE_/g, currentPage);
-                return infoMessage;
-            },
             drawCallback: function() {
                 var table = this.api();
+                if (table.data().length === 0) return;
                 
-                // Wait for data to be loaded
-                if (table.data().length === 0) {
-                    return;
-                }
-                
-                // Only create filters once
-                if ($('.toolbar-filter-options').children().length === 0) {
+                // Build filters once
+                if ($('#${n}columnFilterWidgets').children().length === 0) {
                     createFilters(table);
                 }
                 
-                // Convert pagination to match release version structure
-                var $paginate = $('.dataTables_paginate');
-                var $ul = $paginate.find('ul');
-                if ($ul.length) {
-                    $ul.find('.paginate_button').each(function() {
-                        var $li = $(this);
-                        var $link = $li.find('a');
-                        if ($link.length) {
-                            var newClass = $li.attr('class').replace('page-item', 'paginate_button').replace(/\bpage-link\b/g, '');
-                            $link.attr('class', newClass);
-                            $paginate.append($link);
-                        }
-                    });
-                    $ul.remove();
-                }
-                
-                $('.dataTables_length select').removeClass('form-select form-select-sm');
+                // Move DT-rendered info/length/paging into our static paging row
+                var $pagingRow = $('#${n}pagingRow');
+                $('#${n}portletBrowser .dt-info').appendTo($pagingRow);
+                $('#${n}portletBrowser .dt-length').appendTo($pagingRow);
+                $('#${n}portletBrowser .dt-paging').appendTo($pagingRow);
             },
-            dom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><"toolbar-filter-options"><"toolbar-br"><"dataTables-inline dataTables-right"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>'
+            layout: {
+                topStart: null,
+                topEnd: null,
+                top: null,
+                bottomStart: null,
+                bottom: {
+                    features: ['info', 'pageLength', 'paging']
+                },
+                bottomEnd: null
+            }
         });
     };
 

@@ -31,13 +31,13 @@
     width: 100%;
 }
 
-#${n}marketplace .dataTables_wrapper {
+#${n}marketplace .dt-container {
     position: relative;
     clear: both;
-    zoom: 1; /* Feeling sorry for IE */
+    zoom: 1;
 }
 
-#${n}marketplace  .dataTables_processing {
+#${n}marketplace .dt-processing {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -52,7 +52,7 @@
     background-color: white;
 }
 
-#${n}marketplace .dataTables_paginate{
+#${n}marketplace .dt-paging {
     white-space:nowrap;
 }
 
@@ -89,11 +89,23 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables row classes
  */
-#${n}marketplace tr.odd {
+#${n}marketplace tr.odd td,
+#${n}marketplace tr.odd th {
     background-color: #eee;
 }
 
-#${n}marketplace tr.even {
+#${n}marketplace tr.even td,
+#${n}marketplace tr.even th {
+    background-color: #fff;
+}
+
+#${n}marketplace tbody tr:nth-child(odd) td,
+#${n}marketplace tbody tr:nth-child(odd) th {
+    background-color: #eee;
+}
+
+#${n}marketplace tbody tr:nth-child(even) td,
+#${n}marketplace tbody tr:nth-child(even) th {
     background-color: #fff;
 }
 
@@ -110,7 +122,7 @@
     margin-right: 10px;
  }
 
-#${n}marketplace.top .dataTables_info {
+#${n}marketplace .dt-info {
     float: none;
 }
 
@@ -118,11 +130,11 @@
     clear: both;
 }
 
-#${n}marketplace .dataTables_empty {
+#${n}marketplace .dt-empty {
     text-align: center;
 }
 
-#${n}marketplace .example_alt_pagination div.dataTables_info {
+#${n}marketplace .example_alt_pagination div.dt-info {
     width: 40%;
 }
 
@@ -172,14 +184,14 @@
 @media only screen and (max-width: 768px) {
     #${n}marketplace #unseen table td:nth-child(2),
     #unseen table th:nth-child(2){display: none;}
-    #${n}marketplace .dataTables_filter{
+    #${n}marketplace .dt-search {
         text-align: left;
     }
-    #${n}marketplace .dataTables_filter>label{
+    #${n}marketplace .dt-search>label {
         width: 100%;
         float: left;
     }
-    #${n}marketplace .dataTables_filter>label>input{
+    #${n}marketplace .dt-search>label>input {
         width: 90%;
         float: right:
     }
@@ -202,8 +214,77 @@
     margin-top: 30px;
 }
 
-#${n}marketplace .dataTables_length, .dataTables_filter {
+#${n}marketplace .dt-length, .dt-search {
     text-align:right;
+}
+
+#${n}marketplace .dt-length select {
+    width: auto;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#${n}marketplace .dt-length label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#${n}marketplace .dt-paging {
+    text-align: center;
+}
+
+#${n}marketplace .dt-paging .pagination {
+    display: inline-flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin: 4px 0;
+    border-radius: 4px;
+}
+
+#${n}marketplace .dt-paging .pagination .dt-paging-button {
+    list-style: none;
+}
+
+#${n}marketplace .dt-paging .pagination .dt-paging-button .page-link {
+    position: relative;
+    float: left;
+    padding: 6px 12px;
+    line-height: 1.42857143;
+    color: #428bca;
+    text-decoration: none;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    margin-left: -1px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#${n}marketplace .dt-paging .pagination .dt-paging-button .page-link:hover {
+    background-color: #eee;
+}
+
+#${n}marketplace .dt-paging .pagination .dt-paging-button.active .page-link {
+    color: #fff;
+    background-color: #428bca;
+    border-color: #428bca;
+    z-index: 2;
+}
+
+#${n}marketplace .dt-paging .pagination .dt-paging-button.disabled .page-link {
+    color: #777;
+    cursor: not-allowed;
+    background-color: #fff;
+}
+
+#${n}marketplace .dt-paging .pagination .dt-paging-button:first-child .page-link {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+#${n}marketplace .dt-paging .pagination .dt-paging-button:last-child .page-link {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
 }
 
 #${n}marketplace a:hover {
@@ -477,34 +558,38 @@
                 }
             };
 
-            var myDataTable = $('#${n}portletTable').dataTable({
-                "aoColumnDefs": [{"bSortable": false, "aTargets": [ 2 ] }, { "bVisible": false, "aTargets": [ 3 ] }],
-                "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
-                       applyEllipsis(nRow,0,75);
-                      },
-                "sDom": '<rt'+
-                    '<"row ${n}bottom" <"col-6 col-sm-8 col-md-3" i>'+
-                    '<"col-6 col-sm-4 col-md-3 order-md-2"l>'+
-                    '<"col-12 col-md-6 order-md-1"p>>',
-                "bStateSave": false,
-                "bAutoWidth":false
+            var myDataTable = $('#${n}portletTable').DataTable({
+                columnDefs: [{orderable: false, targets: [2]}, {visible: false, targets: [3]}],
+                rowCallback: function(nRow, aData) {
+                    applyEllipsis(nRow, 0, 75);
+                },
+                dom: '<rt<"row ${n}bottom"<"col-6 col-sm-8 col-md-3"i><"col-6 col-sm-4 col-md-3 order-md-2"l><"col-12 col-md-6 order-md-1"p>>',
+                language: {
+                    lengthMenu: '_MENU_ records per page',
+                    paginator: {
+                        previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                        next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+                    }
+                },
+                stateSave: false,
+                autoWidth: false
             });
 
             $("#${n}featured").insertAfter($("#${n}marketplace .top"));
 
-            var setFilter = function(text){
-                myDataTable.fnFilter(text.trim());
+            var setFilter = function(text) {
+                myDataTable.search('').column(3).search(text.trim()).draw();
             };
 
-            var sortColumns = function(column){
-                myDataTable.fnSort([[column, 'asc']]);
-            }
+            var sortColumns = function(column) {
+                myDataTable.order([column, 'asc']).draw();
+            };
 
-            var clearFilter = function(){
-                myDataTable.fnFilter("");
+            var clearFilter = function() {
+                myDataTable.search('').column(3).search('').draw();
                 clearKeywordFilter();
                 $("#${n}portletTable_filter").focus();
-            }
+            };
 
             var clearKeywordFilter = function(){
                 $("#${n}portletTable_filter").val("");
@@ -551,7 +636,7 @@
             $("#${n}portletTable_filter").keyup(function(e) {
                 disableCategoriesWidgets();
                 enableAZIndexWidgets();
-                setFilter(this.value);
+                myDataTable.column(3).search('').search(this.value.trim()).draw();
             });
 
             $("#${n}clear_filter_button").on('click', function(){

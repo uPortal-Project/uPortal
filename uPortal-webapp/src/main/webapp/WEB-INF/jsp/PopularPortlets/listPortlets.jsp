@@ -25,55 +25,83 @@
 
 <c:set var="n"><portlet:namespace/></c:set>
 <style>
-#${n}portletBrowser .dataTables_filter, #${n}portletBrowser .first.paginate_button, #${n}portletBrowser .last.paginate_button{
+#${n}portletBrowser .dt-search,
+#${n}portletBrowser .first.dt-paging-button,
+#${n}portletBrowser .last.dt-paging-button {
     display: none;
 }
-#${n}portletBrowser .dataTables-inline, #${n}portletBrowser .column-filter-widgets {
-    display: inline-block;
-}
-#${n}portletBrowser .dataTables_wrapper {
+#${n}portletBrowser .dt-container {
     width: 100%;
 }
-#${n}portletBrowser .dataTables_paginate .paginate_button {
+#${n}portletBrowser .column-filter-widgets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+#${n}portletBrowser .column-filter-widget select {
+    font-size: 14px;
+}
+#${n}portletBrowser .filter-term {
+    display: inline-block;
+    background: #d9edf7;
+    border: 1px solid #bce8f1;
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 4px;
+}
+#${n}portletBrowser .filter-term::after {
+    content: ' \00d7';
+}
+#${n}portletBrowser .view-filter {
+    padding: 10px 15px 15px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+#${n}portletBrowser .dt-paging-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 14px;
+}
+#${n}portletBrowser .dt-paging-row .dt-info {
+    white-space: nowrap;
+}
+#${n}portletBrowser .dt-paging-row .dt-length {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+#${n}portletBrowser .dt-paging-row .dt-length select {
+    display: inline-block !important;
+    width: auto;
+    font-size: 14px;
+}
+#${n}portletBrowser .dt-paging-row .dt-length label {
+    font-weight: normal;
+    margin: 0;
+}
+#${n}portletBrowser .dt-paging .page-link {
     margin: 2px;
     color: #428BCA;
     cursor: pointer;
-    *cursor: hand;
+    font-size: 14px;
 }
-#${n}portletBrowser .dataTables_paginate .paginate_active {
-    margin: 2px;
-    color:#000;
+#${n}portletBrowser .dt-paging .page-item.active .page-link {
+    color: #000;
+    background: none;
+    border-color: transparent;
 }
-
-#${n}portletBrowser .dataTables_paginate .paginate_active:hover {
-    text-decoration: line-through;
-}
-
 #${n}portletBrowser table tr td a {
     color: #428BCA;
 }
-
-#${n}portletBrowser .dataTables-left {
-    float:left;
-}
-
-#${n}portletBrowser .column-filter-widget {
-    vertical-align: top;
-    display: inline-block;
-    overflow: hidden;
-    margin-right: 5px;
-}
-
-#${n}portletBrowser .filter-term {
-    display: block;
-    text-align:bottom;
-}
-
-#${n}portletBrowser .dataTables_length label {
-    font-weight: normal;
-}
 #${n}portletBrowser .datatable-search-view {
-    text-align:right;
+    text-align: right;
 }
 </style>
 
@@ -115,10 +143,18 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <div class="card-body portlet-body">
 
     <!-- Portlet Section -->
-    <div id="${n}popularPortlets" class="portlet-section pagination" role="region">
+    <div id="${n}popularPortlets" class="portlet-section fl-pager" role="region">
 
       <div class="portlet-section-body">
-        <table id="${n}portletsTable" style="width:100%;">
+          <div class="row alert alert-info view-filter" id="${n}viewFilter">
+              <div class="toolbar-filter"><b>Filters</b>:</div>
+              <div>
+                  <div class="column-filter-widgets" id="${n}columnFilterWidgets"></div>
+              </div>
+              <div class="toolbar-br"><br/></div>
+              <div class="dt-paging-row" id="${n}pagingRow"></div>
+          </div>
+          <table id="${n}portletsTable" style="width:100%;">
           <thead>
             <tr rsf:id="header:">
               <th><spring:message code="title"/></th>
@@ -174,80 +210,114 @@ up.jQuery(function() {
             portletList_configuration.main.table.fnClearTable();
             portletList_configuration.main.table.fnDestroy();
         }
-        portletList_configuration.main.table = $("#${n}portletsTable").dataTable({
-            iDisplayLength: portletList_configuration.main.pageSize,
-            aLengthMenu: [5, 10, 20, 50],
-            bServerSide: false,
-            sAjaxSource: '${popularPortletCountsUrl}',
-            sAjaxDataProp: "counts",
-            bDeferRender: false,
-            bProcessing: true,
-            bAutoWidth:false,
-            sPaginationType: 'full_numbers',
-            oLanguage: {
-                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
-                oPaginate: {
-                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
-                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+        portletList_configuration.main.table = $("#${n}portletsTable").DataTable({
+            pageLength: portletList_configuration.main.pageSize,
+            lengthMenu: [5, 10, 20, 50],
+            serverSide: false,
+            ajax: {
+                url: '${popularPortletCountsUrl}',
+                data: function(d) {
+                    var formData = $("#${n}form").serializeArray();
+                    formData.forEach(function(item) { d[item.name] = item.value; });
+                },
+                dataSrc: 'counts',
+                error: function(xhr, error, thrown) {
+                    console.error('AJAX Error:', xhr.status, xhr.responseText, error, thrown);
                 }
             },
-            aoColumns: [
-                { mData: 'portletFName', sType: 'string', sWidth: '50%' },  // Name
-                { mData: 'count', sType: 'string', sWidth: '50%' }  // Times
+            deferRender: false,
+            processing: true,
+            autoWidth: false,
+            language: {
+                lengthMenu: '_MENU_ per page',
+                paginator: {
+                    first: '\u00AB',
+                    previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                    next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>',
+                    last: '\u00BB'
+                }
+            },
+            infoCallback: function(settings, start, end, max, total, pre) {
+                var api = this.api();
+                var pageInfo = api.page.info();
+                return 'Viewing page ' + (pageInfo.page + 1) + '. Showing records ' + start + ' to ' + end + ' of ' + total + ' items.';
+            },
+            columns: [
+                { data: 'portletFName', width: '50%' },
+                { data: 'count', width: '50%' }
             ],
-            fnInitComplete: function (oSettings) {
-                portletList_configuration.main.table.fnDraw();
+            initComplete: function() {
+                this.api().draw();
             },
-            fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = $.ajax({
-                    url: sUrl,
-                    data: $("#${n}form").serialize(),
-                    dataType: "json",
-                    cache: false,
-                    type: oSettings.sServerMethod,
-                    success: function (json) {
-                        if (json.sError) {
-                            oSettings.oApi._fnLog(oSettings, 0, json.sError);
-                        }
-
-                        $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
-                        fnCallback(json);
-                    },
-                    error: function (xhr, error, thrown) {
-                        lib.handleError(xhr, error, thrown);
-                    }
-                });
+            rowCallback: function(row, data) {
+                $('td:eq(0)', row).html(getDeepLinkAnchorTag(data.portletFName, data.portletDescription, data.portletTitle));
             },
-            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
-                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
-                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
-                infoMessage = infoMessage.replace(/_START_/g, iStart).
-                                      replace(/_END_/g, iEnd).
-                                      replace(/_TOTAL_/g, iTotal).
-                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
-                return infoMessage;
+            drawCallback: function() {
+                var table = this.api();
+                var $widgets = $('#${n}columnFilterWidgets');
+                var $pagingRow = $('#${n}pagingRow');
+                if (table.data().length > 0 && $widgets.children().length === 0) {
+                    var searchFns = [];
+                    table.columns().every(function() {
+                        var col = this;
+                        var colIdx = col.index();
+                        var header = $(col.header()).text().trim();
+                        var colSelected = [];
+                        var vals = [];
+                        col.data().each(function(v) {
+                            var s = String(v);
+                            if (vals.indexOf(s) === -1) vals.push(s);
+                        });
+                        vals.sort();
+                        var $wrap = $('<div class="column-filter-widget"></div>');
+                        var $sel = $('<select></select>');
+                        $sel.append($('<option value="">' + header + '</option>'));
+                        vals.forEach(function(v) { $sel.append($('<option></option>').val(v).text(v)); });
+                        if (vals.length <= 1) $sel.prop('disabled', true);
+                        var searchFn = (function($sel, colSelected, col) {
+                            return function(settings, data, dataIndex) {
+                                if (colSelected.length === 0) return true;
+                                var cellVal = String(col.data()[dataIndex] !== undefined ? col.data()[dataIndex] : data[col.index()]);
+                                return colSelected.indexOf(cellVal) !== -1;
+                            };
+                        })($sel, colSelected, col);
+                        searchFns.push(searchFn);
+                        $.fn.dataTable.ext.search.push(searchFn);
+                        $sel.on('change', function() {
+                            var v = $(this).val();
+                            if (!v || colSelected.indexOf(v) !== -1) return;
+                            colSelected.push(v);
+                            $(this).val('');
+                            var $term = $('<span class="filter-term"></span>').text(v);
+                            $term.on('click', function() {
+                                var idx = colSelected.indexOf(v);
+                                if (idx !== -1) colSelected.splice(idx, 1);
+                                $(this).remove();
+                                table.draw();
+                            });
+                            $wrap.append($term);
+                            table.draw();
+                        });
+                        $wrap.append($sel);
+                        $widgets.append($wrap);
+                    });
+                }
+                $('#${n}portletBrowser .dt-info').appendTo($pagingRow);
+                $('#${n}portletBrowser .dt-length').appendTo($pagingRow);
+                $('#${n}portletBrowser .dt-paging').appendTo($pagingRow);
             },
-            // Add links to the proper columns after we get the data
-            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                // get deeplink anchor tag
-                $('td:eq(0)', nRow).html( getDeepLinkAnchorTag(aData.portletFName, aData.portletDescription, aData.portletTitle) );
-            },
-            // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><P><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
-            // SearchPanes configuration (modern replacement for ColumnFilterWidgets)
-            searchPanes: {
-                columns: [0, 1], // Title and Times columns
-                cascadePanes: true,
-                viewTotal: true,
-                layout: 'columns-2'
+            layout: {
+                topStart: null,
+                topEnd: null,
+                top: null,
+                bottomStart: null,
+                bottom: { features: ['info', 'pageLength', 'paging'] },
+                bottomEnd: null
             }
         });
     };
 
     initializeTable();
     $("#${n}days").change(initializeTable);
-    // Adding formatting to sDom
-    $("div.toolbar-br").html('<BR>');
-    $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
 });
 </script>
