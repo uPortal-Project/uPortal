@@ -116,7 +116,7 @@ up.jQuery(function() {
         form.target.value = targetSuggest.getValue();
     };
 
-    var targetSuggest = new ModernAutocomplete(
+    var targetSuggest = up.Autocomplete(
             document.querySelector("#${n}targetSuggest"),
             {
                 initialText: '<spring:message code="target" htmlEscape="false" javaScriptEscape="true"/>',

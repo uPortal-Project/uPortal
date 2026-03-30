@@ -167,7 +167,7 @@ up.jQuery(function() {
             return true;
         };
 
-        var principalSuggest = new ModernAutocomplete(
+        var principalSuggest = up.Autocomplete(
             document.querySelector("#${n}principalSuggest"),
             {
                 initialText: "John",
@@ -194,7 +194,7 @@ up.jQuery(function() {
             }
         );
 
-        var permissionSuggest = new ModernAutocomplete(
+        var permissionSuggest = up.Autocomplete(
             document.querySelector("#${n}permissionSuggest"),
             {
                 initialText: '<spring:message code="permission" htmlEscape="false" javaScriptEscape="true"/>',
