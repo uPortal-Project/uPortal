@@ -14,6 +14,7 @@
  */
 package org.apereo.portal.io.xml;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
 import java.io.BufferedInputStream;
@@ -73,12 +74,13 @@ import org.apache.commons.compress.compressors.pack200.Pack200CompressorInputStr
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.CloseShieldInputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.detect.Detector;
-import org.apache.tika.io.CloseShieldInputStream;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.mime.MediaType;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apereo.portal.concurrency.CallableWithoutResult;
@@ -519,26 +521,33 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         }
     }
 
-    private MediaType getMediaType(BufferedInputStream inputStream, String fileName)
-            throws IOException {
-        final TikaInputStream tikaInputStreamStream =
-                TikaInputStream.get(new CloseShieldInputStream(inputStream));
-        try {
+    @VisibleForTesting
+    MediaType getMediaType(BufferedInputStream inputStream, String fileName) throws IOException {
+        IOException detectionException = null;
+        try (final TikaInputStream tikaInputStream =
+                TikaInputStream.get(new CloseShieldInputStream(inputStream))) {
             final Detector detector = new DefaultDetector();
             final Metadata metadata = new Metadata();
-            metadata.set(Metadata.RESOURCE_NAME_KEY, fileName);
+            metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, fileName);
 
-            final MediaType type = detector.detect(tikaInputStreamStream, metadata);
+            final MediaType type = detector.detect(tikaInputStream, metadata);
             logger.debug("Determined '{}' for '{}'", type, fileName);
             return type;
         } catch (IOException e) {
-            logger.warn("Failed to determine media type for '" + fileName + "' assuming XML", e);
-            return null;
+            logger.warn("Failed to determine media type for '{}'", fileName, e);
+            detectionException = e;
+            throw e;
         } finally {
-            IOUtils.closeQuietly(tikaInputStreamStream);
-
             // Reset the buffered stream to make up for anything read by the detector
-            inputStream.reset();
+            try {
+                inputStream.reset();
+            } catch (IOException resetException) {
+                if (detectionException != null) {
+                    detectionException.addSuppressed(resetException);
+                } else {
+                    throw resetException;
+                }
+            }
         }
     }
 

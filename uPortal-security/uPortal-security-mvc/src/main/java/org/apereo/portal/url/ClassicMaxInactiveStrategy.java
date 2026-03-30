@@ -44,7 +44,7 @@ public class ClassicMaxInactiveStrategy implements IMaxInactiveStrategy {
         assert permissions != null;
         if (permissions.length == 0) {
             // No max inactive permission set for this user
-            log.info(
+            log.debug(
                     "No {} permissions apply to user '{}'",
                     MAX_INACTIVE_ATTR,
                     person.getAttribute(IPerson.USERNAME));
