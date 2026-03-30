@@ -8,7 +8,7 @@ dependencies {
     api project(':uPortal-concurrency')
     api project(':uPortal-hibernate:uPortal-hibernate4-dialects')
 
-    api "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    api "com.fasterxml.jackson.core:jackson-annotations:${jacksonAnnotationsVersion}"
     api "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
     api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     api "com.google.guava:guava:${guavaVersion}"
