@@ -156,6 +156,11 @@ class ModernUploader {
 
         this.uploadBtn.disabled = false;
         if (this.pauseBtn) this.pauseBtn.classList.add('d-none');
+
+        const hasErrors = this.files.some(f => f.status === 'error');
+        if (!hasErrors) {
+            window.location.reload();
+        }
     }
 
     async uploadFile(fileObj) {
@@ -172,8 +177,6 @@ class ModernUploader {
 
             if (response.ok) {
                 fileObj.status = 'complete';
-                // Redirect or show success message
-                window.location.reload();
             } else {
                 throw new Error(`Upload failed: ${response.statusText}`);
             }
