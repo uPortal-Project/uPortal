@@ -383,7 +383,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         <h4 class="modal-title">Configuration</h4>
                     </div>
                     <div class="modal-body">
@@ -397,7 +397,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"><xsl:attribute name="aria-label"><xsl:value-of select="upMsg:getMessage('close', $USER_LANG)"/></xsl:attribute>&times;</button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"><xsl:attribute name="aria-label"><xsl:value-of select="upMsg:getMessage('close', $USER_LANG)"/></xsl:attribute></button>
                         <h4 class="modal-title"><xsl:value-of select="upMsg:getMessage('direct.url', $USER_LANG)"/></h4>
                     </div>
                     <div class="modal-body">

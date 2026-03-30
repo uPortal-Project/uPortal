@@ -184,7 +184,7 @@ task aggregateRespondrSkins {
 
 // Generate CSS for Respondr skins
 project.tasks.getByName('npm_run_compile-scss').dependsOn(prepareSkinResources)
-project.tasks.getByName('npm_run_compile-scss').environment('BOOTSTRAP_VERSION', bootstrapVersion)
+project.tasks.getByName('npm_run_compile-scss').environment.put('BOOTSTRAP_VERSION', bootstrapVersion)
 aggregateRespondrSkins.dependsOn('npm_run_compile-scss')
 processResources.dependsOn(aggregateRespondrSkins)
 
