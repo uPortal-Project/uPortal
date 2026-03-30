@@ -18,7 +18,6 @@ class ModernRatingModal {
     }
 
     createModal() {
-        const title = this.element.dataset.title;
         const closeLabel = this.element.dataset['close.button.label'] || 'Close';
         const saveLabel = this.element.dataset['save.button.label'] || 'Save';
 
@@ -26,7 +25,7 @@ class ModernRatingModal {
             <div class="modal-dialog ratePortletModal-dialog" style="text-align:center; position:static">
                 <div class="modal-content" style="display:inline-block">
                     <div class="modal-header">
-                        <h4 class="modal-title" style="white-space: nowrap"><strong>${title}</strong></h4>
+                        <h4 class="modal-title" style="white-space: nowrap"><strong class="modal-title-text"></strong></h4>
                     </div>
                     <div class="modal-body" style="font-size:2em;">
                         <div class="form-text ratingModalInstruct" style="font-size:0.5em; white-space:normal; word-wrap:break-word;"></div>
@@ -35,14 +34,19 @@ class ModernRatingModal {
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${closeLabel}</button>
-                        <button type="button" class="btn btn-primary ratingModalSaveButton disabled">${saveLabel}</button>
+                        <button type="button" class="btn btn-secondary modal-close-btn" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn btn-primary ratingModalSaveButton disabled modal-save-btn"></button>
                     </div>
                 </div>
             </div>
         `;
 
         this.element.innerHTML = modalHTML;
+
+        this.element.querySelector('.modal-title-text').textContent = this.element.dataset.title || '';
+        this.element.querySelector('.modal-close-btn').textContent = closeLabel;
+        this.element.querySelector('.modal-save-btn').textContent = saveLabel;
+
         this.modal = new bootstrap.Modal(this.element);
         
         // Add backdrop cleanup
