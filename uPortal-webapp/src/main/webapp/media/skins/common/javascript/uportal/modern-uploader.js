@@ -146,7 +146,7 @@ class ModernUploader {
         if (this.files.length === 0) return;
 
         this.uploadBtn.disabled = true;
-        this.pauseBtn.classList.remove('d-none');
+        if (this.pauseBtn) this.pauseBtn.classList.remove('d-none');
 
         for (const fileObj of this.files) {
             if (fileObj.status === 'queued') {
@@ -155,7 +155,7 @@ class ModernUploader {
         }
 
         this.uploadBtn.disabled = false;
-        this.pauseBtn.classList.add('d-none');
+        if (this.pauseBtn) this.pauseBtn.classList.add('d-none');
     }
 
     async uploadFile(fileObj) {
