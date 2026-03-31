@@ -74,7 +74,7 @@
   -->
   <xsl:template name="columns">
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-    <div id="portalPageBodyColumns" class="row" role="main" aria-multiselectable="false" aria-readonly="false" aria-disabled="false" tabindex="0">
+    <div id="portalPageBodyColumns" class="row" role="main" tabindex="0">
 
       <!--
        | uPortal Classic vs. Flex
