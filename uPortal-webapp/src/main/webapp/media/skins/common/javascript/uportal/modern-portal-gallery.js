@@ -670,6 +670,7 @@ class LayoutSelector {
         
         const columnText = layout.columns.length === 1 ? this.strings.column : this.strings.columns;
         const layoutName = this.strings[layout.nameKey] || layout.nameKey;
+        const layoutString = layout.columns.join('-');
         
         layoutEl.innerHTML = `
             <div class="ri-wrapper layout-wrapper">

@@ -50,6 +50,9 @@ class ModernRatingModal {
         this.modal = new bootstrap.Modal(this.element);
         
         // Add backdrop cleanup
+        this.element.addEventListener('hide.bs.modal', () => {
+            if (document.activeElement) document.activeElement.blur();
+        });
         this.element.addEventListener('hidden.bs.modal', () => {
             document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
             document.body.classList.remove('modal-open');
