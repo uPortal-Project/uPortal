@@ -235,13 +235,70 @@ class ModernNotification {
 window.up = window.up || {};
 window.up.notify = ModernNotification.show;
 
-// jQuery plugin compatibility
-if (window.jQuery) {
-    window.jQuery.fn.createRatingModal = function() {
-        return this.each(function() {
-            if (!this.modernRatingModal) {
-                this.modernRatingModal = new ModernRatingModal(this);
-            }
-        });
-    };
-}
+// Promise-based confirm dialog replacing native confirm()
+window.up.confirm = function(message, confirmLabel, cancelLabel) {
+    confirmLabel = confirmLabel || 'OK';
+    cancelLabel = cancelLabel || 'Cancel';
+    return new Promise(function(resolve) {
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center;';
+
+        var dialog = document.createElement('div');
+        dialog.style.cssText = 'background:#fff;border-radius:4px;padding:20px;max-width:400px;width:90%;box-shadow:0 4px 12px rgba(0,0,0,0.3);';
+
+        var msg = document.createElement('p');
+        msg.textContent = message;
+        msg.style.cssText = 'margin:0 0 16px;font-size:14px;';
+
+        var btnRow = document.createElement('div');
+        btnRow.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;';
+
+        var cancelBtn = document.createElement('button');
+        cancelBtn.textContent = cancelLabel;
+        cancelBtn.className = 'btn btn-secondary';
+
+        var confirmBtn = document.createElement('button');
+        confirmBtn.textContent = confirmLabel;
+        confirmBtn.className = 'btn btn-primary';
+
+        function close(result) {
+            if (document.activeElement) document.activeElement.blur();
+            overlay.remove();
+            resolve(result);
+        }
+
+        cancelBtn.addEventListener('click', function() { close(false); });
+        confirmBtn.addEventListener('click', function() { close(true); });
+
+        btnRow.appendChild(cancelBtn);
+        btnRow.appendChild(confirmBtn);
+        dialog.appendChild(msg);
+        dialog.appendChild(btnRow);
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+        confirmBtn.focus();
+    });
+};
+
+// Register jQuery plugin - aggr loads before up.jQuery is set via noConflict,
+// so register on window.jQuery now (same object that becomes up.jQuery after noConflict)
+// and also re-register when up.jQuery is confirmed available.
+(function() {
+    function registerPlugin(jq) {
+        if (jq && jq.fn && !jq.fn.createRatingModal) {
+            jq.fn.createRatingModal = function() {
+                return this.each(function() {
+                    if (!this.modernRatingModal) {
+                        this.modernRatingModal = new ModernRatingModal(this);
+                    }
+                });
+            };
+        }
+    }
+    // Register on current jQuery (before noConflict runs)
+    if (window.jQuery) registerPlugin(window.jQuery);
+    // Also register once DOM is ready in case up.jQuery differs
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.up && window.up.jQuery) registerPlugin(window.up.jQuery);
+    });
+})();

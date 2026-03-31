@@ -427,7 +427,7 @@ class ModernEntitySelector {
             } else {
                 console.error('Entity invalid or failed to load:', { key, entity });
                 this.options.selected.pop();
-                alert('Failed to load entity data. Please try again.');
+                window.up.notify('Failed to load entity data. Please try again.', 'TopCenter', 'error');
             }
         }
         this.updateButtonStates();

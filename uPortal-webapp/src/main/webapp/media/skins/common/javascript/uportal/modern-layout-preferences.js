@@ -75,8 +75,8 @@ class LayoutPreferences {
                         console.error('Tab rename failed:', error);
                     });
                 },
-                onTabRemove: (tabContainer) => {
-                    if (!confirm(this.options.messages.confirmRemoveTab)) {
+                onTabRemove: async (tabContainer) => {
+                    if (!await window.up.confirm(this.options.messages.confirmRemoveTab)) {
                         return false;
                     }
                     
@@ -156,10 +156,10 @@ class LayoutPreferences {
                     
                     persistence.update(options, (data) => {
                         // Success - operation completed successfully
-                    }).catch(error => {
+                    }).catch(async (error) => {
                         // Error - show error dialog and offer reload
                         console.error('Move failed:', error);
-                        if (confirm(this.options.messages.movePortletError)) {
+                        if (await window.up.confirm(this.options.messages.movePortletError)) {
                             location.reload();
                         }
                     });
@@ -183,12 +183,12 @@ class LayoutPreferences {
 
     initializePortletDeletion() {
         // Portlet deletion
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', async (e) => {
             if (e.target.matches('a[id*=removePortlet_]')) {
                 e.preventDefault();
                 
                 const id = window.up.defaultNodeIdExtractor(e.target);
-                if (!confirm(this.options.messages.confirmRemovePortlet)) {
+                if (!await window.up.confirm(this.options.messages.confirmRemovePortlet)) {
                     return false;
                 }
                 
