@@ -230,7 +230,7 @@ up.jQuery(function() {
             autoWidth: false,
             language: {
                 lengthMenu: '_MENU_ per page',
-                paginator: {
+                paginate: {
                     first: '\u00AB',
                     previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
                     next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>',
