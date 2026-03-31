@@ -49,13 +49,17 @@ class ModernRatingModal {
 
         this.modal = new bootstrap.Modal(this.element);
         
-        // Add backdrop cleanup
+        // Blur active element when modal starts hiding to avoid aria-hidden warning
         this.element.addEventListener('hide.bs.modal', () => {
             if (document.activeElement) document.activeElement.blur();
         });
+        // Clean up backdrop only if no other modals are open
         this.element.addEventListener('hidden.bs.modal', () => {
-            document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-            document.body.classList.remove('modal-open');
+            const openModals = document.querySelectorAll('.modal.show');
+            if (openModals.length === 0) {
+                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                document.body.classList.remove('modal-open');
+            }
         });
     }
 
