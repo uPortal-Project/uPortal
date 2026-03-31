@@ -18,8 +18,8 @@ class ModernRatingModal {
     }
 
     createModal() {
-        const closeLabel = this.element.dataset['close.button.label'] || 'Close';
-        const saveLabel = this.element.dataset['save.button.label'] || 'Save';
+        const closeLabel = this.element.getAttribute('data-close-button-label') || 'Close';
+        const saveLabel = this.element.getAttribute('data-save-button-label') || 'Save';
 
         const modalHTML = `
             <div class="modal-dialog ratePortletModal-dialog" style="text-align:center; position:static">
@@ -117,12 +117,12 @@ class ModernRatingModal {
                 if (data.rating === null) {
                     that.ratingValue = 0;
                     that.highlightStars(0);
-                    instructEl.textContent = that.element.dataset['rating.instructions.unrated'] || '';
+                    instructEl.textContent = that.element.dataset.ratingInstructionsUnrated || '';
                 } else {
                     that.ratingValue = data.rating;
                     that.highlightStars(data.rating);
                     saveButton.classList.remove('disabled');
-                    instructEl.textContent = that.element.dataset['rating.instructions.rated'] || '';
+                    instructEl.textContent = that.element.dataset.ratingInstructionsRated || '';
                 }
 
                 // Center modal dialog
@@ -131,7 +131,7 @@ class ModernRatingModal {
             },
             error: function() {
                 ModernNotification.show(
-                    that.element.dataset['get.rating.unsucessful'] || 'Error loading rating',
+                    that.element.dataset.getRatingUnsuccessful || 'Error loading rating',
                     'TopCenter',
                     'error'
                 );
@@ -150,21 +150,21 @@ class ModernRatingModal {
             success: function() {
                 that.modal.hide();
                 ModernNotification.show(
-                    that.element.dataset['rating.save.successful'] || 'Rating saved successfully',
+                    that.element.dataset.ratingSaveSuccessful || 'Rating saved successfully',
                     'TopCenter',
                     'success'
                 );
                 setTimeout(() => {
                     const instructEl = that.element.querySelector('.ratingModalInstruct');
                     if (instructEl) {
-                        instructEl.textContent = that.element.dataset['rating.instructions.rated'] || '';
+                        instructEl.textContent = that.element.dataset.ratingInstructionsRated || '';
                     }
                 }, 1000);
             },
             error: function() {
                 that.modal.hide();
                 ModernNotification.show(
-                    that.element.dataset['rating.save.unsuccessful'] || 'Error saving rating',
+                    that.element.dataset.ratingSaveUnsuccessful || 'Error saving rating',
                     'TopCenter',
                     'error'
                 );
