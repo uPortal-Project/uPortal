@@ -404,19 +404,18 @@
                         <p id="direct-url-display" tabindex="0"></p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><xsl:value-of select="upMsg:getMessage('close', $USER_LANG)"/></button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><xsl:value-of select="upMsg:getMessage('close', $USER_LANG)"/></button>
                     </div>
                 </div>
             </div>
         </div>
         <script type="text/javascript">
-            up.jQuery(function() {
-                var $ = up.jQuery;
-                $('#direct-url-modal').on('show.bs.modal', function (event) {
-                    var widget = $(event.relatedTarget); // Widget that triggered the modal
-                    var dUrl = widget.data('direct-url'); // Extract info from data-* attributes
-                    $('#direct-url-display').text(dUrl);
-                });
+            document.querySelector('#direct-url-modal').addEventListener('show.bs.modal', function(event) {
+                var url = event.relatedTarget ? event.relatedTarget.getAttribute('data-direct-url') : '';
+                document.getElementById('direct-url-display').textContent = url;
+            });
+            document.querySelector('#direct-url-modal').addEventListener('hide.bs.modal', function() {
+                if (document.activeElement) document.activeElement.blur();
             });
         </script>
     </xsl:template>

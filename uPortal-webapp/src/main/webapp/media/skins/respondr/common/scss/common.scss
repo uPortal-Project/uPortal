@@ -496,17 +496,14 @@ body {
   /* Fix z-index layering - Vue component overlaying controls */
   .up-portlet-titlebar {
     position: relative;
-    z-index: 10;
   }
   
   .portlet-controls {
-    position: relative;
-    z-index: 20;
+    position: absolute;
   }
   
   .portlet-options-menu {
     position: relative;
-    z-index: 30;
   }
   
   /* Ensure Vue components don't overlay portlet controls */
