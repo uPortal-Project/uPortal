@@ -25,12 +25,17 @@ var up = up || {};
 class ModernUploader {
     constructor(container, options = {}) {
         this.container = typeof container === 'string' ? document.querySelector(container) : container;
+        const defaultQueueSettings = {
+            uploadURL: '/api/import',
+            fileQueueLimit: 1
+        };
+        const providedQueueSettings = options.queueSettings || {};
         this.options = {
+            ...options,
             queueSettings: {
-                uploadURL: '/api/import',
-                fileQueueLimit: 1
-            },
-            ...options
+                ...defaultQueueSettings,
+                ...providedQueueSettings
+            }
         };
         
         this.files = [];
