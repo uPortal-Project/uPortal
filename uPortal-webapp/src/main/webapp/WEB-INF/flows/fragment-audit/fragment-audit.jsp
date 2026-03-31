@@ -23,9 +23,9 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="card portlet" role="section">
     <!-- Portlet Body -->
-    <div class="fl-widget-content portlet-body">
+    <div class="card-body portlet-body">
 
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">
@@ -42,11 +42,11 @@
     </div>
 </div>
 
-<div id="${n}template" class="fl-widget panel panel-default" style="display: none;">
-    <div class="fl-widget-titlebar panel-heading">
+<div id="${n}template" class="card card" style="display: none;">
+    <div class="card-header card-header">
         <h2><span class="name"></span></h2>
     </div>
-    <div class="fl-widget-content panel-body" style="padding: 4px;">
+    <div class="card-body card-body" style="padding: 4px;">
         <p>
             <div style="float: right;">
                 <strong><spring:message code="fragmentAudit.precedence.label"/>:</strong> <span class="precedence"></span>

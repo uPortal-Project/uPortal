@@ -26,10 +26,10 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet user-mgr view-reviewuser" role="section">
+<div class="card portlet user-mgr view-reviewuser" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="card-header titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading">
             <c:choose>
                 <c:when test="${ accountForm.id < 0 }">
@@ -48,7 +48,7 @@
     </div> <!-- end: portlet-titlebar -->
 
     <!-- Portlet Body -->
-    <div class="fl-widget-content content portlet-content">
+    <div class="card-body content portlet-content">
 
         <form:form modelAttribute="accountForm" action="${formUrl}" method="POST">
 
@@ -67,7 +67,7 @@
                             <c:if test="${ accountForm.id < 0 }">
                                 <tr>
                                     <td class="attribute-name">
-                                        <label for="${n}userUsername">
+                                        <label for="${n}userUsername" class="form-label">
                                             <spring:message code="username" />
                                         </label>
                                     </td>
@@ -79,7 +79,7 @@
                             <!--  Password and confirm password -->
                             <tr>
                                 <td class="attribute-name">
-                                    <label for="${n}userPassword">
+                                    <label for="${n}userPassword" class="form-label">
                                         <spring:message code="password"/>
                                     </label>
                                 </td>
@@ -89,7 +89,7 @@
                             </tr>
                             <tr>
                                 <td class="attribute-name">
-                                    <label for="${n}userConfirmPassword">
+                                    <label for="${n}userConfirmPassword" class="form-label">
                                         <spring:message code="confirm.password"/>
                                     </label>
                                 </td>
@@ -118,7 +118,7 @@
                                 <tr>
                                     <td class="attribute-name">
                                         <strong>
-                                            <label for="${ n }${ attribute.name }">
+                                            <label for="${ n }${ attribute.name }" class="form-label">
                                                 <spring:message code="${ attribute.label }"/>
                                             </label>
                                         </strong>
@@ -159,7 +159,7 @@
                                     <td class="attribute-name">
                                         <c:set var="attrName" value="${ attribute.key }"/>
                                         <strong>
-                                            <label for="${ n }${ attrName }">
+                                            <label for="${ n }${ attrName }" class="form-label">
                                                 <spring:message code="attribute.displayName.${attrName}" text="${attrName}"/>
                                             </label>
                                         </strong>
@@ -242,13 +242,13 @@
 <script type="text/javascript">
     up.jQuery(function() {
         var $ = up.jQuery;
-        $(document).ready(function(){
-            up.ParameterEditor(
-                    $("#${n}standardAttributes"),
+        $(function(){
+            new ModernParameterEditor(
+                    $("#${n}standardAttributes")[0],
                     {
                         parameterBindName: 'attributes',
                         multivalued: true,
-                        dialog: $("#${n}parameterForm"),
+                        dialog: $("#${n}parameterForm")[0],
                         displayClasses: {
                             deleteItemLink: "delete-attribute-link",
                             deleteValueLink: "delete-attribute-value-link",
@@ -261,12 +261,12 @@
                         }
                     }
                 );
-            up.ParameterEditor(
-                    $("#${n}customAttributes"),
+            new ModernParameterEditor(
+                    $("#${n}customAttributes")[0],
                     {
                         parameterBindName: 'attributes',
                         multivalued: true,
-                        dialog: $("#${n}parameterForm"),
+                        dialog: $("#${n}parameterForm")[0],
                         displayClasses: {
                             deleteItemLink: "delete-attribute-link",
                             deleteValueLink: "delete-attribute-value-link",

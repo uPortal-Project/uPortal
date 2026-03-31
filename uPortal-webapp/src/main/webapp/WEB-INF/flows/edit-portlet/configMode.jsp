@@ -32,29 +32,38 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | the user interface of this portlet
 | including HTML, CSS, JavaScript, accessibilty,
 | naming conventions, 3rd Party libraries
-| (like jQuery and the Fluid Skinning System)
+| (like jQuery and Bootstrap)
 | and more, refer to:
 | docs/SKINNING_UPORTAL.md
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet ptl-mgr view-configmode" role="section">
+<div class="card portlet ptl-mgr view-configmode" role="section">
 
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+  <div class="card-header titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading">
       <spring:message code="edit.portlet.configuration"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
 
   <!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content">
+  <div class="card-body content portlet-content">
     <up:render-delegate fname="${PORTLET_FNAME}" portletMode="CONFIG" windowState="maximized">
         <up:parent-url>
             <up:param name="execution" value="${flowExecutionKey}"/>
             <up:param name="_eventId" value="configModeAction"/>
         </up:parent-url>
     </up:render-delegate>
+
+    <!-- Configuration Navigation Buttons -->
+    <div class="buttons config-mode-buttons">
+        <form action="${navigationUrl}" method="post">
+            <input type="hidden" name="execution" value="${flowExecutionKey}"/>
+            <input class="button btn btn-primary" type="submit" value="<spring:message code='save'/>" name="_eventId_update"/>
+            <input class="button btn btn-link" type="submit" value="<spring:message code='return.without.saving'/>" name="_eventId_cancel"/>
+        </form>
+    </div>
 
   </div> <!-- end: portlet-content -->
 

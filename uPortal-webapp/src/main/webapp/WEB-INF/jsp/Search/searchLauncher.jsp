@@ -29,28 +29,22 @@
 
 <%-- Do not namespace webSearchContainer or webSearchSubmit. They are referenced in less files. You can change to
      class names, but that may impact users who have customized their less files. --%>
-<div id="webSearchContainer" class="fl-widget">
-    <div class="fl-widget-inner">
-      <div class="fl-widget-content">
-        <form class="form-search" role="form" method="POST" action="${searchLaunchUrl}" id="${n}webSearchForm">
-          <div class="input-group">
-            <spring:message code="search" var="searchPlaceholder" />
-            <spring:message code="search.terms" var="searchTitle" />
-            <spring:message code="search.submit" var="searchSubmit" />
-            <label for="${n}webSearchInput" class="sr-only">${searchTitle}</label>
-            <input id="${n}webSearchInput" class="searchInput input-large search-query form-control" value="" name="query"
-             type="search" placeholder="${searchPlaceholder}" title="${searchTitle}" maxlength="200"/>
-            <span class="input-group-btn">
-              <button id="webSearchSubmit" type="submit" name="submit" class="btn btn-default"
-               value="${searchSubmit}">
-                <span>${searchSubmit}</span>
-                <i class="fa fa-search" aria-hidden="true"></i>
-              </button>
-            </span>
-          </div>
-        </form>
+<div id="webSearchContainer" class="portal-search">
+    <form role="form" method="POST" action="${searchLaunchUrl}" id="${n}webSearchForm">
+      <div class="input-group">
+        <spring:message code="search" var="searchPlaceholder" />
+        <spring:message code="search.terms" var="searchTitle" />
+        <spring:message code="search.submit" var="searchSubmit" />
+        <label for="${n}webSearchInput" class="visually-hidden">${searchTitle}</label>
+        <input id="${n}webSearchInput" class="searchInput form-control" value="" name="query"
+         type="search" placeholder="${searchPlaceholder}" title="${searchTitle}" maxlength="200"/>
+        <button id="webSearchSubmit" type="submit" name="submit" class="btn btn-secondary"
+         value="${searchSubmit}">
+          <span>${searchSubmit}</span>
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </button>
       </div>
-    </div>
+    </form>
 </div>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/search/autosuggestHandler.js"></script>
@@ -75,7 +69,7 @@
     });
 
     // Only search if the user entered some text to search for
-    $("#${n}webSearchForm").submit(function(event) {
+    $("#${n}webSearchForm").on('submit', function(event) {
         if ($( "#${n}webSearchInput").val().trim().length == 0) {
             event.preventDefault();
         } else {

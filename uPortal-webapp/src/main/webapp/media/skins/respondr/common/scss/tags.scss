@@ -1,0 +1,127 @@
+/**
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+html {
+  background-color: $body-background-color;
+  overflow-x: hidden; /* prevent horizontal scrollbar on desktop */
+  min-height: 100%; /* do not use height and width properties on both html and body elements -> bug on chrome and safari with scrollTop effect with overflow-x: hidden */
+  min-width: 100%;
+
+  &.touch {
+    .portal-navigation-dropdown::after {
+      content: "";
+      position: absolute;
+      inset: 0 -10px -10px;
+    }
+
+    @media screen {
+      @media (min-width: 576px) {
+        .portal-navigation-gripper::after {
+          content: "";
+          position: absolute;
+          inset: -10px -10px 0 0;
+        }
+
+        .portal-navigation-delete::after {
+          content: "";
+          position: absolute;
+          inset: -10px 0 0 -10px;
+        }
+      }
+    }
+  }
+
+  body {
+    background: -webkit-gradient(
+      left top,
+      right top,
+      color-stop(0%, $offcanvas-background-color),
+      color-stop(260px, darken($offcanvas-background-color, 10%)),
+      color-stop(270px, darken($offcanvas-background-color, 50%)),
+      color-stop(271px, $offcanvas-background-color),
+      color-stop(100%, $offcanvas-background-color)
+    ); /* Chrome, Safari4+ */
+
+    background: linear-gradient(
+      to left,
+      $offcanvas-background-color 0%,
+      darken($offcanvas-background-color, 10%) 260px,
+      darken($offcanvas-background-color, 50%) 270px,
+      $offcanvas-background-color 271px,
+      $offcanvas-background-color 100%
+    ); /* W3C */
+
+    overflow-x: hidden;
+
+    #wrapper {
+      background-color: $body-background-color;
+      background-image: $body-background-image;
+    }
+  }
+}
+
+/* ie9 fix */
+@media (max-width: 575px) {
+  html.no-csstransforms3d {
+    body {
+      background-color: $offcanvas-background-color;
+
+      .row-offcanvas {
+        /* When the sidebar is active */
+        &.active {
+          left: 270px;
+
+          .portal-nav {
+            z-index: 1;
+
+            #portalNavigation {
+              left: -280px;
+              z-index: 4 !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/* ie9, ie10, ie11 fix */
+@media (max-width: 575px) {
+  html.no-flexboxlegacy {
+    .row-offcanvas {
+      /* When the sidebar is active */
+      &.active {
+        #up-sticky-nav {
+          left: 270px;
+        }
+      }
+    }
+  }
+}
+
+/* Link color - uses defaultSkin/scss/variables.scss, not common/bootstrap/variables.scss */
+a {
+  color: $portal-link-color;
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    color: $portal-link-hover-color;
+    text-decoration: underline;
+  }
+}

@@ -31,7 +31,7 @@
         <p><spring:message code="session-timeout.body2"/></p>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default refresh-session" data-dismiss="modal">
+        <button type="button" class="btn btn-secondary refresh-session" data-bs-dismiss="modal">
             <spring:message code="session-timeout.button.keep-alive"/>
         </button>
         <button type="button" class="btn btn-primary logout">

@@ -27,4 +27,4 @@
     </c:choose>
 </c:set>
 
-<div class="user-name"><span class="hidden-xs">${greeting}</span>&nbsp;${userInfo['displayName']}</div>
+<div class="user-name"><span class="d-none d-sm-inline">${greeting}</span>&nbsp;${userInfo['displayName']}</div>

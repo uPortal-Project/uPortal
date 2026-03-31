@@ -49,69 +49,112 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | the user interface of this portlet
 | including HTML, CSS, JavaScript, accessibilty,
 | naming conventions, 3rd Party libraries
-| (like jQuery and the Fluid Skinning System)
+| (like jQuery and Bootstrap)
 | and more, refer to:
 | docs/SKINNING_UPORTAL.md
 -->
 
 <style>
-#${n}portletBrowser .dataTables_filter, #${n}portletBrowser .first.paginate_button, #${n}portletBrowser .last.paginate_button{
+#${n}portletBrowser .dt-search {
     display: none;
 }
-#${n}portletBrowser .dataTables-inline, #${n}portletBrowser .column-filter-widgets {
-    display: inline-block;
-}
-#${n}portletBrowser .dataTables_wrapper {
+#${n}portletBrowser .dt-container {
     width: 100%;
 }
-#${n}portletBrowser .dataTables_paginate .paginate_button {
+#${n}portletBrowser .view-filter {
+    padding: 10px 15px 15px;
+    margin-bottom: 20px;
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    font-size: 14px;
+}
+#${n}portletBrowser .view-filter h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: bold;
+}
+#${n}portletBrowser .column-filter-widgets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+#${n}portletBrowser .column-filter-widget {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+#${n}portletBrowser .column-filter-widget select {
+    font-size: 14px;
+}
+#${n}portletBrowser .filter-term {
+    display: inline-block;
+    margin: 2px 0;
+    padding: 2px 8px;
+    background-color: #d9edf7;
+    border: 1px solid #bce8f1;
+    border-radius: 3px;
+    color: #31708f;
+    text-decoration: none;
+    font-size: 12px;
+    cursor: pointer;
+    width: fit-content;
+}
+#${n}portletBrowser .filter-term:hover {
+    background-color: #c4e3f3;
+    text-decoration: none;
+}
+#${n}portletBrowser .dt-paging-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 14px;
+}
+#${n}portletBrowser .dt-paging-row .dt-info {
+    white-space: nowrap;
+}
+#${n}portletBrowser .dt-paging-row .dt-length {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+#${n}portletBrowser .dt-paging-row .dt-length select {
+    display: inline-block !important;
+    width: auto;
+    font-size: 14px;
+}
+#${n}portletBrowser .dt-paging-row .dt-length label {
+    font-weight: normal;
+    margin: 0;
+}
+#${n}portletBrowser .dt-paging .page-link {
     margin: 2px;
     color: #428BCA;
     cursor: pointer;
-    *cursor: hand;
+    font-size: 14px;
 }
-#${n}portletBrowser .dataTables_paginate .paginate_active {
-    margin: 2px;
-    color:#000;
+#${n}portletBrowser .dt-paging .page-item.active .page-link {
+    color: #000;
+    background: none;
+    border-color: transparent;
 }
-
-#${n}portletBrowser .dataTables_paginate .paginate_active:hover {
-    text-decoration: line-through;
-}
-
 #${n}portletBrowser table tr td a {
     color: #428BCA;
 }
-
-#${n}portletBrowser .dataTables-left {
-    float:left;
-}
-
-#${n}portletBrowser .column-filter-widget {
-    vertical-align: top;
-    display: inline-block;
-    overflow: hidden;
-    margin-right: 5px;
-}
-
-#${n}portletBrowser .filter-term {
-    display: block;
-    text-align:bottom;
-}
-
-#${n}portletBrowser .dataTables_length label {
-    font-weight: normal;
-}
 #${n}portletBrowser .datatable-search-view {
-    text-align:right;
+    text-align: right;
 }
 </style>
 
 <!-- Portlet -->
-<div id="${n}portletBrowser" class="fl-widget portlet ptl-mgr view-home" role="section">
+<div id="${n}portletBrowser" class="card portlet ptl-mgr view-home" role="section">
   <c:if test="${not empty statusMsgCode}">
     <div class="alert alert-success alert-dismissable">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-hidden="true"></button>
       <spring:message code="${statusMsgCode}" arguments="${portlet.name}" htmlEscape="true"/>
       <c:if test="${not empty layoutURL}">
         <spring:message code="add.portlet.to.layout" arguments="${layoutURL}" htmlEscape="false"/>
@@ -119,17 +162,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div>
   </c:if>
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+  <div class="card-header titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading"><spring:message code="portlet.registry"/></h2>
     <div class="fl-col-flex2 toolbar" role="toolbar">
       <div class="fl-col">
-        <ul class="btn-group">
-          <li class="btn"><a class="btn btn-primary button" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span>&nbsp;&nbsp;<i class="fa fa-plus-circle"></i></a></li>
-        </ul>
+        <div class="btn-group" role="group">
+          <a class="btn btn-primary" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span>&nbsp;&nbsp;<i class="fa fa-plus-circle"></i></a>
+        </div>
       </div>
-      <div class="fl-col fl-text-align-right datatable-search-view">
-        <form class="portlet-search-form form-inline" style="display:inline">
-          <label for="${n}search">
+      <div class="fl-col text-end datatable-search-view">
+        <form class="portlet-search-form d-flex align-items-center gap-2" style="display:inline">
+          <label for="${n}search" class="form-label">
             <spring:message code="search"/>
           </label>
           <input id="${n}search" type="search" class="portlet-search-input form-control"/>
@@ -140,7 +183,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div>
 
   <!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content">
+  <div class="card-body content portlet-content">
+      <div class="row alert alert-info view-filter" id="${n}viewFilter">
+        <h4>Filters</h4>
+        <div class="column-filter-widgets" id="${n}columnFilterWidgets"></div>
+        <div class="dt-paging-row" id="${n}pagingRow"></div>
+      </div>
       <div>
         <table id="${n}portletsList" class="portlet-table table table-bordered table-striped table-hover" style="width:100%;">
           <thead>
@@ -150,7 +198,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <th><spring:message code="state"/></th>
               <th><spring:message code="edit"/></th>
               <th><spring:message code="delete"/></th>
-              <th><spring:message code="category"/></th>
             </tr>
           </thead>
         </table>
@@ -182,114 +229,180 @@ up.jQuery(function() {
     // Url generating helper functions
     var getEditURL = function(portletId) {
         var url = '${editPortletUrl}'.replace("PORTLETID", portletId);
-        return '<a href="' + url + '"><spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/> <span class="pull-right"><i class="fa fa-edit"></i></span></a>';
+        return '<a href="' + url + '"><spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/> <span class="float-end"><i class="fa fa-edit"></i></span></a>';
     };
     var getDeleteURL = function(portletId) {
         var url = '${removePortletUrl}'.replace("PORTLETID", portletId);
-        return '<a href="' + url + '"><spring:message code="delete" htmlEscape="false" javaScriptEscape="true"/> <span class="pull-right"><i class="fa fa-trash-o"></i></span></a>';
+        return '<a href="' + url + '"><spring:message code="delete" htmlEscape="false" javaScriptEscape="true"/> <span class="float-end"><i class="fa fa-trash-o"></i></span></a>';
+    };
+
+    // Global variables for category filtering
+    var selectedCategories = [];
+    var categorySearchFunction = function(settings, data, dataIndex) {
+        if (selectedCategories.length === 0) return true;
+        
+        var table = portletList_configuration.main.table;
+        var portlet = table.row(dataIndex).data();
+        if (!portlet.categories || !Array.isArray(portlet.categories)) return false;
+        
+        // OR logic: show if portlet has ANY of the selected categories
+        return selectedCategories.some(function(term) {
+            return portlet.categories.indexOf(term) !== -1;
+        });
+    };
+    
+    var createFilters = function(table) {
+        var $columnFilterWidgets = $('#${n}columnFilterWidgets');
+        
+        // State filter
+        var stateSelect = $('<select class="form-select form-select-sm"><option value="">State</option></select>');
+        var stateData = table.column(2).data().unique().sort();
+        stateData.each(function(state) {
+            stateSelect.append('<option value="' + state + '">' + state + '</option>');
+        });
+        if (stateData.length <= 1) {
+            stateSelect.prop('disabled', true);
+        }
+        stateSelect.on('change', function() {
+            table.column(2).search(this.value).draw();
+        });
+        
+        // Category filter
+        var categorySelect = $('<select class="form-select form-select-sm"><option value="">Category</option></select>');
+        var allCategories = [];
+        table.data().each(function(portlet) {
+            if (portlet.categories && Array.isArray(portlet.categories)) {
+                allCategories = allCategories.concat(portlet.categories);
+            }
+        });
+        var uniqueCategories = [...new Set(allCategories)].sort();
+        uniqueCategories.forEach(function(cat) {
+            categorySelect.append('<option value="' + cat + '">' + cat + '</option>');
+        });
+        
+        var $categoryWidget = $('<div class="column-filter-widget"></div>').append(categorySelect);
+        
+        categorySelect.on('change', function() {
+            var selectedValue = this.value;
+            if (selectedValue && selectedCategories.indexOf(selectedValue) === -1) {
+                selectedCategories.push(selectedValue);
+                
+                var $filterTerm = $('<a class="filter-term" href="#">' + selectedValue + '</a>');
+                $filterTerm.on('click', function(e) {
+                    e.preventDefault();
+                    var termText = $(this).text();
+                    selectedCategories = selectedCategories.filter(function(cat) {
+                        return cat !== termText;
+                    });
+                    $(this).remove();
+                    updateCategoryFilter();
+                });
+                $categoryWidget.append($filterTerm);
+                updateCategoryFilter();
+            }
+            this.value = '';
+        });
+        
+        function updateCategoryFilter() {
+            $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(function(fn) {
+                return fn !== categorySearchFunction;
+            });
+            if (selectedCategories.length > 0) {
+                $.fn.dataTable.ext.search.push(categorySearchFunction);
+            }
+            table.draw();
+        }
+        
+        $columnFilterWidgets
+            .append($('<div class="column-filter-widget">').append(stateSelect))
+            .append($categoryWidget);
     };
 
     // Created as its own
     var initializeTable = function() {
-        portletList_configuration.main.table = $("#${n}portletsList").dataTable({
-            iDisplayLength: portletList_configuration.main.pageSize,
-            aLengthMenu: [5, 10, 20, 50],
-            bServerSide: false,
-            sAjaxSource: '<c:url value="/api/portlets.json"/>',
-            sAjaxDataProp: "portlets",
-            bDeferRender: false,
-            bProcessing: true,
-            bAutoWidth: false,
-            sPaginationType: 'full_numbers',
-            oLanguage: {
-                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
-                oPaginate: {
-                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
-                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+        portletList_configuration.main.table = $("#${n}portletsList").DataTable({
+            pageLength: portletList_configuration.main.pageSize,
+            lengthMenu: [5, 10, 20, 50],
+            serverSide: false,
+            ajax: {
+                url: '<c:url value="/api/portlets.json"/>',
+                dataSrc: "portlets",
+                error: function (xhr, error, thrown) {
+                    console.error('AJAX Error:', xhr.status, xhr.responseText, error, thrown);
                 }
             },
-            aoColumns: [
-                { mData: 'name', sType: 'html', sWidth: '30%' },  // Name
-                { mData: 'type', sType: 'html', sWidth: '30%' },  // Type
-                { mData: 'lifecycleState', sType: 'html', sWidth: '20%' },  // Lifecycle State
-                { mData: 'id', sType: 'html', bSearchable: false, sWidth: '10%' },  // Edit Link
-                { mData: 'id', sType: 'html', bSearchable: false, sWidth: '10%' },  // Delete Link
-                {
-                    mData: function(source, type) {
-                        // this function sets the value (set), returns original source of value (undefined), and then returns the value
-                        if (type === undefined) {
-                            return source.categories;
-                        } else if (type === 'set') {
-                            source.display = source.categories.join();
-                            return;
-                        }
-                        // 'display', 'filter', 'sort', and 'type' all just use the formatted string
-                        return source.display;
-                    },
-                    bSearchable: true,
-                    bVisible: false,
-                    asSorting: [ "desc", "asc" ]
-                }  // Categories - hidden
+            deferRender: false,
+            processing: true,
+            autoWidth: false,
+            language: {
+                lengthMenu: '_MENU_ per page',
+                paginate: {
+                    first: '\u00AB',
+                    previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                    next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>',
+                    last: '\u00BB'
+                }
+            },
+            infoCallback: function(settings, start, end, max, total, pre) {
+                var api = this.api();
+                var pageInfo = api.page.info();
+                return 'Viewing page ' + (pageInfo.page + 1) + '. Showing records ' + start + ' to ' + end + ' of ' + total + ' items.';
+            },
+            columns: [
+                { data: 'name', width: '30%' },
+                { data: 'type', width: '30%' },
+                { data: 'lifecycleState', width: '20%' },
+                { data: 'id', searchable: false, width: '10%' },
+                { data: 'id', searchable: false, width: '10%' }
             ],
-            fnInitComplete: function (oSettings) {
-                //portletList_configuration.main.table.fnDraw();
-                // Adding formatting to sDom
-                $("div.toolbar-br").html('<BR>');
-                $("div.toolbar-filter").html('<h4><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></h4>');
-                $(".column-filter-widget select").addClass("form-control");
+            initComplete: function (settings) {
+                this.api().draw();
             },
-            fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = $.ajax({
-                    url: sUrl,
-                    data: aoData,
-                    dataType: "json",
-                    cache: false,
-                    type: oSettings.sServerMethod,
-                    success: function (json) {
-                        if (json.sError) {
-                            oSettings.oApi._fnLog(oSettings, 0, json.sError);
-                        }
-
-                        $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
-                        fnCallback(json);
-                    },
-                    error: function (xhr, error, thrown) {
-                        lib.handleError(xhr, error, thrown);
-                    }
-                });
+            rowCallback: function (row, data, displayNum, displayIndex, dataIndex) {
+                $('td:eq(3)', row).html( getEditURL(data.id) );
+                $('td:eq(4)', row).html( getDeleteURL(data.id) );
             },
-            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
-                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
-                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
-                infoMessage = infoMessage.replace(/_START_/g, iStart).
-                                      replace(/_END_/g, iEnd).
-                                      replace(/_TOTAL_/g, iTotal).
-                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
-                return infoMessage;
+            drawCallback: function() {
+                var table = this.api();
+                if (table.data().length === 0) return;
+                
+                // Build filters once
+                if ($('#${n}columnFilterWidgets').children().length === 0) {
+                    createFilters(table);
+                }
+                
+                // Move DT-rendered info/length/paging into our static paging row
+                var $pagingRow = $('#${n}pagingRow');
+                $('#${n}portletBrowser .dt-info').appendTo($pagingRow);
+                $('#${n}portletBrowser .dt-length').appendTo($pagingRow);
+                $('#${n}portletBrowser .dt-paging').appendTo($pagingRow);
             },
-            // Add links to the proper columns after we get the data
-            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                // Create edit and delete links
-                $('td:eq(3)', nRow).html( getEditURL(aData.id) );
-                $('td:eq(4)', nRow).html( getDeleteURL(aData.id) );
-            },
-            // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><"toolbar-filter-options"W><"toolbar-br"><"dataTables-inline dataTables-right"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>',
-            // Filtering
-            oColumnFilterWidgets: {
-                sSeparator: ',', // Used for multivalue column Categories
-                aiExclude: [portletList_configuration.column.name,
-                                portletList_configuration.column.type,
-                                portletList_configuration.column.placeHolderForEditLink,
-                                portletList_configuration.column.placeHolderForDeleteLink]
+            layout: {
+                topStart: null,
+                topEnd: null,
+                top: null,
+                bottomStart: null,
+                bottom: {
+                    features: ['info', 'pageLength', 'paging']
+                },
+                bottomEnd: null
             }
         });
     };
 
     initializeTable();
     // Hide the out of the box search and populate it with our text box
-    $('#${n}portletBrowser .portlet-search-input').keyup(function(){
-        portletList_configuration.main.table.fnFilter( $(this).val() );
+    $('#${n}portletBrowser .portlet-search-input').on('keyup', function(){
+        portletList_configuration.main.table.search( $(this).val() ).draw();
+    });
+    
+    // Cleanup on page unload to prevent memory leaks
+    $(window).on('beforeunload', function() {
+        if (portletList_configuration.main.table != undefined && $.fn.DataTable.isDataTable('#${n}portletsList')) {
+            portletList_configuration.main.table.clear();
+            portletList_configuration.main.table.destroy();
+            portletList_configuration.main.table = null;
+        }
     });
 });
 </script>

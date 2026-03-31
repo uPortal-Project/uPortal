@@ -143,14 +143,14 @@
     <xsl:template name="region.header-left">
         <xsl:choose>
             <xsl:when test="//region[@name='header-left']/channel">
-                <div id="region-header-left" class="col-sm-6 col-md-8 text-left">
+                <div id="region-header-left" class="col-sm-6 col-md-8 text-start">
                     <xsl:for-each select="//region[@name='header-left']/channel">
                         <xsl:call-template name="regions.portlet.decorator" />
                     </xsl:for-each>
                 </div>
             </xsl:when>
             <xsl:otherwise>
-                <div id="empty-region-header-left" class="col-sm-6 col-md-8 text-left"></div>
+                <div id="empty-region-header-left" class="col-sm-6 col-md-8 text-start"></div>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -164,14 +164,14 @@
     <xsl:template name="region.header-right">
         <xsl:choose>
             <xsl:when test="//region[@name='header-right']/channel">
-                <div id="region-header-right" class="col-sm-6 col-md-4 text-right">
+                <div id="region-header-right" class="col-sm-6 col-md-4 text-end">
                     <xsl:for-each select="//region[@name='header-right']/channel">
                         <xsl:call-template name="regions.portlet.decorator" />
                     </xsl:for-each>
                 </div>
             </xsl:when>
             <xsl:otherwise>
-                <div id="empty-region-header-right" class="col-sm-6 col-md-4 text-right"></div>
+                <div id="empty-region-header-right" class="col-sm-6 col-md-4 text-end"></div>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -203,14 +203,14 @@
     <xsl:template name="region.customize">
         <xsl:if test="upAuth:hasPermission('UP_SYSTEM', 'CUSTOMIZE', 'ALL')">
             <xsl:if test="//region[@name='customize']/channel">
-                <div id="region-customize" class="container-fluid hidden-xs">
+                <div id="region-customize" class="container-fluid d-none d-sm-block">
                     <div id="customizeOptionsWrapper">
                         <div id="customizeOptions" class="collapse">
                                 <xsl:for-each select="//region[@name='customize']/channel">
                                     <xsl:call-template name="regions.portlet.decorator" />
                                 </xsl:for-each>
                         </div>
-                        <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#customizeOptions"><xsl:value-of select="upMsg:getMessage('customize', $USER_LANG)"/> <i class="fa"></i></button>
+                        <button type="button" class="btn btn-secondary" id="customizeButton" aria-expanded="false" aria-controls="customizeOptions"><xsl:value-of select="upMsg:getMessage('customize', $USER_LANG)"/> <i class="fa fa-caret-down"></i></button>
                     </div>
                 </div>
             </xsl:if>
@@ -383,7 +383,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         <h4 class="modal-title">Configuration</h4>
                     </div>
                     <div class="modal-body">
@@ -397,26 +397,25 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><xsl:value-of select="upMsg:getMessage('close', $USER_LANG)"/></span></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"><xsl:attribute name="aria-label"><xsl:value-of select="upMsg:getMessage('close', $USER_LANG)"/></xsl:attribute></button>
                         <h4 class="modal-title"><xsl:value-of select="upMsg:getMessage('direct.url', $USER_LANG)"/></h4>
                     </div>
                     <div class="modal-body">
                         <p id="direct-url-display" tabindex="0"></p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal"><xsl:value-of select="upMsg:getMessage('close', $USER_LANG)"/></button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><xsl:value-of select="upMsg:getMessage('close', $USER_LANG)"/></button>
                     </div>
                 </div>
             </div>
         </div>
         <script type="text/javascript">
-            up.jQuery(function() {
-                var $ = up.jQuery;
-                $('#direct-url-modal').on('show.bs.modal', function (event) {
-                    var widget = $(event.relatedTarget); // Widget that triggered the modal
-                    var dUrl = widget.data('direct-url'); // Extract info from data-* attributes
-                    $('#direct-url-display').text(dUrl);
-                });
+            document.querySelector('#direct-url-modal').addEventListener('show.bs.modal', function(event) {
+                var url = event.relatedTarget ? event.relatedTarget.getAttribute('data-direct-url') : '';
+                document.getElementById('direct-url-display').textContent = url;
+            });
+            document.querySelector('#direct-url-modal').addEventListener('hide.bs.modal', function() {
+                if (document.activeElement) document.activeElement.blur();
             });
         </script>
     </xsl:template>
@@ -499,10 +498,9 @@
             <script type="text/javascript">
                 up.jQuery(document).ready(function() {
                     var $ = up.jQuery;
-                    $('section.<xsl:value-of select="@fname" />').hover(function() {
+                    $('section.<xsl:value-of select="@fname" />').on('mouseenter', function() {
                         $(this).find('.hover-chrome').stop(true, true).slideDown('medium');
-                    },
-                    function() {
+                    }).on('mouseleave', function() {
                         $(this).find('.hover-chrome').stop(true,true).slideUp('medium');
                     });
                 });

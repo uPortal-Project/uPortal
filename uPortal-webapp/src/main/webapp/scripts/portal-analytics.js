@@ -94,5 +94,32 @@
         });
 
         addPageLevelListeners();
+        
+        // Bootstrap 5 dropdown compatibility fix
+        setTimeout(function() {
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            dropdownToggles.forEach(function(toggle, i) {
+                toggle.setAttribute('data-bs-toggle', 'dropdown');
+                toggle.setAttribute('aria-expanded', 'false');
+                
+                const menu = toggle.nextElementSibling || toggle.parentElement.querySelector('.dropdown-menu');
+                if (menu) {
+                    menu.setAttribute('aria-labelledby', toggle.id || 'dropdown-' + i);
+                    if (!toggle.id) toggle.id = 'dropdown-' + i;
+                }
+                
+                const existingInstance = bootstrap.Dropdown.getInstance(toggle);
+                if (existingInstance) existingInstance.dispose();
+                const instance = new bootstrap.Dropdown(toggle);
+                
+                // Add click handler to override conflicting JavaScript
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    instance.toggle();
+                }, true);
+            });
+
+        }, 100);
     });
 })();

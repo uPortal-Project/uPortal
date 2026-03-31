@@ -1,0 +1,36 @@
+/*
+ * Modern uploader styles - minimal CSS for file upload functionality
+ * Replaces Fluid uploader CSS with Bootstrap-compatible styles
+ */
+
+.uploader-queue-footer td {
+    padding: 6px;
+}
+
+.uploader-file-progress {
+    margin: 0.5rem 0;
+}
+
+.uploader-browse-instructions {
+    text-align: center;
+    padding: 1rem;
+    border: 2px dashed #dee2e6;
+    border-radius: 0.375rem;
+    margin: 1rem 0;
+}
+
+.uploader-errors-panel {
+    margin-top: 1rem;
+}
+
+.uploader-buttons {
+    margin-top: 1rem;
+}
+
+.uploader-status-region {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}

@@ -55,10 +55,10 @@
 <c:set var="isNew" value="${ empty group.key }"/>
 
 <!-- Portlet -->
-<div class="fl-widget portlet grp-mgr view-reviewgroup" role="section">
+<div class="card portlet grp-mgr view-reviewgroup" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="card-header titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading">${ fn:escapeXml(group.name )}</h2>
         <h3 class="subtitle">${ fn:escapeXml(group.description )}</h3>
         <div class="details">Created by ${ fn:escapeXml(group.creatorId )}</div>
@@ -81,7 +81,7 @@
     </div> <!-- end: portlet-titlebar -->
     
     <!-- Portlet Body -->
-    <div class="fl-widget-content content portlet-content">
+    <div class="card-body content portlet-content">
         
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">

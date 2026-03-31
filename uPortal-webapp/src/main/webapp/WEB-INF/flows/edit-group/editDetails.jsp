@@ -25,15 +25,15 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet grp-mgr view-editdetails" role="section">
+<div class="card portlet grp-mgr view-editdetails" role="section">
 
     <!-- Portlet Title -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="card-header titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="edit.group.details"/></h2>
     </div> <!-- end: portlet-title -->
 
     <!-- Portlet Body -->
-    <div class="fl-widget-content content portlet-content">
+    <div class="card-body content portlet-content">
         <form:form action="${ formUrl }" method="POST" modelAttribute="group">
 
             <!-- Portlet Messages -->
@@ -54,11 +54,11 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="label"><label for="name"><spring:message code="name"/>:</label></td>
+                            <td class="label"><label for="name" class="form-label"><spring:message code="name"/>:</label></td>
                             <td><form:input path="name"/></td>
                         </tr>
                         <tr>
-                            <td class="label"><label for="description"><spring:message code="description"/>:</label></td>
+                            <td class="label"><label for="description" class="form-label"><spring:message code="description"/>:</label></td>
                             <td><form:input path="description"/></td>
                         </tr>
                     </tbody>

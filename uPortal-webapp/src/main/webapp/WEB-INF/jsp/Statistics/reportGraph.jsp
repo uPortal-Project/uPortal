@@ -36,10 +36,10 @@
 <script type="text/javascript" src="${canvas2imageScriptPath}"></script>
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="card portlet" role="section">
   
   <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body">
+  <div class="card-body portlet-body">
   
     <!-- Portlet Section -->
     <div id="${n}" class="portlet-section" role="region">
@@ -291,15 +291,15 @@ up.jQuery(function() {
          return false;
       } else {
          $("#${n}_formError").hide();
-         $("#${n}_reportForm input[type=submit]").removeAttr("disabled");
+         $("#${n}_reportForm input[type=submit]").prop("disabled", false);
          return true;
       }
    };
 
-   $(window).resize(resizeChart);
+   $(window).on('resize', resizeChart);
 
    $("#${n} .datepicker").datepicker();
-   $('#${n}_reportForm').submit(function(event) {
+   $('#${n}_reportForm').on('submit', function(event) {
        if (!validateIntervals()) {
            return false;
        }
@@ -349,7 +349,7 @@ up.jQuery(function() {
        event.preventDefault();
    });
 
-   $("#${n}_editChart").click(function() { editChart(); return false; });
+   $("#${n}_editChart").on('click', function() { editChart(); return false; });
    $("#${n}_downloadPng").mousedown(downloadPng);
 
    // Add validation listeners

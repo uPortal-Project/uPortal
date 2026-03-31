@@ -145,7 +145,7 @@
         left:0;
     }
 
-    #${n} .marketplace_carousel_inner .item{
+    #${n} .marketplace_carousel_inner .carousel-item{
         height: 20em;
     }
 
@@ -169,7 +169,7 @@
         background-color: #333333;
     }
 
-    #${n} .btn.btn-default.disabled {
+    #${n} .btn.btn-secondary.disabled {
         background-color: #E0E0E0;
         opacity: 1;
     }
@@ -179,7 +179,7 @@
         padding: 20px 0;
     }
 
-    #${n} .marketplace_section .panel {
+    #${n} .marketplace_section .card {
         border: none;
         border-radius: 0;
         -webkit-border-radius: 0;
@@ -189,7 +189,7 @@
         -moz-box-shadoe: none;
     }
 
-    #${n} .marketplace_section .panel .portlet-box {
+    #${n} .marketplace_section .card .portlet-box {
         height: 112px;
         max-height: 112px;
         margin: 0;
@@ -204,22 +204,22 @@
         overflow: hidden;
     }
 
-    #${n} .marketplace_section .panel .portlet-box:hover {
+    #${n} .marketplace_section .card .portlet-box:hover {
         background-color: #eee;
         cursor: pointer;
     }
 
-    #${n} .marketplace_section .panel .portlet-box a {
+    #${n} .marketplace_section .card .portlet-box a {
         width: 100%;
         display: block;
     }
 
-    #${n} .marketplace_section .panel .portlet-box a:hover {
+    #${n} .marketplace_section .card .portlet-box a:hover {
         text-decoration: none;
         color: #000000;
     }
 
-    #${n} .marketplace_section .panel .portlet-box .portlet-icon {
+    #${n} .marketplace_section .card .portlet-box .portlet-icon {
         width: 92px;
         height: 92px;
         max-height: 92px;
@@ -230,25 +230,25 @@
         text-align: center;
     }
 
-    #${n} .marketplace_section .panel .portlet-box .portlet-icon img {
+    #${n} .marketplace_section .card .portlet-box .portlet-icon img {
         width: 72px;
         height: 72px;
         margin-top: 7px;
     }
 
-    #${n} .marketplace_section .panel .portlet-box .portlet-details {
+    #${n} .marketplace_section .card .portlet-box .portlet-details {
         text-align: left;
         color: #000;
         margin-right: 0;
     }
 
-    #${n} .marketplace_section .panel .portlet-box .portlet-details h5 {
+    #${n} .marketplace_section .card .portlet-box .portlet-details h5 {
         font-size: 16px;
         margin: 0 0 3px 0;
     }
 
 
-    #${n} .marketplace_section .panel .portlet-box .portlet-details p {
+    #${n} .marketplace_section .card .portlet-box .portlet-details p {
         font-size: 11px;
         margin: 0;
     }
@@ -274,16 +274,15 @@
 
 <script type="text/template" id="${n}options-menu">
     <li role="menuitem">
-        <a href="#" title='<spring:message code="link.to" text="Link to ..." />' data-toggle="modal" data-target="#${n}copy-modal" id="${n}linkto">
+        <a class="dropdown-item" href="#" title='<spring:message code="link.to" text="Link to ..." />' data-bs-toggle="modal" data-bs-target="#${n}copy-modal" id="${n}linkto">
             <spring:message code="link.to" text="Link to ..."/>
         </a>
     </li>
-    <li aria-hidden="true" class="divider"></li>
+    <li aria-hidden="true" class="dropdown-divider"></li>
     {% if (canFavorite) { %}
     <li role="menuitem">
         <spring:message code="add.this.portlet.to.my.favorite" text="Add this Portlet to My Favorites" var="atptmfTitle"/>
-        <a href="#" title="${atptmfTitle}"
-                class="{% if (isFavorite) { print('marketplace_remove_favorite'); } else { print('marketplace_add_favorite'); } %}">
+        <a class="dropdown-item {% if (isFavorite) { print('marketplace_remove_favorite'); } else { print('marketplace_add_favorite'); } %}" href="#" title="${atptmfTitle}">
             {% if (isFavorite) { %}
                 <i class="fa fa-star"></i>
             {% } else { %}
@@ -296,7 +295,7 @@
     </li>
     {% } %}
     <li role="menuitem">
-        <a href="javascript://" aria-disabled="true" disabled>
+        <a class="dropdown-item" href="javascript://" aria-disabled="true" disabled>
                 <span>
                     <spring:message code="marketplace.add.to.tab" text="Add portlet to tab:"/>
                 </span>
@@ -304,7 +303,7 @@
     </li>
     {% _.each(tabs, function(tab) { %}
         <li role="menuitem">
-            <a href="#" class="marketplace_add_to_tab_link" data-tab-id="{%= tab.id %}">
+            <a class="dropdown-item marketplace_add_to_tab_link" href="#" data-tab-id="{%= tab.id %}">
                 <span>
                     {%- tab.name %}
                 </span>
@@ -323,12 +322,12 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-offset-3 col-xs-6">
+            <div class="offset-md-3 col-6">
                 <div class="carousel-container">
                     <div id="${n}marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="true">
                         <div class="carousel-inner marketplace_carousel_inner" role="listbox">
                             {% _(screenShots).each(function(screen, idx) { %}
-                                <div class="item marketplace_screen_shots {% if (idx === 0) { %} active {% } %}">
+                                <div class="carousel-item marketplace_screen_shots {% if (idx === 0) { %} active {% } %}">
                                     <img src="{%= screen.url %}" alt="screenshot for portlet">
                                         {% _(screen.captions).each(function(caption) { %}
                                             <div class="carousel-caption">
@@ -342,14 +341,16 @@
                         {% if (screenShots.length > 1) { %}
                             <ol class="carousel-indicators marketplace_carousel_indicators">
                                 {% _(screenShots).each(function(screen, idx) { %}
-                                    <li data-target="#${n}marketplace_screenshots_and_videos" data-slide-to="{%= idx %}"></li>
+                                    <li data-bs-target="#${n}marketplace_screenshots_and_videos" data-bs-slide-to="{%= idx %}"></li>
                                 {% }); %}
                             </ol>
-                            <a class="left carousel-control carousel-marketplace-control" href="#${n}marketplace_screenshots_and_videos" role="button" data-slide="prev">
-                                <span class="glyphicon glyphicon-chevron-left"></span>
+                            <a class="carousel-control-prev carousel-marketplace-control" href="#${n}marketplace_screenshots_and_videos" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
                             </a>
-                            <a class="right carousel-control carousel-marketplace-control" href="#${n}marketplace_screenshots_and_videos" role="button" data-slide="next">
-                                <span class="glyphicon glyphicon-chevron-right"></span>
+                            <a class="carousel-control-next carousel-marketplace-control" href="#${n}marketplace_screenshots_and_videos" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
                             </a>
                         {% } %}
                     </div>
@@ -360,21 +361,20 @@
 </script>
 
 <div id="${n}">
-    <div class="col-xs-12">
+    <div class="col-12">
         <div class="row">
-            <div class="col-xs-6">
+            <div class="col-6">
                 <portlet:renderURL var="initialViewURL" windowState="MAXIMIZED"/>
-                <a class="btn btn-default" href="${initialViewURL}"><i class="fa fa-arrow-left"></i> <spring:message code="back.to.list" text="Back to List"/></a>
+                <a class="btn btn-secondary" href="${initialViewURL}"><i class="fa fa-arrow-left"></i> <spring:message code="back.to.list" text="Back to List"/></a>
             </div>
-            <div class="col-xs-6" class="${n}go_button">
+            <div class="col-6" class="${n}go_button">
                 <div class="btn-group marketplace_button_group" style="float:right">
                     <a href="${marketplaceEntry.renderUrl}" id="marketplace_go_button"
-                       class="btn btn-default marketplace_dropdown_button" role="button">
+                       class="btn btn-secondary marketplace_dropdown_button" role="button">
                         <spring:message code="go" text="Go"/>
                     </a>
-                    <button type="button" class="btn btn-default dropdown-toggle marketplace_dropdown_button" data-toggle="dropdown">
+                    <button type="button" class="btn btn-secondary dropdown-toggle marketplace_dropdown_button" data-bs-toggle="dropdown">
                         <spring:message code="options" text="Options"/>
-                        <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu marketplace_dropdown_menu" role="menu" style="right: 0; left: auto;">
                     </ul>
@@ -382,7 +382,7 @@
             </div>
         </div>
         <div class="row header-info-wrapper">
-            <div class="col-sm-1 col-xs-4 header-img">
+            <div class="col-sm-1 col-4 header-img">
                 <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
                     <c:choose>
                         <c:when test="${empty marketplaceEntry.getParameter('mobileIconUrl')}">
@@ -393,7 +393,7 @@
                         </c:otherwise>
                 </c:choose>
             </div>
-            <div class="col-sm-11 col-xs-8">
+            <div class="col-sm-11 col-8">
                 <div class="marketplace_description_title">
                     <h1>${marketplaceEntry.title}</h1>
                 </div>
@@ -406,11 +406,11 @@
             <div class="col-sm-12 screen-shot-section"></div>
         </div>
         <div class="row">
-            <div class="col-xs-12">
+            <div class="col-12">
                 <h1>
                     <spring:message code="rating.and.review.cap" text="Ratings &amp; Reviews"/>
                 </h1>
-                <div class="col-xs-3 marketplace_average_rating">
+                <div class="col-3 marketplace_average_rating">
                     <fieldset class="rating-readonly">
                         <input
                             name="overallrating"
@@ -484,7 +484,7 @@
                         </label>
                     </fieldset>
                 </div>
-                <div id="col-xs-9 marketplace_users_rated">
+                <div id="col-9 marketplace_users_rated">
                     <span id="marketplace_average_rating_description">
                         (${marketplaceEntry.userRated} reviews)
                     </span>
@@ -492,10 +492,10 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-12">
+            <div class="col-12">
                 <div class="marketplace_user_rating">
                     <h4><spring:message code="rate.this.portlet" text="Rate this portlet"/></h4>
-                    <div id="${n}marketplace_rating_instructions" class="help-block"></div>
+                    <div id="${n}marketplace_rating_instructions" class="form-text"></div>
                     <form id="${n}save_rating_form">
                         <fieldset class="rating">
                             <input
@@ -564,14 +564,14 @@
                             </label>
                         </fieldset>
                         <c:if test="${enableReviews}">
-                        <div class="form-group">
-                            <label for="${n}marketplace_user_review_input" id="review-label"><spring:message code="rating.leave.review"/></label>
-                            <textarea id="${n}marketplace_user_review_input" aria-labelledby="review-label" name="review" class="form-control col-xs-12 col-med-6" rows="3"></textarea>
+                        <div class="row mb-3">
+                            <label for="${n}marketplace_user_review_input" id="review-label" class="form-label"><spring:message code="rating.leave.review"/></label>
+                            <textarea id="${n}marketplace_user_review_input" aria-labelledby="review-label" name="review" class="form-control col-12 col-med-6" rows="3"></textarea>
                             <div id="${n}input_chars_remaining"></div>
                         </div>
                         </c:if>
-                        <div class="form-group">
-                            <button id="${n}marketplace_user_rating_submit_button" type="submit" class="btn btn-default">
+                        <div class="row mb-3">
+                            <button id="${n}marketplace_user_rating_submit_button" type="submit" class="btn btn-secondary">
                                 <spring:message code="submit" text="Submit"/>
                             </button>
                         </div>
@@ -583,7 +583,7 @@
         </div>
         <c:if test="${not empty  marketplaceEntry.portletReleaseNotes.releaseNotes}">
             <div class="row clearfix">
-                <div class = "col-xs-12 col-md-4">
+                <div class = "col-12 col-md-4">
                     <br>
                     <p>
                         <span class="marketplace_section_header"><spring:message code="whats.new" text="What's New"/></span>
@@ -623,7 +623,7 @@
                         <portlet:param name="fName" value="${relatedPortlet.fname}"/>
                     </portlet:renderURL>
                     <div class="col-sm-6 col-lg-3">
-                        <div class="panel panel-default">
+                        <div class="card">
                             <div class="row portlet-box">
                                 <a href="${entryURL}">
                                     <div class="portlet-icon">
@@ -653,7 +653,7 @@
         <c:set var="portletCategories" value="${marketplaceEntry.categories}"/>
         <c:if test="${not empty portletCategories}">
             <div class="row">
-            <div class = "col-xs-12 col-md-4">
+            <div class = "col-12 col-md-4">
                 <span class="marketplace_section_header"><spring:message code="categories" text="CATEGORIES" /></span>
                 <ul>
                     <c:forEach var="portletCategory" items="${portletCategories}">
@@ -667,12 +667,12 @@
             </div>
             <br>
         </c:if>
-        <div class="row col-xs-12" style="clear:both;">
-            <div class="col-xs-4">
+        <div class="row col-12" style="clear:both;">
+            <div class="col-4">
             </div>
-            <div class="col-xs-4">
+            <div class="col-4">
             </div>
-            <div class="col-xs-4" style="float:left">
+            <div class="col-4" style="float:left">
 
             </div>
         </div>
@@ -681,23 +681,26 @@
 <div class="modal fade" id="${n}copy-modal" tabindex="-1" role="dialog" aria-labelledby="LinkToModal" aria-modal="true">
     <div class="modal-dialog" style="text-align:center">
         <div class="modal-content" style="white-space: nowrap">
-            <h4 id="LinkToModal" class="modal-title">
-                <strong>
-                    <spring:message code="link.to.this" text="Link to This"/>
-                </strong>
-            </h4>
+            <div class="modal-header">
+                <h4 id="LinkToModal" class="modal-title">
+                    <strong>
+                        <spring:message code="link.to.this" text="Link to This"/>
+                    </strong>
+                </h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
             <div class="modal-body">
-                <form class="form-horizontal" role="form">
-                <div class="form-group">
-                    <label for="inputDeep" class="col-sm-2 control-label"><spring:message code="link" text="Link"/></label>
+                <form class="" role="form">
+                <div class="row mb-3">
+                    <label for="inputDeep" class="col-sm-2 col-form-label"><spring:message code="link" text="Link"/></label>
                     <div class="col-sm-10">
                         <input tabindex="0" type="text" class="form-control" id="inputDeep"
                                value="${marketplaceEntry.renderUrl}"></input>
                     </div>
                 </div>
                 <c:if test="${not empty shortURL }">
-                    <div class="form-group">
-                        <label for="smallLink" class="col-sm-2 control-label"><spring:message code="shortLink" text="Short Link"/></label>
+                    <div class="row mb-3">
+                        <label for="smallLink" class="col-sm-2 col-form-label"><spring:message code="shortLink" text="Short Link"/></label>
                         <div class="col-sm-10">
                             <input tabindex="0" type="text" class="form-control" id="smallLink" value="${shortURL}"></input>
                         </div>
@@ -706,7 +709,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button tabindex="0" role="button" type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="close" text="Close"/></button>
+                <button tabindex="0" role="button" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><spring:message code="close" text="Close"/></button>
             </div>
         </div>
     </div>
@@ -718,7 +721,7 @@
 
 <script type="text/javascript">
 (function($, Backbone, _) {
-    $(document).ready( function () {
+    $(function () {
         // IMPORTANT: The tabs object is not a true model so it won't do
         // notifications on change.  If tabs needs to change, replace the
         // entire object, don't modify the one in this model.
@@ -789,7 +792,7 @@
                     dataType: 'json'
                 });
 
-                promise.success(function() {
+                promise.done(function() {
                     <spring:message code="success" text="Success" var="success"/>
                     <spring:message code="marketplace.add.portlet.success"
                             text="{0} Portlet has been added to tab {1}"
@@ -805,7 +808,7 @@
                     });
                 });
 
-                promise.error(function() {
+                promise.fail(function() {
                     <spring:message code="marketplace.add.portlet.error"
                             text="Portlet could not be added to tab {0}"
                             htmlEscape="false"
@@ -1027,7 +1030,7 @@
             e.innerHTML = input;
             return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
         };
-        if($("input[name=rating][type=radio]:checked").size() > 0) {
+        if($("input[name=rating][type=radio]:checked").length > 0) {
             updateRatingInstructions('<spring:message code="rating.instructions.rated"
             text='You have already rated "{0}"; adjust your rating if you wish.'
             arguments="${marketplaceEntry.title}"
@@ -1071,12 +1074,20 @@
         </c:if>
 
         // Submit function
-        $("#${n}save_rating_form").submit(function (e) {
+        $("#${n}save_rating_form").on('submit', function (e) {
+            e.preventDefault();
+            var ratingVal = $("input[name=rating][type=radio]:checked").val();
+            if (!ratingVal) {
+                updateRatingInstructions('<spring:message code="rating.instructions.select"
+                text="Please select a star rating before submitting."
+                htmlEscape="true" />');
+                return;
+            }
             var reviewText = $("#${n}marketplace_user_review_input").val();
             $.ajax({
                 url: '${saveRatingUrl}',
                 data: {
-                    rating: $("input[name=rating][type=radio]:checked").val(),
+                    rating: ratingVal,
                     portletFName: "${marketplaceEntry.fname}",
                     review: reviewText ? reviewText.trim() : ''
                 },
@@ -1101,7 +1112,6 @@
                     });
                 }
             });
-            e.preventDefault();
         });
     });
 

@@ -57,10 +57,25 @@ public class GroupAdministrationHelper {
      */
     public GroupForm getGroupForm(String key) {
 
+        if (key == null) {
+            log.error("ERROR: getGroupForm called with null key!");
+            throw new IllegalArgumentException("Group key cannot be null");
+        }
+
+        if (key.isEmpty()) {
+            log.error("ERROR: getGroupForm called with empty key!");
+            throw new IllegalArgumentException("Group key cannot be empty");
+        }
+
         log.debug("Initializing group form for group key " + key);
 
         // find the current version of this group entity
         IEntityGroup group = GroupService.findGroup(key);
+
+        if (group == null) {
+            log.error("ERROR: GroupService.findGroup returned null for key: [" + key + "]");
+            throw new IllegalArgumentException("No group found for key: " + key);
+        }
 
         // update the group form with the existing group's main information
         GroupForm form = new GroupForm();

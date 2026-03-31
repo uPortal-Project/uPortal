@@ -20,7 +20,7 @@
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<div class="jumbotron">
+<div class="bg-light p-5 rounded-3">
   <h2 class="text-warning" style="font-size: 200%;">
     <i class="fa fa-exclamation-circle"></i>
     <spring:message code="errorportlet.maintenance.title"/>

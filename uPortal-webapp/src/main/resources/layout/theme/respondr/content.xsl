@@ -74,7 +74,7 @@
   -->
   <xsl:template name="columns">
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-    <div id="portalPageBodyColumns" class="row">
+    <div id="portalPageBodyColumns" class="row" role="main" tabindex="0">
 
       <!--
        | uPortal Classic vs. Flex
@@ -250,16 +250,16 @@
         <div class="modal fade" id="ratePortletModal{@ID}" tabindex="-1" role="dialog"
              aria-labelledby="RatingModal" aria-hidden="true"
              data-title="{upMsg:getMessage('rate.portlet.by.name', $USER_LANG, $portletName)}"
-             data-close.button.label="{upMsg:getMessage('close', $USER_LANG)}"
-             data-save.button.label="{upMsg:getMessage('save.and.close', $USER_LANG)}"
+             data-close-button-label="{upMsg:getMessage('close', $USER_LANG)}"
+             data-save-button-label="{upMsg:getMessage('save.and.close', $USER_LANG)}"
              data-geturl="{$getRatingPortletUrl}"
              data-saveurl="{$saveRatingPortletUrl}"
-             data-get.rating.unsucessful="{upMsg:getMessage('rating.retrieved.unsuccessfully', $USER_LANG)}"
-             data-rating.save.successful = "{upMsg:getMessage('rating.saved.successfully', $USER_LANG)}"
-             data-rating.save.unsuccessful = "{upMsg:getMessage('rating.saved.unsuccessfully', $USER_LANG)}"
-             data-rating.instructions.unrated =
+             data-get-rating-unsuccessful="{upMsg:getMessage('rating.retrieved.unsuccessfully', $USER_LANG)}"
+             data-rating-save-successful="{upMsg:getMessage('rating.saved.successfully', $USER_LANG)}"
+             data-rating-save-unsuccessful="{upMsg:getMessage('rating.saved.unsuccessfully', $USER_LANG)}"
+             data-rating-instructions-unrated=
                      "{upMsg:getMessage('rating.instructions.unrated', $USER_LANG, $portletName)}"
-             data-rating.instructions.rated =
+             data-rating-instructions-rated=
                      "{upMsg:getMessage('rating.instructions.rated', $USER_LANG, $portletName)}"
                 />
 
@@ -399,7 +399,7 @@
    | These two templates render the focused portlet content.
   -->
   <xsl:template match="focused">
-    <div class="fluid-row">
+    <div class="row">
         <div class="col-md-12">
             <div id="portalPageBodyColumns">
                 <div class="portal-page-column column-1">
@@ -428,7 +428,7 @@
       <div class="portlet-controls">
         <!-- Locked indicator for portlets that are not movable -->
         <xsl:if test="$PORTLET_LOCKED='locked'">
-          <div class="locked-icon">
+          <div class="locked-icon" title="{upMsg:getMessage('this.portlet.locked', $USER_LANG)}">
               <i class="fa fa-lock" aria-hidden="true"></i>
               <span class="sr-only">
                   <xsl:value-of select="upMsg:getMessage('this.portlet.locked', $USER_LANG)"/>
@@ -446,10 +446,10 @@
         <div class="portlet-options-menu btn-group hidden">  <!-- Start out hidden.  jQuery will unhide if there are menu options -->
           <xsl:choose>
             <xsl:when test="$STYLE = 'hamburger'">
-              <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" title="{upMsg:getMessage('portlet.menu.option', $USER_LANG)}" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+              <a class="btn btn-link dropdown-toggle" data-bs-toggle="dropdown" title="{upMsg:getMessage('portlet.menu.option', $USER_LANG)}" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
             </xsl:when>
             <xsl:otherwise>
-              <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" title="{upMsg:getMessage('portlet.menu.option', $USER_LANG)}" href="javascript:void(0);"><xsl:value-of select="upMsg:getMessage('portlet.menu.option', $USER_LANG)"/> <span class="{upMsg:getMessage('portlet.menu.option.caretclass', $USER_LANG)}"></span></a>
+              <a class="btn btn-link dropdown-toggle" data-bs-toggle="dropdown" title="{upMsg:getMessage('portlet.menu.option', $USER_LANG)}" href="javascript:void(0);"><xsl:value-of select="upMsg:getMessage('portlet.menu.option', $USER_LANG)"/> <span class="{upMsg:getMessage('portlet.menu.option.caretclass', $USER_LANG)}"></span></a>
             </xsl:otherwise>
           </xsl:choose>
           <ul class="dropdown-menu" style="right: 0; left: auto;">
@@ -481,7 +481,7 @@
 
           <xsl:if test="$AUTHENTICATED='true'">
             <li class="up-portlet-options-item rate">
-              <a href="#" title="{upMsg:getMessage('rate.this.portlet', $USER_LANG)}" class="rateThisPortlet{@ID}" data-toggle="modal" data-target="#ratePortletModal{@ID}">
+              <a href="#" title="{upMsg:getMessage('rate.this.portlet', $USER_LANG)}" class="rateThisPortlet{@ID}" data-bs-toggle="modal" data-bs-target="#ratePortletModal{@ID}">
                 <span><xsl:value-of select="upMsg:getMessage('rate.this.portlet', $USER_LANG)"/></span>
               </a>
             </li>
@@ -501,7 +501,7 @@
                               (function($) {
                               $( document ).ready(function() {
                               $('.addToFavoriteLink<xsl:value-of
-                              select="@chanID"/>').click({
+                              select="@chanID"/>').on('click', {
                               portletId : '<xsl:value-of select="@chanID"/>',
                               context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.addToFavorite);
                               });
@@ -520,7 +520,7 @@
                           <script type="text/javascript">
                               (function($) {
                               $( document ).ready(function() {
-                              $('.removeFromFavoriteLink<xsl:value-of select="@chanID"/>').click({portletId : '<xsl:value-of select="@chanID"/>', context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.removeFromFavorite);
+                              $('.removeFromFavoriteLink<xsl:value-of select="@chanID"/>').on('click', {portletId : '<xsl:value-of select="@chanID"/>', context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.removeFromFavorite);
                               });
                               })(up.jQuery);
                           </script>
@@ -693,7 +693,7 @@
           <xsl:value-of select="$PORTAL_PROTOCOL_AND_SERVER"/><xsl:value-of select="$CONTEXT_PATH"/>/p/<xsl:value-of select="@fname"/>
       </xsl:variable>
       <li class="up-portlet-options-item directUrl">
-          <a title="{upMsg:getMessage('direct.url', $USER_LANG)}" class="up-portlet-control directUrl"  data-toggle="modal" data-target="#direct-url-modal" data-direct-url="{$portletDirectUrl}"><xsl:value-of select="upMsg:getMessage('direct.url', $USER_LANG)"/></a>
+          <a title="{upMsg:getMessage('direct.url', $USER_LANG)}" class="up-portlet-control directUrl"  data-bs-toggle="modal" data-bs-target="#direct-url-modal" data-direct-url="{$portletDirectUrl}"><xsl:value-of select="upMsg:getMessage('direct.url', $USER_LANG)"/></a>
       </li>
 
           <!-- About Icon -->
@@ -749,9 +749,9 @@
                     <xsl:variable select="//tab[@focusedFragment='true']/@ID" name="FOCUSED_FRAGMENT_ID"></xsl:variable>
                     <!--
                     Collection favoriting and link access not yet implemented.
-                    <div class="dropdown pull-right">
+                    <div class="dropdown float-end">
                     <button class="btn dropdown-toggle" type="button" id='{$FOCUSED_FRAGMENT_ID}dropdownMenu'
-                            data-toggle="dropdown" style="background: inherit;">
+                            data-bs-toggle="dropdown" style="background: inherit;">
                         <span class="glyphicon glyphicon-cog"></span>
                     </button>
                         <ul class="dropdown-menu" role="menu" aria-labelledby='{$FOCUSED_FRAGMENT_ID}dropdownMenu'>

@@ -1,0 +1,107 @@
+/**
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/**
+ * Accessible pure css rating system
+ *
+ * @see http://output.jsbin.com/zejeba/
+ * @example
+ *
+ * <fieldset class="rating">
+ *   <input
+ *     name="rating"
+ *     type="radio"
+ *     id="rating2"
+ *     value="2"
+ *     aria-label="2 stars">
+ *   <label
+ *     for="rating2"
+ *     title="2 stars">
+ *       ☆
+ *   </label>
+ *
+ *   <input
+ *     name="rating"
+ *     type="radio"
+ *     id="rating1"
+ *     value="1"
+ *     aria-label="1 star">
+ *   <label
+ *     for="rating1"
+ *     title="1 star">
+ *       ☆
+ *   </label>
+ * </fieldset>
+ */
+
+.rating,
+.rating-readonly {
+  padding: 0; // to prevent flicker when mousing over padding
+  border: none; // to prevent flicker when mousing over border
+  unicode-bidi: bidi-override;
+  direction: rtl; // for CSS-only style change on hover
+  text-align: left; // revert the RTL direction
+  user-select: none; // disable mouse/touch selection */
+  cursor: pointer;
+
+  > label {
+    direction: ltr;
+    display: inline-block;
+    position: relative;
+  }
+
+  > input {
+    width: 0;
+    opacity: 0;
+    margin-left: -($font-size-base / 2); // center behind star
+  }
+}
+
+.rating {
+  /* the stars */
+  & > *:hover,
+  > *:hover ~ label,
+  &:not(:hover) > input:checked ~ label {
+    color: transparent; // reveal the contour star from the HTML markup
+    cursor: inherit; // avoid a cursor transition from arrow/pointer to text selection
+  }
+
+  > *:hover::before,
+  > *:hover ~ label::before,
+  &:not(:hover) > input:checked ~ label::before {
+    content: "★";
+    position: absolute;
+    left: 0;
+    color: $rating-selected-color;
+  }
+}
+
+.rating-readonly {
+  > input:checked ~ label {
+    color: transparent; // reveal the contour star from the HTML markup
+    cursor: inherit; // avoid a cursor transition from arrow/pointer to text selection
+  }
+
+  > input:checked ~ label::before {
+    content: "★";
+    position: absolute;
+    left: 0;
+    color: $rating-selected-color;
+  }
+}

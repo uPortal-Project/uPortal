@@ -34,55 +34,64 @@
   <portlet:param name="target" value="TARGET"/>
 </portlet:renderURL>
 <style>
-#${n}permissionBrowser .dataTables_filter, #${n}permissionBrowser .first.paginate_button, #${n}permissionBrowser .last.paginate_button{
+#${n}permissionBrowser .dt-search,
+#${n}permissionBrowser .first.dt-paging-button,
+#${n}permissionBrowser .last.dt-paging-button {
     display: none;
 }
 #${n}permissionBrowser .dataTables-inline, #${n}permissionBrowser .column-filter-widgets {
     display: inline-block;
 }
-#${n}permissionBrowser .dataTables_wrapper {
+#${n}permissionBrowser .view-filter {
+    padding-bottom: 15px;
+    overflow: hidden;
+    margin-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+#${n}permissionBrowser .dt-container {
     width: 100%;
 }
-#${n}permissionBrowser .dataTables_paginate .paginate_button {
+#${n}permissionBrowser .dt-layout-row:has(.dt-paging) {
+    background-color: rgb(217, 237, 247);
+    border: 1px solid rgb(188, 232, 241);
+    border-top: none;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    padding: 8px 15px;
+    margin-bottom: 20px;
+}
+#${n}permissionBrowser .dt-paging .page-link {
     margin: 2px;
     color: #428BCA;
     cursor: pointer;
-    *cursor: hand;
 }
-#${n}permissionBrowser .dataTables_paginate .paginate_active {
-    margin: 2px;
-    color:#000;
+#${n}permissionBrowser .dt-paging .page-item.active .page-link {
+    color: #000;
+    background: none;
+    border-color: transparent;
 }
-
-#${n}permissionBrowser .dataTables_paginate .paginate_active:hover {
-    text-decoration: line-through;
-}
-
 #${n}permissionBrowser table tr td a {
     color: #428BCA;
 }
-
 #${n}permissionBrowser .dataTables-left {
-    float:left;
+    float: left;
 }
-
 #${n}permissionBrowser .column-filter-widget {
     vertical-align: top;
     display: inline-block;
     overflow: hidden;
     margin-right: 5px;
 }
-
 #${n}permissionBrowser .filter-term {
     display: block;
-    text-align:bottom;
+    text-align: bottom;
 }
-
-#${n}permissionBrowser .dataTables_length label {
+#${n}permissionBrowser .dt-length label {
     font-weight: normal;
 }
 #${n}permissionBrowser .datatable-search-view {
-    text-align:right;
+    text-align: right;
 }
 </style>
 
@@ -92,23 +101,23 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | the user interface of this portlet
 | including HTML, CSS, JavaScript, accessibilty,
 | naming conventions, 3rd Party libraries
-| (like jQuery and the Fluid Skinning System)
+| (like jQuery and Bootstrap)
 | and more, refer to:
 | docs/SKINNING_UPORTAL.md
 -->
 
 <!-- Portlet -->
-<div id="${n}permissionBrowser" class="fl-widget portlet prm-mgr" role="section">
+<div id="${n}permissionBrowser" class="card portlet prm-mgr" role="section">
 
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+  <div class="card-header portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading">
         <spring:message code="activityName.permissions.assigned.to.principalName" arguments="${ fn:escapeXml(activityDisplayName) }, ${ principalDisplayName }"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
 
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content">
+  <div class="card-body portlet-content">
       <div class="titlebar">
           <h3 class="title" role="heading"><spring:message code="assignments"/></h3>
       </div>
@@ -165,80 +174,61 @@ up.jQuery(function() {
 
     var initializeTable = function() {
         var table = $("#${n}permissionsTable");
-        principalList_configuration.main.table = $("#${n}permissionsTable").dataTable({
-            iDisplayLength: principalList_configuration.main.pageSize,
-            aLengthMenu: [5, 10, 20, 50],
-            bServerSide: false,
-            sAjaxSource: principalList_configuration.url,
-            sAjaxDataProp: "assignments",
-            bDeferRender: false,
-            bProcessing: true,
-            bAutoWidth:false,
-            sPaginationType: 'full_numbers',
-            oLanguage: {
-                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
-                oPaginate: {
-                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
-                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+        principalList_configuration.main.table = $("#${n}permissionsTable").DataTable({
+            pageLength: principalList_configuration.main.pageSize,
+            lengthMenu: [5, 10, 20, 50],
+            serverSide: false,
+            ajax: {
+                url: principalList_configuration.url,
+                dataSrc: "assignments"
+            },
+            deferRender: false,
+            processing: true,
+            autoWidth: false,
+            language: {
+                lengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
+                paginate: {
+                    previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                    next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
                 }
             },
-            aoColumns: [
-                { mData: 'ownerName', sType: 'html', sWidth: '25%' }, // Owner
-                { mData: 'activityName', sType: 'html', sWidth: '25%' }, // Activity
-                { mData: 'targetName', sType: 'html', sWidth: '25%' }, // Target
-                { mData: 'targetName', sType: 'html', bSearchable: false, sWidth: '25%' } // Edit Link
+            columns: [
+                { data: 'ownerName', width: '25%' },
+                { data: 'activityName', width: '25%' },
+                { data: 'targetName', width: '25%' },
+                { data: 'targetName', searchable: false, width: '25%' }
             ],
-            fnInitComplete: function (oSettings) {
-                principalList_configuration.main.table.fnDraw();
+            initComplete: function (settings) {
+                principalList_configuration.main.table.draw();
             },
-            fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = $.ajax({
-                    url: sUrl,
-                    data: aoData,
-                    dataType: "json",
-                    cache: false,
-                    type: oSettings.sServerMethod,
-                    success: function (json) {
-                        if (json.sError) {
-                            oSettings.oApi._fnLog(oSettings, 0, json.sError);
-                        }
-
-                        $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
-                        fnCallback(json);
-                    },
-                    error: function (xhr, error, thrown) {
-                        lib.handleError(xhr, error, thrown);
-                    }
-                });
+            rowCallback: function (row, data, displayNum, displayIndex, dataIndex) {
+                $('td:eq(3)', row).html( getEditAnchorTag(data.ownerKey, data.activityKey, data.targetKey) );
+                $('td:eq(1)', row).html( getActivityValue(data.activityName, data.inherited) );
             },
-            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
-                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
-                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
-                infoMessage = infoMessage.replace(/_START_/g, iStart).
-                                      replace(/_END_/g, iEnd).
-                                      replace(/_TOTAL_/g, iTotal).
-                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
-                return infoMessage;
+            layout: {
+                topStart: null,
+                topEnd: null,
+                top: function() {
+                    var div = document.createElement('div');
+                    div.className = 'row alert alert-info view-filter';
+                    return div;
+                },
+                top2Start: 'paging',
+                top2: 'info',
+                top2End: 'pageLength',
+                bottomStart: null,
+                bottom: null,
+                bottomEnd: null
             },
-            // Add links to the proper columns after we get the data
-            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                // Create edit link
-                $('td:eq(3)', nRow).html( getEditAnchorTag(aData.ownerKey, aData.activityKey, aData.targetKey) );
-                // Set activity inherited markup
-                $('td:eq(1)', nRow).html( getActivityValue(aData.activityName, aData.inherited) );
-            },
-            // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
-            // Filtering
-            oColumnFilterWidgets: {
-                sSeparator: ',', // Used for multivalue column Categories
-                aiExclude: [principalList_configuration.column.placeHolderForEditLink]
+            searchPanes: {
+                columns: [0, 1, 2],
+                cascadePanes: true,
+                viewTotal: true,
+                layout: 'columns-3'
             }
         });
     };
     initializeTable();
-    // Adding formatting to sDom
-    $("div.toolbar-br").html('<BR>');
-    $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
+    $("div.toolbar-filter").html('<b><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></b>:');
 });
 </script>

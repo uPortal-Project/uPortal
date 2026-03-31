@@ -24,15 +24,15 @@
 </portlet:actionURL>
 
 <!-- Portlet -->
-<div class="fl-widget portlet loc-sel view-select" role="section">
+<div class="card portlet loc-sel view-select" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="card-header titlebar portlet-titlebar" role="sectionhead">
     	 <h2 class="title" role="heading"><spring:message code="set.language.preference"/></h2>
     </div>
 
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content">
+    <div class="card-body content portlet-content">
       	<div class="portlet-form">
               <form action="${queryUrl}" method="POST">
                   <ul style="margin:0">
@@ -40,7 +40,7 @@
                           <li style="list-style:none;padding:0.2em 0 0.2em 0">
                               <input type="radio" name="locale" id="${ fn:escapeXml(locale.code) }" value="${ fn:escapeXml(locale.code) }" ${ locale.code == currentLocale ? "checked" : '' }/>
                               <img src="/ResourceServingWebapp/rs/famfamfam/flags/${ fn:escapeXml(fn:toLowerCase(locale.locale.country) )}.png"/>
-                              <label for="${ fn:escapeXml(locale.code) }">
+                              <label for="${ fn:escapeXml(locale.code) }" class="form-check-label">
                                   ${ fn:escapeXml(locale.displayLanguage) }
                               </label>
                           </li>

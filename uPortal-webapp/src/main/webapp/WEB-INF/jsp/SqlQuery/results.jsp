@@ -22,64 +22,107 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <style>
-#${n}resultBrowser .dataTables_filter, #${n}resultBrowser .first.paginate_button, #${n}resultBrowser .last.paginate_button{
+#${n}resultBrowser .dt-search,
+#${n}resultBrowser .first.dt-paging-button,
+#${n}resultBrowser .last.dt-paging-button {
     display: none;
 }
-#${n}resultBrowser .dataTables-inline, #${n}resultBrowser .column-filter-widgets {
-    display: inline-block;
-}
-#${n}resultBrowser .dataTables_wrapper {
+#${n}resultBrowser .dt-container {
     width: 100%;
 }
-#${n}resultBrowser .dataTables_paginate .paginate_button {
+#${n}resultBrowser .view-filter {
+    padding: 10px 15px 15px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+#${n}resultBrowser .view-filter h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: bold;
+}
+#${n}resultBrowser .column-filter-widgets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+#${n}resultBrowser .column-filter-widget {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+#${n}resultBrowser .column-filter-widget select {
+    font-size: 14px;
+}
+#${n}resultBrowser .filter-term {
+    display: inline-block;
+    margin: 2px 0;
+    padding: 2px 8px;
+    background-color: #d9edf7;
+    border: 1px solid #bce8f1;
+    border-radius: 3px;
+    color: #31708f;
+    text-decoration: none;
+    font-size: 12px;
+    cursor: pointer;
+    width: fit-content;
+}
+#${n}resultBrowser .filter-term:hover {
+    background-color: #c4e3f3;
+    text-decoration: none;
+}
+#${n}resultBrowser .dt-paging-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 14px;
+}
+#${n}resultBrowser .dt-paging-row .dt-info {
+    white-space: nowrap;
+}
+#${n}resultBrowser .dt-paging-row .dt-length {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+#${n}resultBrowser .dt-paging-row .dt-length select {
+    display: inline-block !important;
+    width: auto;
+    font-size: 14px;
+}
+#${n}resultBrowser .dt-paging-row .dt-length label {
+    font-weight: normal;
+    margin: 0;
+}
+#${n}resultBrowser .dt-paging .page-link {
     margin: 2px;
     color: #428BCA;
     cursor: pointer;
-    *cursor: hand;
+    font-size: 14px;
 }
-#${n}resultBrowser .dataTables_paginate .paginate_active {
-    margin: 2px;
-    color:#000;
+#${n}resultBrowser .dt-paging .page-item.active .page-link {
+    color: #000;
+    background: none;
+    border-color: transparent;
 }
-
-#${n}resultBrowser .dataTables_paginate .paginate_active:hover {
-    text-decoration: line-through;
-}
-
 #${n}resultBrowser table tr td a {
     color: #428BCA;
-}
-
-#${n}resultBrowser .dataTables-left {
-    float:left;
-}
-
-#${n}resultBrowser .column-filter-widget {
-    vertical-align: top;
-    display: inline-block;
-    overflow: hidden;
-    margin-right: 5px;
-}
-
-#${n}resultBrowser .filter-term {
-    display: block;
-    text-align:bottom;
-}
-
-#${n}resultBrowser .dataTables_length label {
-    font-weight: normal;
-}
-#${n}resultBrowser .datatable-search-view {
-    text-align:right;
 }
 </style>
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="card portlet" role="section">
   
   <!-- Portlet Body -->
-  <div id="${n}resultBrowser" class="fl-widget-content portlet-body">
-  
+  <div id="${n}resultBrowser" class="card-body portlet-body">
+        <div class="row alert alert-info view-filter" id="${n}viewFilter">
+            <h4>Filters</h4>
+            <div class="column-filter-widgets" id="${n}columnFilterWidgets"></div>
+            <div class="dt-paging-row" id="${n}pagingRow"></div>
+        </div>
         <table id="${n}sqlResults" style="width:100%;">
             <thead>
                 <tr style="text-transform:capitalize">
@@ -113,48 +156,108 @@
         }
     };
     var initializeTable = function() {
-        resultList_configuration.main.table = $("#${n}sqlResults").dataTable({
-            iDisplayLength: resultList_configuration.main.pageSize,
-            aLengthMenu: [5, 10, 20, 50],
-            sPaginationType: 'full_numbers',
-            bDeferRender: false,
-            bProcessing: true,
-            oLanguage: {
-                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
-                oPaginate: {
-                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
-                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+        resultList_configuration.main.table = $("#${n}sqlResults").DataTable({
+            pageLength: resultList_configuration.main.pageSize,
+            lengthMenu: [5, 10, 20, 50],
+            deferRender: false,
+            processing: true,
+            language: {
+                lengthMenu: '_MENU_ per page',
+                paginate: {
+                    first: '\u00AB',
+                    previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                    next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>',
+                    last: '\u00BB'
                 }
             },
-            // use results right from the model instead of pulling from server via ajax
-            aaData: results,
-            // dynamically create columns
-            aoColumns: [
+            infoCallback: function(settings, start, end, max, total, pre) {
+                var api = this.api();
+                var pageInfo = api.page.info();
+                return 'Viewing page ' + (pageInfo.page + 1) + '. Showing records ' + start + ' to ' + end + ' of ' + total + ' items.';
+            },
+            data: results,
+            columns: [
                 <c:forEach items="${ results[0] }" var="row" varStatus="status">
-                { mData: 'column${ status.index }', sType: 'string' }${ status.last ? "" : ","}
+                { data: 'column${ status.index }' }${ status.last ? "" : ","}
                 </c:forEach>
             ],
-            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
-                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
-                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
-                infoMessage = infoMessage.replace(/_START_/g, iStart).
-                                      replace(/_END_/g, iEnd).
-                                      replace(/_TOTAL_/g, iTotal).
-                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
-                return infoMessage;
+            drawCallback: function() {
+                var table = this.api();
+                var $widgets = $('#${n}columnFilterWidgets');
+
+                if (table.data().length > 0 && $widgets.children().length === 0) {
+                    var selectedValues = [];
+                    var searchFns = [];
+
+                    function updateFilters() {
+                        $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(function(fn) {
+                            return searchFns.indexOf(fn) === -1;
+                        });
+                        searchFns.forEach(function(fn) {
+                            $.fn.dataTable.ext.search.push(fn);
+                        });
+                        table.draw();
+                    }
+
+                    table.columns().every(function(colIdx) {
+                        var header = $(table.column(colIdx).header()).text();
+                        var colSelected = [];
+                        selectedValues.push(colSelected);
+
+                        var searchFn = (function(idx, arr) {
+                            return function(settings, data, dataIndex) {
+                                if (arr.length === 0) return true;
+                                return arr.indexOf(data[idx]) !== -1;
+                            };
+                        })(colIdx, colSelected);
+                        searchFns.push(searchFn);
+
+                        var uniqueVals = table.column(colIdx).data().unique().sort();
+                        var select = $('<select class="form-select form-select-sm"><option value="">' + header + '</option></select>');
+                        uniqueVals.each(function(v) {
+                            select.append('<option value="' + v + '">' + v + '</option>');
+                        });
+                        if (uniqueVals.length <= 1) select.prop('disabled', true);
+
+                        var $widget = $('<div class="column-filter-widget"></div>').append(select);
+
+                        select.on('change', function() {
+                            var val = this.value;
+                            if (val && colSelected.indexOf(val) === -1) {
+                                colSelected.push(val);
+                                var $term = $('<a class="filter-term" href="#">' + val + '</a>');
+                                $term.on('click', function(e) {
+                                    e.preventDefault();
+                                    var text = $(this).text();
+                                    colSelected.splice(colSelected.indexOf(text), 1);
+                                    $(this).remove();
+                                    updateFilters();
+                                });
+                                $widget.append($term);
+                                updateFilters();
+                            }
+                            this.value = '';
+                        });
+
+                        $widgets.append($widget);
+                    });
+                }
+
+                var $pagingRow = $('#${n}pagingRow');
+                $('#${n}resultBrowser .dt-info').appendTo($pagingRow);
+                $('#${n}resultBrowser .dt-length').appendTo($pagingRow);
+                $('#${n}resultBrowser .dt-paging').appendTo($pagingRow);
             },
-            // Add links to the proper columns after we get the data
-            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-            },
-            // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
-            // Filtering
-            oColumnFilterWidgets: { }
+            layout: {
+                topStart: null,
+                topEnd: null,
+                top: null,
+                bottomStart: null,
+                bottom: { features: ['info', 'pageLength', 'paging'] },
+                bottomEnd: null
+            }
         });
     };
     initializeTable();
-    // Adding formatting to sDom
-    $("div.toolbar-br").html('<BR>');
-    $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
  });
 </script>

@@ -46,34 +46,33 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div id="${n}" class="fl-widget portlet user-mgr view-reviewuser" role="section">
+<div id="${n}" class="card portlet user-mgr view-reviewuser" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="card-header titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading">${ fn:escapeXml(person.name )}</h2>
         <div class="btn-group toolbar">
                 <c:if test="${ canEdit }">
-                    <a class="btn btn-default" href="${ editDetailsUrl }"><spring:message code="edit" text="Edit" /></a>
+                    <a class="btn btn-secondary" href="${ editDetailsUrl }"><spring:message code="edit" text="Edit" /></a>
                 </c:if>
-                <a class="btn btn-default" href="${ permissionsUrl }"><spring:message code="view.permissions" text="Permissions" /></a>
+                <a class="btn btn-secondary" href="${ permissionsUrl }"><spring:message code="view.permissions" text="Permissions" /></a>
                 <c:if test="${ canDelete }">
-                    <a class="btn btn-default" href="${ deleteUrl }"><spring:message code="delete" text="Delete" /></a>
+                    <a class="btn btn-secondary" href="${ deleteUrl }"><spring:message code="delete" text="Delete" /></a>
                 </c:if>
-                <a class="btn btn-default" href="${ resetLayoutUrl }"><spring:message code="reset.user.layout" text="Reset User Layout" /></a>
+                <a class="btn btn-secondary" href="${ resetLayoutUrl }"><spring:message code="reset.user.layout" text="Reset User Layout" /></a>
                 <c:if test="${ canImpersonate }">
-                	<a class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuImpersonate" data-toggle="dropdown">
+                	<a class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuImpersonate" data-bs-toggle="dropdown">
                     <spring:message code="impersonate" text="Impersonate"/>
-                    <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-right up-impersonation-menu" role="menu" aria-labelledby="dropdownMenuImpersonate">
-                      <li role="presentation"><a role="menuitem" tabindex="-1" data-href="${ impersonateUrl }" href="javascript:void(0)"><spring:message code="label.default.profile" text="Default Profile"/></a></li>
+                      <li role="presentation"><a class="dropdown-item" role="menuitem" tabindex="-1" data-href="${ impersonateUrl }" href="javascript:void(0)"><spring:message code="label.default.profile" text="Default Profile"/></a></li>
                       <c:forEach var="profile" items="${profiles}">
                         <portlet:actionURL var="swapDynamicURL">
                             <portlet:param name="execution" value="${flowExecutionKey}" />
                             <portlet:param name="_eventId" value="swapDynamic"/>
                             <portlet:param name="profile" value="${profile.value.profileFname}" />
                         </portlet:actionURL>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" data-href="${ swapDynamicURL }" href="javascript:void(0)">${profile.value.profileName}</a></li>
+                        <li role="presentation"><a class="dropdown-item" role="menuitem" tabindex="-1" data-href="${ swapDynamicURL }" href="javascript:void(0)">${profile.value.profileName}</a></li>
                       </c:forEach>
                     </ul>
                 </c:if>
@@ -81,7 +80,7 @@
     </div> <!-- end: portlet-titlebar -->
 
     <!-- Portlet Body -->
-    <div class="fl-widget-content content portlet-content">
+    <div class="card-body content portlet-content">
 
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">
@@ -129,7 +128,7 @@
         </div>
 
         <div class="buttons">
-            <a class="button btn btn-default" href="${ backUrl }"><spring:message code="back" text="Back" /></a>
+            <a class="button btn btn-secondary" href="${ backUrl }"><spring:message code="back" text="Back" /></a>
         </div>
     </div>
 </div>
@@ -137,14 +136,15 @@
 <script type="text/javascript">
 (function($) {
     // Impersonation requests must be an actionURL and a POST...
-    $('#${n} .up-impersonation-menu a').click(function() {
+    $('#${n} .up-impersonation-menu a').on('click', function(e) {
+        e.preventDefault();
         var url = $(this).attr('data-href');
         var form = $('<form />', {
             action: url,
             method: 'POST',
             style: 'display: none;'
         });
-        form.appendTo('body').submit();
+        form.appendTo('body')[0].submit();
     });
 })(up.jQuery);
 </script>

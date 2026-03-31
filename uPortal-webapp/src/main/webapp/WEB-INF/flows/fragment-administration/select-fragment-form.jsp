@@ -21,22 +21,22 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- Portlet -->
-<div id="portalFragAdminList" class="fl-widget portlet snooper view-main" role="section">
+<div id="portalFragAdminList" class="card portlet snooper view-main" role="section">
 
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="card-header titlebar portlet-titlebar" role="sectionhead">
     	<h2 class="title" role="heading"><spring:message code="fragment.administration"/></h2>
     </div>
 
     <!-- Portlet Content -->
-	<div class="fl-widget-content content portlet-content">
+	<div class="card-body content portlet-content">
 
         <portlet:actionURL var="formUrl">
             <portlet:param name="execution" value="${flowExecutionKey}" />
             <portlet:param name="_eventId" value="selectFragment"/>
         </portlet:actionURL>
-        <form method="POST" name="fragmentAdminForm" class="form form-inline" action="${formUrl}">
+        <form method="POST" name="fragmentAdminForm" class="form d-flex align-items-center gap-2" action="${formUrl}">
             <select id="fragmentOwner" class="form-control" name="impersonateUser" title="<spring:message code="choose.fragment.to.edit"/>">
             	<option value="NONE"> -- <spring:message code="fragments"/> -- </option>
                 <c:forEach items="${fragments}" var="item">

@@ -21,16 +21,16 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- Portlet -->
-<div class="fl-widget portlet snooper view-main" role="section">
+<div class="card portlet snooper view-main" role="section">
 
 	
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="card-header titlebar portlet-titlebar" role="sectionhead">
     	<h2 class="title" role="heading">Snooper Information</h2>
     </div>
     
     <!-- Portlet Content -->
-	<div class="fl-widget-content content portlet-content">
+	<div class="card-body content portlet-content">
   
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">
