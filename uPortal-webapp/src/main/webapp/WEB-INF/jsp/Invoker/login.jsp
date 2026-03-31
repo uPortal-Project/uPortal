@@ -28,7 +28,7 @@
             <i class="fa fa-sign-in" aria-hidden="true"></i>
             <spring:message code="sign.in"/>
         </a>
-        <a id="portalCASLoginNewLink" title="<spring:message code="create.new.portal.account"/>" href="http://www.jasig.org/cas" class="btn btn-secondary">
+        <a id="portalCASLoginNewLink" title="<spring:message code="create.new.portal.account"/>" href="https://apereo.org/programs/software/cas" class="btn btn-secondary">
             <i class="fa fa-user-plus" aria-hidden="true"></i>
             <spring:message code="new.user.question"/>
         </a>
