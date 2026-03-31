@@ -122,6 +122,7 @@ class PortalGallery {
         const customizeBtn = document.getElementById('customizeButton');
         const arrow = customizeBtn?.querySelector('i');
         if (arrow) arrow.className = 'fa fa-caret-up';
+        if (customizeBtn) customizeBtn.setAttribute('aria-expanded', 'true');
 
         if (outer && inner) {
             inner.style.display = 'block';
@@ -146,6 +147,7 @@ class PortalGallery {
         const customizeBtn = document.getElementById('customizeButton');
         const arrow = customizeBtn?.querySelector('i');
         if (arrow) arrow.className = 'fa fa-caret-down';
+        if (customizeBtn) customizeBtn.setAttribute('aria-expanded', 'false');
 
         if (outer && inner) {
             up.jQuery(outer).slideUp(300, 'swing', () => {
