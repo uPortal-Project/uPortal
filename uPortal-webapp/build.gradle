@@ -145,25 +145,11 @@ task aggregateRespondrSkins {
     inputs.files fileTree('src/main/webapp/media/skins/common')
     doLast {
         final ResourcesAggregator aggr = new ResourcesAggregatorImpl();
-        aggr.setDisplayJsWarnings(true);
+        aggr.setDisplayJsWarnings(false);
 
         final File resourcesXmlFile = new File(projectDir, 'src/main/webapp/media/skins/respondr/defaultSkin/skin.xml');
         final File fullOutputDirectory = new File(buildDir, 'generated-sources/skin/main/webapp/media/skins/respondr/defaultSkin');
         final File sharedJavaScriptDirectory = new File(buildDir, 'generated-sources/skin/main/webapp/media/skins/respondr');
-
-        // Debug logging
-        logger.lifecycle("=== AGGREGATION DEBUG ===");
-        logger.lifecycle("resourcesXmlFile=${resourcesXmlFile}");
-        logger.lifecycle("fullOutputDirectory=${fullOutputDirectory}");
-        logger.lifecycle("sharedJavaScriptDirectory=${sharedJavaScriptDirectory}");
-        logger.lifecycle("bootstrapJsPath=${bootstrapJsPath}");
-        
-        // Check Bootstrap file existence
-        def bootstrapFile = new File("${buildDir}/generated-sources/skin/main/webapp/webjars/bootstrap/js/bootstrap.bundle.min.js")
-        logger.lifecycle("Bootstrap webjar file exists: ${bootstrapFile.exists()}");
-        if (bootstrapFile.exists()) {
-            logger.lifecycle("Bootstrap file size: ${bootstrapFile.length()} bytes");
-        }
 
         final AggregationRequest aggregationRequest = new AggregationRequest();
         aggregationRequest
@@ -175,9 +161,7 @@ task aggregateRespondrSkins {
                 .addAdditionalSourceDirectory(new File(bootstrapJsPath))
                 .setSharedJavaScriptDirectory(sharedJavaScriptDirectory);
         
-        logger.lifecycle("Starting aggregation...");
         aggr.aggregate(aggregationRequest);
-        logger.lifecycle("Aggregation complete.");
 
     }
 }
