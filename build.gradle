@@ -91,7 +91,7 @@ allprojects {
         }
     }
     googleJavaFormat {
-        toolVersion '1.7'
+        toolVersion '1.35.0'
         options style: 'AOSP'
         exclude '**/generated-sources'
     }
