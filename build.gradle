@@ -222,7 +222,7 @@ subprojects {
 
                 pom.project {
                     name 'uPortal'
-                    packaging 'jar'
+                    packaging project.plugins.hasPlugin('war') ? 'war' : 'jar'
                     // optionally artifactId can be defined here
                     description 'Enterprise open source portal built by and for the higher education community.'
                     url 'https://github.com/uPortal-Project/uPortal'

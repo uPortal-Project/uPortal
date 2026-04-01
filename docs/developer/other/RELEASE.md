@@ -114,12 +114,35 @@ Run the following command in the uPortal clone's directory:
 
 ## Verify and Publish from Central Publisher Portal
 
-After the `release` task uploads artifacts via the OSSRH Staging API, verify and publish them:
+Because uPortal uses Gradle's legacy `uploadArchives` (a Maven-API-like plugin), the OSSRH Staging API does **not** automatically close the staging repository. After the `release` task completes, you must manually trigger the upload to the Central Portal.
+
+### Push staged artifacts to the portal
+
+Run this from the **same machine** that ran the release (same IP is required):
+
+```sh
+curl -X POST \
+  "https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/org.jasig.portal" \
+  -H "Authorization: Bearer $(echo -n '{ossrhUsername}:{ossrhPassword}' | base64)"
+```
+
+Replace `{ossrhUsername}` and `{ossrhPassword}` with your Central Portal user token credentials (the same ones in `~/.gradle/gradle.properties`).
+
+### Review and publish
+
 1. Log into <https://central.sonatype.com>
-2. Navigate to your deployments/staging repositories
+2. Navigate to your deployments — the staged artifacts should now be visible
 3. Review the release for the expected artifacts
 4. Verify the artifacts pass validation checks (signatures, POM requirements)
 5. Publish the deployment to make it available on Maven Central
+
+If the deployment does not appear, you can search for open repositories:
+
+```sh
+curl -X GET \
+  "https://ossrh-staging-api.central.sonatype.com/manual/search/repositories?ip=any&profile_id=org.jasig.portal" \
+  -H "Authorization: Bearer $(echo -n '{ossrhUsername}:{ossrhPassword}' | base64)"
+```
 
 ## Create Release Notes
 
