@@ -335,6 +335,79 @@ docs/                               # Project documentation (Markdown, Jekyll)
 .github/workflows/CI.yml            # GitHub Actions CI
 ```
 
+## Architecture
+
+### Rendering pipeline (decorator pattern)
+
+The core request flow is a composable pipeline of `CharacterPipelineComponent` stages defined in `RenderingPipelineConfiguration.java`:
+
+```
+HTTP Request → IPortalRenderingPipeline → RenderingPipelineBranchPoint[] → DynamicRenderingPipeline
+```
+
+Pipeline stages (bottom-to-top execution):
+1. **UserLayoutStoreComponent** — Loads user's layout XML from database
+2. **StructureAttributeIncorporationComponent** — Merges user preferences
+3. **StructureTransformComponent** — XSLT transform of layout structure
+4. **StructureCachingComponent** — Caches transformed structure
+5. **PortletRenderingInitiationComponent** — Spawns async portlet worker threads
+6. **ThemeAttributeIncorporationComponent** — Adds theme data
+7. **ThemeTransformComponent** — XSLT transform to HTML
+8. **StaxSerializingComponent** — SAX to character stream
+9. **PortletRenderingIncorporationComponent** — Embeds portlet output into page
+
+Adopters extend the pipeline via `RenderingPipelineBranchPoint` beans for conditional routing (e.g., redirect to CAS, alternate UIs).
+
+### Distributed Layout Management (DLM)
+
+Users' portal layouts are composed from a **base layout** merged with **layout fragments** owned by admin accounts. `DistributedLayoutManager` orchestrates this:
+
+- Fragments are portal user accounts that own reusable layout templates
+- Evaluators (group membership, person attributes, profile) determine which fragments apply to each user
+- The merged layout is an XML document of folders and channels (portlet references)
+
+### Authentication
+
+Pluggable via `ISecurityContext` implementations:
+- `RemoteUserSecurityContext` — HTTP REMOTE_USER from servlet container/reverse proxy
+- `CasAssertionSecurityContext` — CAS protocol
+- `SimpleLdapSecurityContext` — Direct LDAP bind
+- `TrustSecurityContext` — Pre-authenticated
+
+Each has a corresponding `ContextFactory`. Configuration is in the security Spring contexts.
+
+### Import/Export system
+
+`JaxbPortalDataHandlerService` handles batch import/export of portal data. Each data type (users, portlets, layouts, groups, permissions, etc.) has:
+- `IDataImporter` — XML to domain object
+- `IDataExporter` — Domain object to XML
+- `IDataUpgrader` — XSLT-based schema migration
+- `IDataTemplatingStrategy` — SpEL parameter substitution in XML files
+
+JAXB classes are generated from XSD schemas in `uPortal-io-jaxb`.
+
+### Soffit framework
+
+REST-based alternative to JSR-286 portlet development. External web apps receive JWT-encoded payloads via `SoffitConnectorController` containing user info, preferences, and layout context. Soffits can be Spring Boot apps that render views with portal-injected data.
+
+### Spring configuration
+
+Mixed XML and Java @Configuration:
+- XML contexts in `uPortal-webapp/src/main/resources/properties/contexts/` (datasource, persistence, groups, LDAP, portlet configs)
+- Java configs: `RenderingPipelineConfiguration`, `PersonDirectoryConfiguration`, `GroupServiceConfiguration`, `SoffitConnectorConfiguration`
+- Convention-based discovery: `RenderingPipelineBranchPoint`, `IPortalDataType`, and `IComponentGroupService` beans are auto-discovered
+
+### Key configuration files
+
+- `uPortal-webapp/src/main/resources/properties/portal.properties` — Main portal config (overridable via `${portal.home}/uPortal.properties`)
+- `uPortal-webapp/src/main/resources/properties/rdbm.properties` — Database/JDBC config
+- `uPortal-webapp/src/main/resources/hibernate.properties` — Hibernate/JPA settings
+- `gradle.properties` — 80+ dependency version declarations
+
+### Dependency coupling
+
+`uPortal-security-authn` is the most highly coupled module (depends on 23 subprojects). Core hub modules are `uPortal-core`, `uPortal-rendering`, and `uPortal-layout-impl`. Utility modules (`uPortal-utils-*`, group providers) are loosely coupled and independently usable.
+
 ## Code style and conventions
 
 **Java:**
