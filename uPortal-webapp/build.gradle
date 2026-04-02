@@ -19,6 +19,11 @@ apply plugin: 'com.github.node-gradle.node'
 
 description = "Apereo uPortal Webapp (WAR)"
 
+// Disable the jar task so the signing plugin does not produce an
+// orphaned .jar.asc (Central Portal rejects deployments that
+// reference a .jar file when only a .war exists)
+jar.enabled = false
+
 /*
  * TODO:  Groovy-based tests (in src/test/groovy) are not currently run by the Gradle build.
  */
