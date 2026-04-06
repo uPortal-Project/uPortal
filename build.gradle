@@ -163,13 +163,17 @@ subprojects {
 
     /* Release Management
      *
-     * Based on Sonatype's guide for publishing w/ Gradle:  http://central.sonatype.org/pages/gradle.html
+     * Based on Sonatype's guide for publishing w/ Gradle:  https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/
+     *
+     * OSSRH was sunset June 2025. Publishing now goes through the Central Portal's
+     * OSSRH Staging API compatibility service. Credentials must be Central Portal
+     * user tokens (generate at https://central.sonatype.com).
      */
     ext {
         publishingUsername = project.hasProperty('ossrhUsername') ? project.getProperty('ossrhUsername') : ""
         publishingPassword = project.hasProperty('ossrhPassword') ? project.getProperty('ossrhPassword') : ""
-        publishingRepositoryUrl = project.hasProperty('ossrhUrl') ? project.getProperty('ossrhUrl') : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-        publishingRepositoryUrlSnapshot = project.hasProperty('ossrhUrlSnapshot') ? project.getProperty('ossrhUrlSnapshot') : "https://oss.sonatype.org/content/repositories/snapshots/"
+        publishingRepositoryUrl = project.hasProperty('ossrhUrl') ? project.getProperty('ossrhUrl') : "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
+        publishingRepositoryUrlSnapshot = project.hasProperty('ossrhUrlSnapshot') ? project.getProperty('ossrhUrlSnapshot') : "https://central.sonatype.com/repository/maven-snapshots/"
     }
     signing {
         required { gradle.taskGraph.hasTask('uploadArchives') }
@@ -218,7 +222,7 @@ subprojects {
 
                 pom.project {
                     name 'uPortal'
-                    packaging 'jar'
+                    packaging project.plugins.hasPlugin('war') ? 'war' : 'jar'
                     // optionally artifactId can be defined here
                     description 'Enterprise open source portal built by and for the higher education community.'
                     url 'https://github.com/uPortal-Project/uPortal'
