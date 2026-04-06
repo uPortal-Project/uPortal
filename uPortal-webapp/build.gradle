@@ -26,6 +26,16 @@ description = "Apereo uPortal Webapp (WAR)"
 configurations {
     // These get packaged with the war in a special way
     webjars
+    webjars.resolutionStrategy {
+        /*
+         * datatables.net-bs5 (and other datatables extensions) declare a broad jquery dependency
+         * of [1.7.0,) which causes resolution of very old jQuery versions (1.7.2, 1.7.3) that
+         * have a broken transitive dependency on org.webjars.npm:jsdom:[0.2.14,0.3) --
+         * a version range that does not exist in Maven Central. Forcing jquery here prevents
+         * the broken dependency chain.
+         */
+        force "org.webjars.npm:jquery:${jqueryVersion}"
+    }
 }
 
 dependencies {
@@ -82,7 +92,15 @@ dependencies {
     webjars "org.webjars.npm:regenerator-runtime:${regeneratorRuntimeVersion}"
     webjars "org.webjars.npm:webcomponents__webcomponentsjs:${webComponentPolyfillVersion}"
     webjars "org.webjars.npm:whatwg-fetch:${whatwgFetchPolyfillVersion}"
-    webjars "org.webjars:bootstrap:${bootstrapVersion}"
+    webjars "org.webjars.npm:bootstrap:${bootstrapVersion}"
+    webjars "org.webjars.npm:jquery:${jqueryVersion}"
+    webjars "org.webjars.npm:jquery-ui:${jqueryUiVersion}"
+    webjars "org.webjars.npm:datatables.net:${datatablesVersion}"
+    webjars "org.webjars.npm:datatables.net-bs5:${datatablesVersion}"
+    webjars "org.webjars.npm:datatables.net-searchpanes:${datatablesSearchpanesVersion}"
+    webjars "org.webjars.npm:datatables.net-searchpanes-bs5:${datatablesSearchpanesVersion}"
+    webjars "org.webjars.npm:datatables.net-select:${datatablesSelectVersion}"
+    webjars "org.webjars.npm:datatables.net-select-bs5:${datatablesSelectVersion}"
 }
 
 node {
@@ -168,7 +186,6 @@ task aggregateRespondrSkins {
 
 // Generate CSS for Respondr skins
 project.tasks.getByName('npm_run_compile-scss').dependsOn(prepareSkinResources)
-project.tasks.getByName('npm_run_compile-scss').environment.put('BOOTSTRAP_VERSION', bootstrapVersion)
 aggregateRespondrSkins.dependsOn('npm_run_compile-scss')
 processResources.dependsOn(aggregateRespondrSkins)
 
