@@ -36,8 +36,8 @@
 
 
   <!-- Default jQuery UI theme.  Point this to a custom jQuery UI theme if desired. -->
-  <css included="plain" resource="true">/webjars/jquery-ui/dist/themes/smoothness/jquery-ui.css</css>
-  <css included="aggregated" resource="true">/webjars/jquery-ui/dist/themes/smoothness/jquery-ui.min.css</css>
+  <css included="plain">/resource-server/webjars/jquery-ui/dist/themes/smoothness/jquery-ui.css</css>
+  <css included="aggregated">/resource-server/webjars/jquery-ui/dist/themes/smoothness/jquery-ui.min.css</css>
 
   <!--
    | The skin is applied in lieu of using the Dynamic Skin Portlet.  Follow configuration information in skinList.xml
