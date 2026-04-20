@@ -1021,7 +1021,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
             $(helpIconSelector).each(function (idx, el) {
                 if (!$(el).is($target)) {
-                    $(el).tooltip('hide');
+                    $(el).tooltip('close');
                 }
             });
         });
@@ -1143,6 +1143,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         resetRestartManually($(restartManuallyFieldName).is(':checked'));
 
         $('#accordion a[data-bs-toggle="collapse"]').on('click', function(e) {
+            e.preventDefault();
+            var target = $(this).attr('href');
+            var $target = $(target);
+            if ($target.hasClass('show')) {
+                bootstrap.Collapse.getInstance($target[0]).hide();
+            } else {
+                new bootstrap.Collapse($target[0]).show();
+            }
             $(this).find('i.fa').toggleClass('fa-chevron-down fa-chevron-up');
         });
     });
