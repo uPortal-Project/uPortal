@@ -14,9 +14,9 @@
  */
 package org.apereo.portal.portlet.container.cache;
 
-import com.google.common.base.Function;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.function.Consumer;
 import org.apache.commons.io.output.NullWriter;
 import org.apereo.portal.utils.TeeWriter;
 
@@ -29,7 +29,7 @@ import org.apereo.portal.utils.TeeWriter;
 public class LimitingTeeWriter extends TeeWriter {
     private final long maximumCharacters;
     private final Writer branch;
-    private final Function<LimitingTeeWriter, ?> limitReachedCallback;
+    private final Consumer<LimitingTeeWriter> limitReachedCallback;
     private long characterCount = 0;
     private boolean limitReached = false;
 
@@ -41,7 +41,7 @@ public class LimitingTeeWriter extends TeeWriter {
             long maximumCharacters,
             Writer out,
             Writer branch,
-            Function<LimitingTeeWriter, ?> limitReachedCallback) {
+            Consumer<LimitingTeeWriter> limitReachedCallback) {
         super(out, branch);
         this.maximumCharacters = maximumCharacters;
         this.branch = branch;
@@ -83,7 +83,7 @@ public class LimitingTeeWriter extends TeeWriter {
             this.setBranch(NullWriter.NULL_WRITER);
 
             if (this.limitReachedCallback != null) {
-                this.limitReachedCallback.apply(this);
+                this.limitReachedCallback.accept(this);
             }
         }
     }

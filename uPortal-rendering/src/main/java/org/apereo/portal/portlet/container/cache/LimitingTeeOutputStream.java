@@ -14,9 +14,9 @@
  */
 package org.apereo.portal.portlet.container.cache;
 
-import com.google.common.base.Function;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.function.Consumer;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apereo.portal.utils.TeeOutputStream;
 
@@ -29,7 +29,7 @@ import org.apereo.portal.utils.TeeOutputStream;
 public class LimitingTeeOutputStream extends TeeOutputStream {
     private final long maximumBytes;
     private final OutputStream branch;
-    private final Function<LimitingTeeOutputStream, ?> limitReachedCallback;
+    private final Consumer<LimitingTeeOutputStream> limitReachedCallback;
     private long byteCount = 0;
     private boolean limitReached = false;
 
@@ -41,7 +41,7 @@ public class LimitingTeeOutputStream extends TeeOutputStream {
             long maximumBytes,
             OutputStream out,
             OutputStream branch,
-            Function<LimitingTeeOutputStream, ?> limitReachedCallback) {
+            Consumer<LimitingTeeOutputStream> limitReachedCallback) {
         super(out, branch);
         this.maximumBytes = maximumBytes;
         this.branch = branch;
@@ -81,7 +81,7 @@ public class LimitingTeeOutputStream extends TeeOutputStream {
             this.setBranch(NullOutputStream.NULL_OUTPUT_STREAM);
 
             if (this.limitReachedCallback != null) {
-                this.limitReachedCallback.apply(this);
+                this.limitReachedCallback.accept(this);
             }
         }
     }
