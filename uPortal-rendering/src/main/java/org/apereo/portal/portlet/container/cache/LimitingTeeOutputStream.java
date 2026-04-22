@@ -81,7 +81,10 @@ public class LimitingTeeOutputStream extends TeeOutputStream {
             this.setBranch(NullOutputStream.NULL_OUTPUT_STREAM);
 
             if (this.limitReachedCallback != null) {
-                this.limitReachedCallback.apply(this);
+                // Named 'unused' to satisfy ErrorProne's CheckReturnValue; the callback's
+                // signature is Function<T,?> but its return value is intentionally discarded.
+                @SuppressWarnings("unused")
+                Object unused = this.limitReachedCallback.apply(this);
             }
         }
     }
