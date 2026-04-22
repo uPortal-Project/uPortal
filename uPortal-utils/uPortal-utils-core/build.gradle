@@ -17,8 +17,14 @@ dependencies {
     api "org.apache.commons:commons-lang3:${commonsLang3Version}"
     api "org.aspectj:aspectjrt:${aspectjVersion}"
     api "com.fasterxml.woodstox:woodstox-core:${woodstoxVersion}"
-    api "org.jasig.resourceserver:resource-server-api:${resourceServerVersion}"
-    api "org.jasig.resourceserver:resource-server-utils:${resourceServerVersion}"
+    api("org.jasig.resourceserver:resource-server-api:${resourceServerVersion}") {
+        exclude group: 'org.springframework', module: 'spring-jcl'
+        exclude group: 'org.slf4j'
+    }
+    api("org.jasig.resourceserver:resource-server-utils:${resourceServerVersion}") {
+        exclude group: 'org.springframework'
+        exclude group: 'org.slf4j'
+    }
     api("org.apereo.service.persondir:person-directory-impl:${personDirectoryVersion}") {
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.springframework', module: 'spring-beans'
