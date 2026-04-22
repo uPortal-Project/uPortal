@@ -14,9 +14,9 @@
  */
 package org.apereo.portal.portlet.container.cache;
 
-import com.google.common.base.Function;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.function.Consumer;
 import org.apache.commons.io.output.NullWriter;
 import org.apereo.portal.utils.TeeWriter;
 
@@ -24,12 +24,12 @@ import org.apereo.portal.utils.TeeWriter;
  * Subclass of {@link TeeWriter} that stops writing to the branch once the limit is hit by calling
  * {@link #setBranch(Writer)} with {@link NullWriter}.
  *
- * <p>A callback {@link Function} to be executed when the limit is hit can be provided as well.
+ * <p>A callback {@link Consumer} to be executed when the limit is hit can be provided as well.
  */
 public class LimitingTeeWriter extends TeeWriter {
     private final long maximumCharacters;
     private final Writer branch;
-    private final Function<LimitingTeeWriter, ?> limitReachedCallback;
+    private final Consumer<LimitingTeeWriter> limitReachedCallback;
     private long characterCount = 0;
     private boolean limitReached = false;
 
@@ -41,7 +41,7 @@ public class LimitingTeeWriter extends TeeWriter {
             long maximumCharacters,
             Writer out,
             Writer branch,
-            Function<LimitingTeeWriter, ?> limitReachedCallback) {
+            Consumer<LimitingTeeWriter> limitReachedCallback) {
         super(out, branch);
         this.maximumCharacters = maximumCharacters;
         this.branch = branch;
@@ -83,10 +83,7 @@ public class LimitingTeeWriter extends TeeWriter {
             this.setBranch(NullWriter.NULL_WRITER);
 
             if (this.limitReachedCallback != null) {
-                // Named 'unused' to satisfy ErrorProne's CheckReturnValue; the callback's
-                // signature is Function<T,?> but its return value is intentionally discarded.
-                @SuppressWarnings("unused")
-                Object unused = this.limitReachedCallback.apply(this);
+                this.limitReachedCallback.accept(this);
             }
         }
     }

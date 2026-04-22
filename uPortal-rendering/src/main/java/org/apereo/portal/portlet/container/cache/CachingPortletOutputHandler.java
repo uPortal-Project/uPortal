@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.portlet.container.cache;
 
-import com.google.common.base.Function;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -102,14 +101,7 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
                             this.maximumSize,
                             delegateWriter,
                             this.cachingWriter,
-                            new Function<LimitingTeeWriter, Object>() {
-                                @Override
-                                public Object apply(LimitingTeeWriter input) {
-                                    // Limit hit, clear the cache
-                                    clearCachedWriter();
-                                    return null;
-                                }
-                            });
+                            input -> clearCachedWriter());
 
             // Wrap the limiting tee writer in a PrintWriter to return to the caller
             this.printWriter = new PrintWriter(this.teeWriter);
@@ -135,14 +127,7 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
                             this.maximumSize,
                             delegateOutputStream,
                             this.cachingOutputStream,
-                            new Function<LimitingTeeOutputStream, Object>() {
-                                @Override
-                                public Object apply(LimitingTeeOutputStream input) {
-                                    // Limit hit, clear the cache
-                                    clearCachedStream();
-                                    return null;
-                                }
-                            });
+                            input -> clearCachedStream());
         }
 
         return teeStream;
