@@ -184,11 +184,10 @@ war {
     }
 }
 
-// Add WAR publishing
-publishing {
-    publications {
-        war(MavenPublication) {
-            from components.web
-        }
-    }
+
+// Override the root maven publication for this WAR project — publish only the WAR artifact.
+// components.java (from root) would fail because jar.enabled = false.
+afterEvaluate {
+    publishing.publications.maven.artifacts.clear()
+    publishing.publications.maven.artifact(war)
 }
