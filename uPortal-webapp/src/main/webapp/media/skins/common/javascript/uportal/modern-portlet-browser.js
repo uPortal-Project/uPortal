@@ -8,12 +8,12 @@ class PortletBrowser {
     constructor(container, gallery, options = {}) {
         this.container = container;
         this.gallery = gallery;
-        this.options = { buttonText: 'Add', buttonAction: 'add', ...options };
+        this.options = {buttonText: 'Add', buttonAction: 'add', ...options};
         this.registry = null;
         this.dragManager = null;
         this.state = {
             currentCategory: '',
-            portletRegex: null
+            portletRegex: null,
         };
         this.init();
     }
@@ -22,27 +22,29 @@ class PortletBrowser {
         try {
             this.registry = new PortletRegistry(this.options.portletListUrl);
             await this.registry.load();
-            
+
             // Initialize drag manager for Add Content tab
             if (this.options.buttonAction === 'add') {
-                this.dragManager = window.up.LayoutDraggableManager(this.container, {
-                    onDropTarget: (method, targetID, portletData) => {
-                        this.onPortletDrop(portletData, method, targetID);
+                this.dragManager = window.up.LayoutDraggableManager(
+                    this.container,
+                    {
+                        onDropTarget: (method, targetID, portletData) => {
+                            this.onPortletDrop(portletData, method, targetID);
+                        },
                     }
-                });
+                );
             }
-            
+
             // Initialize category and portlet views
             this.categoryView = new CategoryListView(this.container, this);
             this.portletView = new PortletListView(this.container, this);
-            
+
             // Set up search
             this.setupSearch();
-            
+
             setTimeout(() => {
                 if (this.options.onLoad) this.options.onLoad();
             }, 1000);
-            
         } catch (error) {
             console.error('FLOW: PortletBrowser init failed:', error);
             // Still call onLoad on error to hide loading spinner
@@ -53,10 +55,12 @@ class PortletBrowser {
     }
 
     setupSearch() {
-        const searchInput = this.container.querySelector('.portlet-search-input');
+        const searchInput = this.container.querySelector(
+            '.portlet-search-input'
+        );
         if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.trim();
+            searchInput.addEventListener('input', (event_) => {
+                const query = event_.target.value.trim();
                 this.state.portletRegex = query ? new RegExp(query, 'i') : null;
                 this.portletView.refresh();
             });
@@ -75,26 +79,29 @@ class PortletBrowser {
             window.location = `/uPortal/p/${portlet.fname}`;
             return;
         }
-        
+
         // "Add" functionality - use the same persistence mechanism as the original Fluid implementation
         this.addPortletToPage(portlet);
     }
-    
+
     onPortletDrop(portlet, method, targetID) {
         // Handle drag and drop portlet addition
         const options = {
             action: 'addPortlet',
             channelID: portlet.id,
             elementID: targetID,
-            position: method
+            position: method,
         };
-        
+
         // Use the existing persistence component
         if (window.up && window.up.LayoutPreferencesPersistence) {
-            const persistence = window.up.LayoutPreferencesPersistence(document.body, {
-                saveLayoutUrl: '/uPortal/api/layout'
-            });
-            
+            const persistence = window.up.LayoutPreferencesPersistence(
+                document.body,
+                {
+                    saveLayoutUrl: '/uPortal/api/layout',
+                }
+            );
+
             persistence.update(options, (data) => {
                 if (data.error) {
                     console.error('Error adding portlet:', data.error);
@@ -105,35 +112,44 @@ class PortletBrowser {
             });
         }
     }
-    
+
     addPortletToPage(portlet) {
         const getActiveTabId = () => {
-            const activeTab = document.querySelector('#portalNavigationList li.active');
-            return activeTab ? window.up.defaultNodeIdExtractor(activeTab) : null;
+            const activeTab = document.querySelector(
+                '#portalNavigationList li.active'
+            );
+            return activeTab
+                ? window.up.defaultNodeIdExtractor(activeTab)
+                : null;
         };
-        
+
         const options = {
             action: 'addPortlet',
-            channelID: portlet.id
+            channelID: portlet.id,
         };
-        
+
         // Find the first movable portlet to insert before
-        const firstChannel = document.querySelector('[id^=portlet_].movable, [id^=portlet_].up-fragment-admin');
-        
-        if (!firstChannel) {
-            // No content on page, add to tab
-            options.elementID = getActiveTabId();
-        } else {
+        const firstChannel = document.querySelector(
+            '[id^=portlet_].movable, [id^=portlet_].up-fragment-admin'
+        );
+
+        if (firstChannel) {
             // Insert before first movable portlet
             options.elementID = window.up.defaultNodeIdExtractor(firstChannel);
             options.position = 'insertBefore';
+        } else {
+            // No content on page, add to tab
+            options.elementID = getActiveTabId();
         }
-        
+
         // Use the modern persistence component
-        const persistence = new ModernLayoutPreferencesPersistence(document.body, {
-            saveLayoutUrl: '/uPortal/api/layout'
-        });
-        
+        const persistence = new window.ModernLayoutPreferencesPersistence(
+            document.body,
+            {
+                saveLayoutUrl: '/uPortal/api/layout',
+            }
+        );
+
         persistence.update(options, (data) => {
             if (data.error) {
                 console.error('Error adding portlet:', data.error);
@@ -153,7 +169,7 @@ class PortletRegistry {
     }
 
     async load() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             up.jQuery.ajax({
                 url: '/uPortal/api/portletList',
                 success: (data) => {
@@ -166,7 +182,7 @@ class PortletRegistry {
                     this.portlets = [];
                     resolve();
                 },
-                dataType: 'json'
+                dataType: 'json',
             });
         });
     }
@@ -174,34 +190,38 @@ class PortletRegistry {
     processRegistryData(data) {
         this.categories = [];
         this.portlets = [];
-        
+
         if (data.registry && data.registry.categories) {
-            data.registry.categories.forEach(category => {
+            for (const category of data.registry.categories) {
                 this.processCategory(category);
-            });
+            }
         }
-        
-        if (data.registry && (data.registry.channels || data.registry.portlets)) {
-            const existingIds = new Set(this.portlets.map(p => p.id));
-            (data.registry.channels || data.registry.portlets).forEach(channel => {
+
+        if (
+            data.registry &&
+            (data.registry.channels || data.registry.portlets)
+        ) {
+            const existingIds = new Set(this.portlets.map((p) => p.id));
+            for (const channel of data.registry.channels ||
+                data.registry.portlets) {
                 if (!existingIds.has(channel.id)) {
                     this.portlets.push(this.createPortlet(channel));
                 }
-            });
+            }
         }
     }
-    
+
     processCategory(categoryData) {
         const category = {
             id: categoryData.id,
             name: categoryData.name,
             description: categoryData.description,
-            deepPortlets: []
+            deepPortlets: [],
         };
-        
+
         const channels = categoryData.channels || categoryData.portlets || [];
-        const existingIds = new Set(this.portlets.map(p => p.id));
-        channels.forEach(channel => {
+        const existingIds = new Set(this.portlets.map((p) => p.id));
+        for (const channel of channels) {
             const portlet = this.createPortlet(channel);
             portlet.categoryId = categoryData.id;
             if (!existingIds.has(channel.id)) {
@@ -209,14 +229,15 @@ class PortletRegistry {
                 existingIds.add(channel.id);
             }
             category.deepPortlets.push(portlet);
-        });
-        
-        const subcats = categoryData.categories || categoryData.subcategories || [];
-        subcats.forEach(subCat => this.processCategory(subCat));
-        
+        }
+
+        const subcats =
+            categoryData.categories || categoryData.subcategories || [];
+        for (const subCat of subcats) this.processCategory(subCat);
+
         this.categories.push(category);
     }
-    
+
     createPortlet(channel) {
         return {
             id: channel.id,
@@ -224,7 +245,10 @@ class PortletRegistry {
             name: channel.name,
             fname: channel.fname,
             description: channel.description,
-            iconUrl: channel.iconUrl || channel.parameters?.iconUrl?.value || '/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png'
+            iconUrl:
+                channel.iconUrl ||
+                channel.parameters?.iconUrl?.value ||
+                '/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png',
         };
     }
 
@@ -236,10 +260,10 @@ class PortletRegistry {
         return this.portlets;
     }
 
-    getMemberPortlets(categoryId, deep = false) {
+    getMemberPortlets(categoryId) {
         if (!categoryId) return this.portlets; // Return all for empty category (ALL)
-        
-        const category = this.categories.find(cat => cat.id === categoryId);
+
+        const category = this.categories.find((cat) => cat.id === categoryId);
         return category ? category.deepPortlets : [];
     }
 }
@@ -258,35 +282,41 @@ class CategoryListView {
 
         // Build categories list
         const categories = [
-            { id: '', name: 'ALL', description: 'All Categories' },
-            ...this.browser.registry.getAllCategories()
-                .filter(cat => 
-                    cat.id !== 'local.1' && 
-                    cat.name !== 'uPortal' && 
-                    cat.deepPortlets && 
-                    cat.deepPortlets.length > 0
+            {id: '', name: 'ALL', description: 'All Categories'},
+            ...this.browser.registry
+                .getAllCategories()
+                .filter(
+                    (cat) =>
+                        cat.id !== 'local.1' &&
+                        cat.name !== 'uPortal' &&
+                        cat.deepPortlets &&
+                        cat.deepPortlets.length > 0
                 )
-                .sort((a, b) => a.name.localeCompare(b.name))
+                .sort((a, b) => a.name.localeCompare(b.name)),
         ];
 
         // Remove existing category elements (but keep h4)
         const existingUls = this.container.querySelectorAll('ul');
-        existingUls.forEach(ul => {
+        for (const ul of existingUls) {
             if (!ul.querySelector('.category-choice-container')) {
                 ul.remove();
             }
-        });
-        
+        }
+
         // Find h4 element
         const h4 = this.container.querySelector('h4');
         if (!h4) return;
-        
+
         // Create separate ul for each category in reverse order to maintain correct sequence
-        for (let i = categories.length - 1; i >= 0; i--) {
-            const category = categories[i];
+        for (let index = categories.length - 1; index >= 0; index--) {
+            const category = categories[index];
             const isActive = category.id === this.browser.state.currentCategory;
-            const ul = this.createCategoryElement(category, isActive, i === 0);
-            h4.insertAdjacentElement('afterend', ul);
+            const ul = this.createCategoryElement(
+                category,
+                isActive,
+                index === 0
+            );
+            h4.after(ul);
         }
     }
 
@@ -294,18 +324,18 @@ class CategoryListView {
         const ul = document.createElement('ul');
         const li = document.createElement('li');
         li.className = `category-choice ${isActive ? 'active' : ''} ${isFirst ? 'first' : ''}`;
-        
+
         li.innerHTML = `<a href="#" class="category-choice-link"><span class="category-choice-name">${category.name}</span></a>`;
-        
-        const linkEl = li.querySelector('.category-choice-link');
-        if (linkEl) {
-            linkEl.addEventListener('click', (e) => {
-                e.preventDefault();
+
+        const linkElement = li.querySelector('.category-choice-link');
+        if (linkElement) {
+            linkElement.addEventListener('click', (event_) => {
+                event_.preventDefault();
                 this.browser.onCategorySelect(category);
             });
         }
-        
-        ul.appendChild(li);
+
+        ul.append(li);
         return ul;
     }
 }
@@ -328,8 +358,10 @@ class PortletListView {
                 this.calculateLayout();
                 this.refresh();
             });
-            
-            const listContainer = this.container.querySelector('.portlet-list, .results-list');
+
+            const listContainer = this.container.querySelector(
+                '.portlet-list, .results-list'
+            );
             if (listContainer) {
                 observer.observe(listContainer);
             }
@@ -337,24 +369,30 @@ class PortletListView {
     }
 
     calculateLayout() {
-        const listContainer = this.container.querySelector('.portlet-list, .results-list');
+        const listContainer = this.container.querySelector(
+            '.portlet-list, .results-list'
+        );
         if (!listContainer) return;
 
         const containerWidth = listContainer.clientWidth;
         const containerHeight = listContainer.clientHeight;
-        
+
         // Estimate portlet dimensions (similar to release version)
         const portletWidth = 648; // From release CSS analysis
-        const portletHeight = 82;  // From release CSS analysis
+        const portletHeight = 82; // From release CSS analysis
         const margin = 5; // From release margins
-        
-        // Calculate how many fit horizontally
-        this.itemsPerRow = Math.max(1, Math.floor((containerWidth + margin) / (portletWidth + margin)));
-        
-        // Calculate how many rows fit vertically
-        this.rowsPerPage = Math.max(1, Math.floor((containerHeight + margin) / (portletHeight + margin)));
-        
 
+        // Calculate how many fit horizontally
+        this.itemsPerRow = Math.max(
+            1,
+            Math.floor((containerWidth + margin) / (portletWidth + margin))
+        );
+
+        // Calculate how many rows fit vertically
+        this.rowsPerPage = Math.max(
+            1,
+            Math.floor((containerHeight + margin) / (portletHeight + margin))
+        );
     }
 
     get pageSize() {
@@ -366,29 +404,33 @@ class PortletListView {
 
         // Get filtered portlets
         const portlets = this.getFilteredPortlets();
-        
+
         // Simple pagination
-        const startIdx = this.currentPage * this.pageSize;
-        const endIdx = startIdx + this.pageSize;
-        const pagePortlets = portlets.slice(startIdx, endIdx);
-        
+        const startIndex = this.currentPage * this.pageSize;
+        const endIndex = startIndex + this.pageSize;
+        const pagePortlets = portlets.slice(startIndex, endIndex);
+
         // Render portlets
         this.renderPortlets(pagePortlets);
         this.renderPagination(portlets.length);
     }
 
     getFilteredPortlets() {
-        let portlets = this.browser.state.currentCategory 
-            ? this.browser.registry.getMemberPortlets(this.browser.state.currentCategory, true)
+        let portlets = this.browser.state.currentCategory
+            ? this.browser.registry.getMemberPortlets(
+                  this.browser.state.currentCategory,
+                  true
+              )
             : this.browser.registry.getAllPortlets();
 
         // Apply search filter
         if (this.browser.state.portletRegex) {
-            portlets = portlets.filter(portlet => 
-                this.browser.state.portletRegex.test(portlet.title) ||
-                this.browser.state.portletRegex.test(portlet.name) ||
-                this.browser.state.portletRegex.test(portlet.fname) ||
-                this.browser.state.portletRegex.test(portlet.description)
+            portlets = portlets.filter(
+                (portlet) =>
+                    this.browser.state.portletRegex.test(portlet.title) ||
+                    this.browser.state.portletRegex.test(portlet.name) ||
+                    this.browser.state.portletRegex.test(portlet.fname) ||
+                    this.browser.state.portletRegex.test(portlet.description)
             );
         }
 
@@ -396,19 +438,21 @@ class PortletListView {
     }
 
     renderPortlets(portlets) {
-        const listContainer = this.container.querySelector('#addContentPortletList, #useContentPortletList, .portlet-list');
+        const listContainer = this.container.querySelector(
+            '#addContentPortletList, #useContentPortletList, .portlet-list'
+        );
         if (!listContainer) return;
 
         // Calculate layout first
         this.calculateLayout();
-        
+
         listContainer.innerHTML = '';
-        
-        portlets.forEach(portlet => {
-            const portletEl = this.createPortletElement(portlet);
-            listContainer.appendChild(portletEl);
-        });
-        
+
+        for (const portlet of portlets) {
+            const portletElement = this.createPortletElement(portlet);
+            listContainer.append(portletElement);
+        }
+
         // Notify drag manager if it exists
         if (this.browser.dragManager) {
             // Small delay to ensure DOM is ready
@@ -419,12 +463,12 @@ class PortletListView {
     }
 
     createPortletElement(portlet) {
-        const portletEl = document.createElement('li');
-        portletEl.className = 'result-item portlet';
-        portletEl.title = `${portlet.title} (${portlet.name})`;
-        portletEl.setAttribute('data-portlet-id', portlet.id);
-        
-        portletEl.innerHTML = `
+        const portletElement = document.createElement('li');
+        portletElement.className = 'result-item portlet';
+        portletElement.title = `${portlet.title} (${portlet.name})`;
+        portletElement.dataset.portletId = portlet.id;
+
+        portletElement.innerHTML = `
             <div class="ri-wrapper portlet-wrapper">
                 <a class="ri-utility portlet-thumb-gripper" href="#" title="Drag to add content"><span>Drag Handle</span></a>
                 <a href="#" class="ri-link portlet-thumb-link">
@@ -437,31 +481,31 @@ class PortletListView {
                 </div>
             </div>
         `;
-        
-        const linkEl = portletEl.querySelector('.portlet-thumb-link');
-        if (linkEl) {
-            linkEl.addEventListener('click', (e) => {
-                e.preventDefault();
+
+        const linkElement = portletElement.querySelector('.portlet-thumb-link');
+        if (linkElement) {
+            linkElement.addEventListener('click', (event_) => {
+                event_.preventDefault();
                 this.browser.onPortletSelect(portlet);
             });
         }
-        
-        return portletEl;
+
+        return portletElement;
     }
 
     renderPagination(totalItems) {
         const totalPages = Math.ceil(totalItems / this.pageSize);
         if (totalPages <= 1) {
             // Hide pager if only one page
-            const pagerEl = this.container.querySelector('.pager');
-            if (pagerEl) pagerEl.style.display = 'none';
+            const pagerElement = this.container.querySelector('.pager');
+            if (pagerElement) pagerElement.style.display = 'none';
             return;
         }
 
-        const pagerEl = this.container.querySelector('.pager');
-        if (pagerEl) {
-            pagerEl.removeAttribute('style'); // Remove inline styles to allow CSS
-            pagerEl.innerHTML = `
+        const pagerElement = this.container.querySelector('.pager');
+        if (pagerElement) {
+            pagerElement.removeAttribute('style'); // Remove inline styles to allow CSS
+            pagerElement.innerHTML = `
                 <div class="pager-button-up flc-pager-previous ${this.currentPage === 0 ? 'fl-pager-disabled' : ''}">
                     <a class="pager-button-up-inner" href="#">
                         <span></span>
@@ -473,20 +517,24 @@ class PortletListView {
                     </a>
                 </div>
             `;
-            
-            const prevBtn = pagerEl.querySelector('.pager-button-up-inner');
-            const nextBtn = pagerEl.querySelector('.pager-button-down-inner');
-            
-            prevBtn?.addEventListener('click', (e) => {
-                e.preventDefault();
+
+            const previousButton = pagerElement.querySelector(
+                '.pager-button-up-inner'
+            );
+            const nextButton = pagerElement.querySelector(
+                '.pager-button-down-inner'
+            );
+
+            previousButton?.addEventListener('click', (event_) => {
+                event_.preventDefault();
                 if (this.currentPage > 0) {
                     this.currentPage--;
                     this.refresh();
                 }
             });
-            
-            nextBtn?.addEventListener('click', (e) => {
-                e.preventDefault();
+
+            nextButton?.addEventListener('click', (event_) => {
+                event_.preventDefault();
                 if (this.currentPage < totalPages - 1) {
                     this.currentPage++;
                     this.refresh();
@@ -498,6 +546,7 @@ class PortletListView {
 
 // Global initialization function to replace Fluid component
 window.up = window.up || {};
-window.up.PortletBrowser = function(container, gallery, options) {
+window.up.PortletBrowser = function (container, gallery, options) {
     return new PortletBrowser(container, gallery, options);
 };
+window.PortletBrowser = PortletBrowser;

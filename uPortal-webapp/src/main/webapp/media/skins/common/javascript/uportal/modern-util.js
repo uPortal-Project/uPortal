@@ -54,8 +54,8 @@ var up = up || {};
      * Escape special characters for RegExp
      */
     up.escapeSpecialChars = function (string_) {
-        const specials = /[.*+?|()[\]{}\\]/g;
-        return string_.replace(specials, '\\$&');
+        const specials = /[()*+.?[\\\]{|}]/g;
+        return string_.replaceAll(specials, '\\$&');
     };
 
     /**

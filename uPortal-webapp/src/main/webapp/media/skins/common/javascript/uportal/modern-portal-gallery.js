@@ -6,8 +6,11 @@
 
 class PortalGallery {
     constructor(container, options = {}) {
-        this.container = typeof container === 'string' ? document.querySelector(container) : container;
-        this.options = { ...this.defaults, ...options };
+        this.container =
+            typeof container === 'string'
+                ? document.querySelector(container)
+                : container;
+        this.options = {...this.defaults, ...options};
         this.panes = new Map();
         this.isOpen = false;
         this.init();
@@ -17,62 +20,74 @@ class PortalGallery {
         return {
             isOpen: false,
             openSpeed: 500,
-            closeSpeed: 50
+            closeSpeed: 50,
         };
     }
 
     init() {
         this.createPanes();
         this.bindEvents();
-        
+
         this.isOpen = false;
-        
+
         const outer = document.querySelector('#customizeOptions');
         const inner = this.container.querySelector('.gallery-inner');
-        
+
         if (outer) outer.style.display = 'none';
         if (inner) inner.style.display = 'none';
-        
+
         const handle = this.container.querySelector('.handle span');
         if (handle) handle.classList.remove('handle-arrow-up');
-        
+
         if (this.options.isOpen) this.openGallery();
     }
 
     createPanes() {
         // Create browse content pane
-        this.panes.set('add-content', new BrowseContentPane(this.container, this, {
-            key: 'add-content',
-            selectors: {
-                pane: '.add-content',
-                paneLink: '.add-content-link'
-            }
-        }));
+        this.panes.set(
+            'add-content',
+            new BrowseContentPane(this.container, this, {
+                key: 'add-content',
+                selectors: {
+                    pane: '.add-content',
+                    paneLink: '.add-content-link',
+                },
+            })
+        );
 
         // Create use content pane
-        this.panes.set('use-content', new UseContentPane(this.container, this, {
-            key: 'use-content',
-            selectors: {
-                pane: '.use-content',
-                paneLink: '.use-content-link'
-            }
-        }));
+        this.panes.set(
+            'use-content',
+            new UseContentPane(this.container, this, {
+                key: 'use-content',
+                selectors: {
+                    pane: '.use-content',
+                    paneLink: '.use-content-link',
+                },
+            })
+        );
 
-        this.panes.set('skin', new SkinPane(this.container, this, {
-            key: 'skin',
-            selectors: {
-                pane: '.skins',
-                paneLink: '.skin-link'
-            }
-        }));
+        this.panes.set(
+            'skin',
+            new SkinPane(this.container, this, {
+                key: 'skin',
+                selectors: {
+                    pane: '.skins',
+                    paneLink: '.skin-link',
+                },
+            })
+        );
 
-        this.panes.set('layout', new LayoutPane(this.container, this, {
-            key: 'layout',
-            selectors: {
-                pane: '.layouts',
-                paneLink: '.layout-link'
-            }
-        }));
+        this.panes.set(
+            'layout',
+            new LayoutPane(this.container, this, {
+                key: 'layout',
+                selectors: {
+                    pane: '.layouts',
+                    paneLink: '.layout-link',
+                },
+            })
+        );
     }
 
     bindEvents() {
@@ -86,20 +101,20 @@ class PortalGallery {
 
         // Customize button click
         setTimeout(() => {
-            const customizeBtn = document.getElementById('customizeButton');
-            if (customizeBtn) {
-                customizeBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+            const customizeButton = document.querySelector('#customizeButton');
+            if (customizeButton) {
+                customizeButton.addEventListener('click', (event_) => {
+                    event_.preventDefault();
+                    event_.stopPropagation();
                     this.isOpen ? this.closeGallery() : this.openGallery();
                 });
             }
         }, 100);
 
         // Close button
-        const closeBtn = this.container.querySelector('.close-button');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => this.closeGallery());
+        const closeButton = this.container.querySelector('.close-button');
+        if (closeButton) {
+            closeButton.addEventListener('click', () => this.closeGallery());
         }
     }
 
@@ -108,21 +123,24 @@ class PortalGallery {
         const handle = this.container.querySelector('.handle span');
         const outer = document.querySelector('#customizeOptions');
         const inner = this.container.querySelector('.gallery-inner');
-        
-        const canAddChildren = document.querySelector('#portalPageBodyColumns .portal-page-column.canAddChildren, #portalPageBodyColumns .portal-page-column.up-fragment-admin');
+
+        const canAddChildren = document.querySelector(
+            '#portalPageBodyColumns .portal-page-column.canAddChildren, #portalPageBodyColumns .portal-page-column.up-fragment-admin'
+        );
         if (canAddChildren) {
             this.panes.get('add-content').showLoadingOnly();
         } else {
             this.panes.get('use-content').showLoadingOnly();
             this.hidePaneLink('add-content');
         }
-        
+
         if (handle) handle.classList.add('handle-arrow-up');
-        
-        const customizeBtn = document.getElementById('customizeButton');
-        const arrow = customizeBtn?.querySelector('i');
+
+        const customizeButton = document.querySelector('#customizeButton');
+        const arrow = customizeButton?.querySelector('i');
         if (arrow) arrow.className = 'fa fa-caret-up';
-        if (customizeBtn) customizeBtn.setAttribute('aria-expanded', 'true');
+        if (customizeButton)
+            customizeButton.setAttribute('aria-expanded', 'true');
 
         if (outer && inner) {
             inner.style.display = 'block';
@@ -141,13 +159,14 @@ class PortalGallery {
         const handle = this.container.querySelector('.handle span');
         const outer = document.querySelector('#customizeOptions');
         const inner = this.container.querySelector('.gallery-inner');
-        
+
         if (handle) handle.classList.remove('handle-arrow-up');
-        
-        const customizeBtn = document.getElementById('customizeButton');
-        const arrow = customizeBtn?.querySelector('i');
+
+        const customizeButton = document.querySelector('#customizeButton');
+        const arrow = customizeButton?.querySelector('i');
         if (arrow) arrow.className = 'fa fa-caret-down';
-        if (customizeBtn) customizeBtn.setAttribute('aria-expanded', 'false');
+        if (customizeButton)
+            customizeButton.setAttribute('aria-expanded', 'false');
 
         if (outer && inner) {
             up.jQuery(outer).slideUp(300, 'swing', () => {
@@ -157,13 +176,13 @@ class PortalGallery {
     }
 
     showPane(key) {
-        this.panes.forEach((pane, paneKey) => {
+        for (const [paneKey, pane] of this.panes.entries()) {
             if (paneKey === key) {
                 pane.showPane();
             } else {
                 pane.hidePane();
             }
-        });
+        }
     }
 
     hidePaneLink(key) {
@@ -181,8 +200,10 @@ class PortalGallery {
     }
 
     showLoading() {
-        const portletList = this.container.querySelector('#addContentPortletList, #useContentPortletList, .portlet-list');
-        
+        const portletList = this.container.querySelector(
+            '#addContentPortletList, #useContentPortletList, .portlet-list'
+        );
+
         if (portletList) {
             portletList.innerHTML = `
                 <div class="loading-indicator" style="
@@ -231,7 +252,9 @@ class GalleryPane {
     }
 
     bindEvents() {
-        const paneLink = this.container.querySelector(this.options.selectors.paneLink);
+        const paneLink = this.container.querySelector(
+            this.options.selectors.paneLink
+        );
         if (paneLink) {
             paneLink.addEventListener('click', () => {
                 this.gallery.showPane(this.options.key);
@@ -241,11 +264,13 @@ class GalleryPane {
 
     showPane() {
         const pane = this.container.querySelector(this.options.selectors.pane);
-        const paneLink = this.container.querySelector(this.options.selectors.paneLink);
-        
+        const paneLink = this.container.querySelector(
+            this.options.selectors.paneLink
+        );
+
         if (pane) pane.style.display = 'block';
         if (paneLink) paneLink.classList.add('active');
-        
+
         if (!this.initialized) {
             if (this.options.onInitialize) {
                 this.options.onInitialize();
@@ -256,16 +281,20 @@ class GalleryPane {
 
     hidePane() {
         const pane = this.container.querySelector(this.options.selectors.pane);
-        const paneLink = this.container.querySelector(this.options.selectors.paneLink);
-        
+        const paneLink = this.container.querySelector(
+            this.options.selectors.paneLink
+        );
+
         if (pane) pane.style.display = 'none';
         if (paneLink) paneLink.classList.remove('active');
     }
 
     hidePaneLink() {
         const pane = this.container.querySelector(this.options.selectors.pane);
-        const paneLink = this.container.querySelector(this.options.selectors.paneLink);
-        
+        const paneLink = this.container.querySelector(
+            this.options.selectors.paneLink
+        );
+
         if (pane) pane.style.display = 'none';
         if (paneLink) {
             paneLink.style.display = 'none';
@@ -274,8 +303,24 @@ class GalleryPane {
     }
 
     showPaneLink() {
-        const paneLink = this.container.querySelector(this.options.selectors.paneLink);
+        const paneLink = this.container.querySelector(
+            this.options.selectors.paneLink
+        );
         if (paneLink) paneLink.style.display = 'block';
+    }
+
+    showLoadingOnly() {
+        const pane = this.container.querySelector(this.options.selectors.pane);
+        const paneLink = this.container.querySelector(
+            this.options.selectors.paneLink
+        );
+
+        if (pane) pane.style.display = 'block';
+        if (paneLink) paneLink.classList.add('active');
+
+        if (!this.initialized) {
+            this.gallery.showLoading();
+        }
     }
 }
 
@@ -285,41 +330,40 @@ class BrowseContentPane extends GalleryPane {
         this.portletBrowser = null;
     }
 
-    showLoadingOnly() {
-        const pane = this.container.querySelector(this.options.selectors.pane);
-        const paneLink = this.container.querySelector(this.options.selectors.paneLink);
-        
-        if (pane) pane.style.display = 'block';
-        if (paneLink) paneLink.classList.add('active');
-        
-        if (!this.initialized) {
-            this.gallery.showLoading();
-        }
-    }
-    
     initializeContent() {
         if (!this.initialized) {
-            const pane = this.container.querySelector(this.options.selectors.pane);
+            const pane = this.container.querySelector(
+                this.options.selectors.pane
+            );
             const startTime = Date.now();
-            
-            this.portletBrowser = new PortletBrowser(pane, this.gallery, {
-                portletListUrl: 'v4-3/dlm/portletRegistry.json',
-                buttonText: 'Add',
-                buttonAction: 'add',
-                onLoad: () => {
-                    const delay = Math.max(0, 1000 - (Date.now() - startTime));
-                    setTimeout(() => this.gallery.hideLoading(), delay);
+
+            this.portletBrowser = new window.PortletBrowser(
+                pane,
+                this.gallery,
+                {
+                    portletListUrl: 'v4-3/dlm/portletRegistry.json',
+                    buttonText: 'Add',
+                    buttonAction: 'add',
+                    onLoad: () => {
+                        const delay = Math.max(
+                            0,
+                            1000 - (Date.now() - startTime)
+                        );
+                        setTimeout(() => this.gallery.hideLoading(), delay);
+                    },
                 }
-            });
+            );
             this.initialized = true;
         }
     }
-    
+
     showPane() {
         // For tab switching after initialization
         const pane = this.container.querySelector(this.options.selectors.pane);
-        const paneLink = this.container.querySelector(this.options.selectors.paneLink);
-        
+        const paneLink = this.container.querySelector(
+            this.options.selectors.paneLink
+        );
+
         if (pane) pane.style.display = 'block';
         if (paneLink) paneLink.classList.add('active');
     }
@@ -331,44 +375,43 @@ class UseContentPane extends GalleryPane {
         this.portletBrowser = null;
     }
 
-    showLoadingOnly() {
-        const pane = this.container.querySelector(this.options.selectors.pane);
-        const paneLink = this.container.querySelector(this.options.selectors.paneLink);
-        
-        if (pane) pane.style.display = 'block';
-        if (paneLink) paneLink.classList.add('active');
-        
-        if (!this.initialized) {
-            this.gallery.showLoading();
-        }
-    }
-    
     initializeContent() {
         if (!this.initialized) {
-            const pane = this.container.querySelector(this.options.selectors.pane);
+            const pane = this.container.querySelector(
+                this.options.selectors.pane
+            );
             const startTime = Date.now();
-            
-            this.portletBrowser = new PortletBrowser(pane, this.gallery, {
-                portletListUrl: 'v4-3/dlm/portletRegistry.json',
-                buttonText: 'Use',
-                buttonAction: 'use',
-                onLoad: () => {
-                    const delay = Math.max(0, 1000 - (Date.now() - startTime));
-                    setTimeout(() => this.gallery.hideLoading(), delay);
+
+            this.portletBrowser = new window.PortletBrowser(
+                pane,
+                this.gallery,
+                {
+                    portletListUrl: 'v4-3/dlm/portletRegistry.json',
+                    buttonText: 'Use',
+                    buttonAction: 'use',
+                    onLoad: () => {
+                        const delay = Math.max(
+                            0,
+                            1000 - (Date.now() - startTime)
+                        );
+                        setTimeout(() => this.gallery.hideLoading(), delay);
+                    },
                 }
-            });
+            );
             this.initialized = true;
         }
     }
-    
+
     showPane() {
         // For tab switching after initialization
         const pane = this.container.querySelector(this.options.selectors.pane);
-        const paneLink = this.container.querySelector(this.options.selectors.paneLink);
-        
+        const paneLink = this.container.querySelector(
+            this.options.selectors.paneLink
+        );
+
         if (pane) pane.style.display = 'block';
         if (paneLink) paneLink.classList.add('active');
-        
+
         // Initialize content if not already done
         if (!this.initialized) {
             this.initializeContent();
@@ -385,27 +428,36 @@ class SkinPane extends GalleryPane {
     showPane() {
         if (!this.initialized) {
             this.gallery.showLoading();
-            
+
             // Initialize skin selector
-            const paneElement = this.container.querySelector(this.options.selectors.pane);
+            const paneElement = this.container.querySelector(
+                this.options.selectors.pane
+            );
             if (paneElement) {
                 this.skinSelector = new SkinSelector(paneElement, {
                     onSelectSkin: (skin) => {
                         // Use the modern persistence component
-                        const persistence = new ModernLayoutPreferencesPersistence(document.body, {
-                            saveLayoutUrl: '/uPortal/api/layout'
-                        });
-                        
-                        persistence.update({
-                            action: 'chooseSkin',
-                            skinName: skin.key
-                        }, () => {
-                            window.location.reload();
-                        });
-                    }
+                        const persistence =
+                            new window.ModernLayoutPreferencesPersistence(
+                                document.body,
+                                {
+                                    saveLayoutUrl: '/uPortal/api/layout',
+                                }
+                            );
+
+                        persistence.update(
+                            {
+                                action: 'chooseSkin',
+                                skinName: skin.key,
+                            },
+                            () => {
+                                window.location.reload();
+                            }
+                        );
+                    },
                 });
             }
-            
+
             this.initialized = true;
             this.gallery.hideLoading();
         }
@@ -431,42 +483,58 @@ class LayoutPane extends GalleryPane {
     showPane() {
         if (!this.initialized) {
             this.gallery.showLoading();
-            
+
             // Initialize layout selector
-            const paneElement = this.container.querySelector(this.options.selectors.pane);
+            const paneElement = this.container.querySelector(
+                this.options.selectors.pane
+            );
             if (paneElement) {
                 this.layoutSelector = new LayoutSelector(paneElement, {
                     onLayoutSelect: (layout) => {
                         // Use the modern persistence component
-                        const persistence = new ModernLayoutPreferencesPersistence(document.body, {
-                            saveLayoutUrl: '/uPortal/api/layout'
-                        });
-                        
+                        const persistence =
+                            new window.ModernLayoutPreferencesPersistence(
+                                document.body,
+                                {
+                                    saveLayoutUrl: '/uPortal/api/layout',
+                                }
+                            );
+
                         const getActiveTabId = () => {
-                            const activeTab = document.querySelector('#portalNavigationList li.active');
-                            return activeTab ? window.up.defaultNodeIdExtractor(activeTab) : null;
+                            const activeTab = document.querySelector(
+                                '#portalNavigationList li.active'
+                            );
+                            return activeTab
+                                ? window.up.defaultNodeIdExtractor(activeTab)
+                                : null;
                         };
-                        
+
                         // Server expects at least 2 widths, pad single column with 0
-                        const widths = layout.columns.length === 1 ? [layout.columns[0], 0] : layout.columns;
-                        
+                        const widths =
+                            layout.columns.length === 1
+                                ? [layout.columns[0], 0]
+                                : layout.columns;
+
                         const options = {
                             action: 'changeColumns',
                             tabId: getActiveTabId(),
-                            widths: widths
+                            widths: widths,
                         };
-                        
+
                         persistence.update(options, (data) => {
                             if (data && data.error) {
-                                console.error('Layout update error:', data.error);
+                                console.error(
+                                    'Layout update error:',
+                                    data.error
+                                );
                             } else {
                                 window.location.reload();
                             }
                         });
-                    }
+                    },
                 });
             }
-            
+
             this.initialized = true;
             this.gallery.hideLoading();
         }
@@ -495,45 +563,57 @@ class SkinSelector {
     async loadSkins() {
         // Try to load skinList.xml from respondr skin directory
         try {
-            const response = await fetch('/uPortal/media/skins/respondr/skinList.xml');
+            const response = await fetch(
+                '/uPortal/media/skins/respondr/skinList.xml'
+            );
             if (response.ok) {
                 const xmlText = await response.text();
                 const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-                this.parseSkinListXML(xmlDoc);
+                const xmlDocument = parser.parseFromString(xmlText, 'text/xml');
+                this.parseSkinListXML(xmlDocument);
             } else {
                 this.useDefaultSkins();
             }
         } catch (error) {
-            console.warn('Could not load skinList.xml, using default skins:', error);
+            console.warn(
+                'Could not load skinList.xml, using default skins:',
+                error
+            );
             this.useDefaultSkins();
         }
     }
 
-    parseSkinListXML(xmlDoc) {
-        const skinNodes = xmlDoc.querySelectorAll('skin');
+    parseSkinListXML(xmlDocument) {
+        const skinNodes = xmlDocument.querySelectorAll('skin');
         this.skins = [];
-        
-        skinNodes.forEach(skinNode => {
+
+        for (const skinNode of skinNodes) {
             const key = skinNode.querySelector('skin-key')?.textContent;
             const name = skinNode.querySelector('skin-name')?.textContent;
-            const description = skinNode.querySelector('skin-description')?.textContent;
-            
+            const description =
+                skinNode.querySelector('skin-description')?.textContent;
+
             if (key && name) {
                 this.skins.push({
                     key,
                     name,
                     description: description || name,
-                    thumbnailPath: `/uPortal/media/skins/respondr/${key}/thumb.gif`
+                    thumbnailPath: `/uPortal/media/skins/respondr/${key}/thumb.gif`,
                 });
             }
-        });
+        }
     }
 
     useDefaultSkins() {
         // Fallback to available skins
         this.skins = [
-            { key: 'defaultSkin', name: 'Default Skin', description: 'Basic responsive skin', thumbnailPath: '/uPortal/media/skins/respondr/defaultSkin/thumb.gif' }
+            {
+                key: 'defaultSkin',
+                name: 'Default Skin',
+                description: 'Basic responsive skin',
+                thumbnailPath:
+                    '/uPortal/media/skins/respondr/defaultSkin/thumb.gif',
+            },
         ];
     }
 
@@ -542,18 +622,18 @@ class SkinSelector {
         if (!skinsList) return;
 
         skinsList.innerHTML = '';
-        
-        this.skins.forEach(skin => {
-            const skinEl = this.createSkinElement(skin);
-            skinsList.appendChild(skinEl);
-        });
+
+        for (const skin of this.skins) {
+            const skinElement = this.createSkinElement(skin);
+            skinsList.append(skinElement);
+        }
     }
 
     createSkinElement(skin) {
-        const skinEl = document.createElement('li');
-        skinEl.className = 'results-item skin';
-        
-        skinEl.innerHTML = `
+        const skinElement = document.createElement('li');
+        skinElement.className = 'results-item skin';
+
+        skinElement.innerHTML = `
             <div class="ri-wrapper skins-wrapper">
                 <a class="ri-link skin-link" href="#">
                     <div class="ri-titlebar skin-titlebar">${skin.name}</div>
@@ -565,28 +645,30 @@ class SkinSelector {
                 </a>
             </div>
         `;
-        
-        const linkEl = skinEl.querySelector('.skin-link');
-        if (linkEl) {
-            linkEl.addEventListener('click', (e) => {
-                e.preventDefault();
-                
+
+        const linkElement = skinElement.querySelector('.skin-link');
+        if (linkElement) {
+            linkElement.addEventListener('click', (event_) => {
+                event_.preventDefault();
+
                 // Remove active class from all skins
-                this.container.querySelectorAll('.skin.selected').forEach(el => {
-                    el.classList.remove('selected');
-                });
-                
+                for (const element of this.container.querySelectorAll(
+                    '.skin.selected'
+                )) {
+                    element.classList.remove('selected');
+                }
+
                 // Add active class to selected skin
-                skinEl.classList.add('selected');
-                
+                skinElement.classList.add('selected');
+
                 // Fire selection event
                 if (this.options.onSelectSkin) {
                     this.options.onSelectSkin(skin);
                 }
             });
         }
-        
-        return skinEl;
+
+        return skinElement;
     }
 }
 
@@ -601,7 +683,7 @@ class LayoutSelector {
             {nameKey: 'wideNarrow', columns: [60, 40]},
             {nameKey: 'even', columns: [33, 34, 33]},
             {nameKey: 'narrowWideNarrow', columns: [25, 50, 25]},
-            {nameKey: 'even', columns: [25, 25, 25, 25]}
+            {nameKey: 'even', columns: [25, 25, 25, 25]},
         ];
         this.strings = {
             fullWidth: 'Full-width',
@@ -610,7 +692,7 @@ class LayoutSelector {
             wideNarrow: 'Wide, narrow',
             narrowWideNarrow: 'Narrow, wide, narrow',
             column: 'Column',
-            columns: 'Columns'
+            columns: 'Columns',
         };
         this.currentLayout = this.getCurrentLayout().slice();
         this.init();
@@ -618,23 +700,26 @@ class LayoutSelector {
 
     getCurrentLayout() {
         const columns = [];
-        const columnElements = document.querySelectorAll('#portalPageBodyColumns > [id^=column_]');
-        
-        columnElements.forEach((col) => {
-            const colMdClass = col.className.match(/col-md-([0-9]+)/);
+        const columnElements = document.querySelectorAll(
+            '#portalPageBodyColumns > [id^=column_]'
+        );
+
+        for (const col of columnElements) {
+            const colMdClass = col.className.match(/col-md-(\d+)/);
             if (colMdClass) {
                 columns.push(Math.round((Number(colMdClass[1]) / 12) * 100));
             } else {
-                const flClass = col.className.match(/fl-container-flex([0-9]+)/);
+                const flClass = col.className.match(/fl-container-flex(\d+)/);
                 if (flClass) columns.push(Number(flClass[1]));
             }
-        });
-        
+        }
+
         if (columns.length === 0 && columnElements.length > 0) {
             const equalWidth = Math.floor(100 / columnElements.length);
-            for (let i = 0; i < columnElements.length; i++) columns.push(equalWidth);
+            for (let index = 0; index < columnElements.length; index++)
+                columns.push(equalWidth);
         }
-        
+
         return columns.length > 0 ? columns : [100];
     }
 
@@ -644,10 +729,10 @@ class LayoutSelector {
 
     layoutsMatch(layout1, layout2) {
         if (layout1.length !== layout2.length) return false;
-        
+
         // Allow for small differences due to Bootstrap grid rounding
-        for (let i = 0; i < layout1.length; i++) {
-            const diff = Math.abs(layout1[i] - layout2[i]);
+        for (let index = 0; index < layout1.length; index++) {
+            const diff = Math.abs(layout1[index] - layout2[index]);
             if (diff > 5) return false; // Allow up to 5% difference
         }
         return true;
@@ -659,22 +744,28 @@ class LayoutSelector {
 
         this.currentLayout = this.getCurrentLayout().slice();
         layoutsList.innerHTML = '';
-        this.layouts.forEach(layout => {
-            layoutsList.appendChild(this.createLayoutElement(layout));
-        });
+        for (const layout of this.layouts) {
+            layoutsList.append(this.createLayoutElement(layout));
+        }
     }
 
     createLayoutElement(layout) {
-        const layoutEl = document.createElement('li');
-        const isSelected = this.layoutsMatch(this.currentLayout, layout.columns);
-        
-        layoutEl.className = `results-item layout ${isSelected ? 'selected' : ''}`;
-        
-        const columnText = layout.columns.length === 1 ? this.strings.column : this.strings.columns;
+        const layoutElement = document.createElement('li');
+        const isSelected = this.layoutsMatch(
+            this.currentLayout,
+            layout.columns
+        );
+
+        layoutElement.className = `results-item layout ${isSelected ? 'selected' : ''}`;
+
+        const columnText =
+            layout.columns.length === 1
+                ? this.strings.column
+                : this.strings.columns;
         const layoutName = this.strings[layout.nameKey] || layout.nameKey;
         const layoutString = layout.columns.join('-');
-        
-        layoutEl.innerHTML = `
+
+        layoutElement.innerHTML = `
             <div class="ri-wrapper layout-wrapper">
                 <a class="ri-link layout-link" href="#">
                     <div class="ri-titlebar layout-titlebar">${layout.columns.length} ${columnText}</div>
@@ -687,34 +778,37 @@ class LayoutSelector {
                 </a>
             </div>
         `;
-        
-        const linkEl = layoutEl.querySelector('.layout-link');
-        if (linkEl) {
-            linkEl.addEventListener('click', (e) => {
-                e.preventDefault();
-                
+
+        const linkElement = layoutElement.querySelector('.layout-link');
+        if (linkElement) {
+            linkElement.addEventListener('click', (event_) => {
+                event_.preventDefault();
+
                 // Check if this is already the current layout
-                if (this.layoutsMatch(this.currentLayout, layout.columns)) return;
-                
+                if (this.layoutsMatch(this.currentLayout, layout.columns))
+                    return;
+
                 // Remove selected class from all layouts
-                this.container.querySelectorAll('.layout.selected').forEach(el => {
-                    el.classList.remove('selected');
-                });
-                
+                for (const element of this.container.querySelectorAll(
+                    '.layout.selected'
+                )) {
+                    element.classList.remove('selected');
+                }
+
                 // Add selected class to clicked layout
-                layoutEl.classList.add('selected');
-                
+                layoutElement.classList.add('selected');
+
                 // Fire selection event BEFORE updating current layout
                 if (this.options.onLayoutSelect) {
                     this.options.onLayoutSelect(layout);
                 }
-                
+
                 // Update current layout after successful callback
                 this.currentLayout = layout.columns.slice();
             });
         }
-        
-        return layoutEl;
+
+        return layoutElement;
     }
 }
 
@@ -722,7 +816,7 @@ class LayoutSelector {
 
 // Global initialization function to replace Fluid component
 window.up = window.up || {};
-window.up.PortalGallery = function(container, options) {
+window.up.PortalGallery = function (container, options) {
     const gallery = new PortalGallery(container, options);
     window.up.gallery = gallery; // Store global reference
     return gallery;

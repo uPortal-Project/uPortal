@@ -26,21 +26,23 @@ class ModernPortletRegistry {
     constructor(container, options = {}) {
         this.container = container;
         if (!options.portletListUrl) {
-            throw new Error('ModernPortletRegistry: portletListUrl is required');
+            throw new Error(
+                'ModernPortletRegistry: portletListUrl is required'
+            );
         }
         this.options = {
             portletListUrl: null,
             allCategoriesName: 'All',
-            ...options
+            ...options,
         };
         this.state = {
             portlets: [],
-            categories: []
+            categories: [],
         };
         this.events = {
-            onLoad: []
+            onLoad: [],
         };
-        
+
         this.getRegistry();
     }
 
@@ -50,9 +52,9 @@ class ModernPortletRegistry {
         this.events[event].push(callback);
     }
 
-    fire(event, ...args) {
+    fire(event, ...arguments_) {
         if (this.events[event]) {
-            this.events[event].forEach(callback => callback(...args));
+            for (const callback of this.events[event]) callback(...arguments_);
         }
     }
 
@@ -90,7 +92,7 @@ class ModernPortletRegistry {
 
         // Process subcategories
         if (category.categories) {
-            category.categories.forEach(subCategory => {
+            for (const subCategory of category.categories) {
                 const processed = this.processCategory(subCategory);
                 c.categories.push(processed);
                 c.categories[processed.id] = processed;
@@ -101,25 +103,25 @@ class ModernPortletRegistry {
                 }
 
                 // Add deep members
-                processed.deepCategories.forEach(member => {
+                for (const member of processed.deepCategories) {
                     if (!c.deepCategories[member.id]) {
                         c.deepCategories.push(member);
                         c.deepCategories[member.id] = member;
                     }
-                });
+                }
 
-                processed.deepPortlets.forEach(member => {
+                for (const member of processed.deepPortlets) {
                     if (!c.deepPortlets['portlet.' + member.id]) {
                         c.deepPortlets.push(member);
                         c.deepPortlets['portlet.' + member.id] = member;
                     }
-                });
-            });
+                }
+            }
         }
 
         // Process portlets
         if (category.channels) {
-            category.channels.forEach(json => {
+            for (const json of category.channels) {
                 const portlet = this.createPortlet(json);
                 c.portlets.push(portlet);
                 c.portlets['portlet.' + portlet.id] = portlet;
@@ -133,7 +135,7 @@ class ModernPortletRegistry {
                     c.deepPortlets.push(portlet);
                     c.deepPortlets['portlet.' + portlet.id] = portlet;
                 }
-            });
+            }
         }
 
         this.state.categories.push(c);
@@ -150,9 +152,9 @@ class ModernPortletRegistry {
             this.state.categories = [];
 
             if (data.registry.categories) {
-                data.registry.categories.forEach(category => {
+                for (const category of data.registry.categories) {
                     this.processCategory(category);
-                });
+                }
             }
 
             // Handle uncategorized channels
@@ -204,6 +206,6 @@ class ModernPortletRegistry {
 }
 
 // Maintain backward compatibility
-up.PortletRegistry = function(container, options) {
+up.PortletRegistry = function (container, options) {
     return new ModernPortletRegistry(container, options);
 };

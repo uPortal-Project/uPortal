@@ -18,8 +18,8 @@ class ModernRatingModal {
     }
 
     createModal() {
-        const closeLabel = this.element.getAttribute('data-close-button-label') || 'Close';
-        const saveLabel = this.element.getAttribute('data-save-button-label') || 'Save';
+        const closeLabel = this.element.dataset.closeButtonLabel || 'Close';
+        const saveLabel = this.element.dataset.saveButtonLabel || 'Save';
 
         const modalHTML = `
             <div class="modal-dialog ratePortletModal-dialog" style="text-align:center; position:static">
@@ -43,12 +43,13 @@ class ModernRatingModal {
 
         this.element.innerHTML = modalHTML;
 
-        this.element.querySelector('.modal-title-text').textContent = this.element.dataset.title || '';
+        this.element.querySelector('.modal-title-text').textContent =
+            this.element.dataset.title || '';
         this.element.querySelector('.modal-close-btn').textContent = closeLabel;
         this.element.querySelector('.modal-save-btn').textContent = saveLabel;
 
         this.modal = new bootstrap.Modal(this.element);
-        
+
         // Blur active element when modal starts hiding to avoid aria-hidden warning
         this.element.addEventListener('hide.bs.modal', () => {
             if (document.activeElement) document.activeElement.blur();
@@ -57,7 +58,10 @@ class ModernRatingModal {
         this.element.addEventListener('hidden.bs.modal', () => {
             const openModals = document.querySelectorAll('.modal.show');
             if (openModals.length === 0) {
-                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                for (const backdrop of document.querySelectorAll(
+                    '.modal-backdrop'
+                ))
+                    backdrop.remove();
                 document.body.classList.remove('modal-open');
             }
         });
@@ -66,8 +70,10 @@ class ModernRatingModal {
     createStarRating() {
         return `
             <div class="star-rating" data-rating="0">
-                ${Array.from({length: 5}, (_, i) => 
-                    `<span class="star" data-value="${i + 1}">★</span>`
+                ${Array.from(
+                    {length: 5},
+                    (_, index) =>
+                        `<span class="star" data-value="${index + 1}">★</span>`
                 ).join('')}
             </div>
             <style>
@@ -84,62 +90,73 @@ class ModernRatingModal {
         const stars = this.element.querySelectorAll('.star');
         const saveButton = this.element.querySelector('.ratingModalSaveButton');
 
-        stars.forEach((star, index) => {
-            star.addEventListener('mouseenter', () => this.highlightStars(index + 1));
-            star.addEventListener('mouseleave', () => this.highlightStars(this.ratingValue));
+        for (const [index, star] of stars.entries()) {
+            star.addEventListener('mouseenter', () =>
+                this.highlightStars(index + 1)
+            );
+            star.addEventListener('mouseleave', () =>
+                this.highlightStars(this.ratingValue)
+            );
             star.addEventListener('click', () => {
                 this.ratingValue = index + 1;
                 this.highlightStars(this.ratingValue);
                 saveButton.classList.remove('disabled');
             });
-        });
+        }
 
         // Save button event
         saveButton.addEventListener('click', () => this.saveRating());
 
         // Modal show event
-        this.element.addEventListener('show.bs.modal', () => this.loadCurrentRating());
+        this.element.addEventListener('show.bs.modal', () =>
+            this.loadCurrentRating()
+        );
     }
 
     highlightStars(rating) {
         const stars = this.element.querySelectorAll('.star');
-        stars.forEach((star, index) => {
+        for (const [index, star] of stars.entries()) {
             star.classList.toggle('active', index < rating);
-        });
+        }
     }
 
     loadCurrentRating() {
         const saveButton = this.element.querySelector('.ratingModalSaveButton');
-        const instructEl = this.element.querySelector('.ratingModalInstruct');
+        const instructElement = this.element.querySelector(
+            '.ratingModalInstruct'
+        );
         const that = this;
 
         saveButton.classList.add('disabled');
 
         up.jQuery.ajax({
             url: this.element.dataset.geturl,
-            success: function(data) {
+            success: function (data) {
                 if (data.rating === null) {
                     that.ratingValue = 0;
                     that.highlightStars(0);
-                    instructEl.textContent = that.element.dataset.ratingInstructionsUnrated || '';
+                    instructElement.textContent =
+                        that.element.dataset.ratingInstructionsUnrated || '';
                 } else {
                     that.ratingValue = data.rating;
                     that.highlightStars(data.rating);
                     saveButton.classList.remove('disabled');
-                    instructEl.textContent = that.element.dataset.ratingInstructionsRated || '';
+                    instructElement.textContent =
+                        that.element.dataset.ratingInstructionsRated || '';
                 }
 
                 // Center modal dialog
                 const dialog = that.element.querySelector('.modal-dialog');
                 dialog.style.transform = 'translate(0, 50%)';
             },
-            error: function() {
+            error: function () {
                 ModernNotification.show(
-                    that.element.dataset.getRatingUnsuccessful || 'Error loading rating',
+                    that.element.dataset.getRatingUnsuccessful ||
+                        'Error loading rating',
                     'TopCenter',
                     'error'
                 );
-            }
+            },
         });
     }
 
@@ -149,30 +166,35 @@ class ModernRatingModal {
         const that = this;
         up.jQuery.ajax({
             url: this.element.dataset.saveurl,
-            data: { rating: this.ratingValue },
+            data: {rating: this.ratingValue},
             type: 'POST',
-            success: function() {
+            success: function () {
                 that.modal.hide();
                 ModernNotification.show(
-                    that.element.dataset.ratingSaveSuccessful || 'Rating saved successfully',
+                    that.element.dataset.ratingSaveSuccessful ||
+                        'Rating saved successfully',
                     'TopCenter',
                     'success'
                 );
                 setTimeout(() => {
-                    const instructEl = that.element.querySelector('.ratingModalInstruct');
-                    if (instructEl) {
-                        instructEl.textContent = that.element.dataset.ratingInstructionsRated || '';
+                    const instructElement = that.element.querySelector(
+                        '.ratingModalInstruct'
+                    );
+                    if (instructElement) {
+                        instructElement.textContent =
+                            that.element.dataset.ratingInstructionsRated || '';
                     }
                 }, 1000);
             },
-            error: function() {
+            error: function () {
                 that.modal.hide();
                 ModernNotification.show(
-                    that.element.dataset.ratingSaveUnsuccessful || 'Error saving rating',
+                    that.element.dataset.ratingSaveUnsuccessful ||
+                        'Error saving rating',
                     'TopCenter',
                     'error'
                 );
-            }
+            },
         });
     }
 
@@ -186,19 +208,23 @@ class ModernRatingModal {
 }
 
 // Simple notification system (replaces noty dependency)
-class ModernNotification {
-    static show(message, position = 'TopCenter', type = 'info') {
+const ModernNotification = {
+    show(message, position = 'TopCenter', type = 'info') {
         const notification = document.createElement('div');
         notification.className = `modern-notification notification-${type}`;
         notification.textContent = message;
-        
+
         // Position styles
         const positions = {
-            'TopCenter': { top: '20px', left: '50%', transform: 'translateX(-50%)' },
-            'TopRight': { top: '20px', right: '20px' },
-            'TopLeft': { top: '20px', left: '20px' }
+            TopCenter: {
+                top: '20px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+            },
+            TopRight: {top: '20px', right: '20px'},
+            TopLeft: {top: '20px', left: '20px'},
         };
-        
+
         Object.assign(notification.style, {
             position: 'fixed',
             zIndex: '9999',
@@ -207,7 +233,7 @@ class ModernNotification {
             color: 'white',
             fontWeight: 'bold',
             maxWidth: '400px',
-            ...positions[position] || positions.TopCenter
+            ...(positions[position] || positions.TopCenter),
         });
 
         // Type-specific styles
@@ -215,51 +241,60 @@ class ModernNotification {
             success: '#28a745',
             error: '#dc3545',
             info: '#17a2b8',
-            warning: '#ffc107'
+            warning: '#ffc107',
         };
-        
-        notification.style.backgroundColor = typeColors[type] || typeColors.info;
-        
-        document.body.appendChild(notification);
-        
+
+        notification.style.backgroundColor =
+            typeColors[type] || typeColors.info;
+
+        document.body.append(notification);
+
         // Auto-remove after delay
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            notification.style.transition = 'opacity 0.3s';
-            setTimeout(() => notification.remove(), 300);
-        }, type === 'error' ? 5000 : 2000);
-    }
-}
+        setTimeout(
+            () => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.3s';
+                setTimeout(() => notification.remove(), 300);
+            },
+            type === 'error' ? 5000 : 2000
+        );
+    },
+};
 
 // Global functions for compatibility
 window.up = window.up || {};
 window.up.notify = ModernNotification.show;
 
 // Promise-based confirm dialog replacing native confirm()
-window.up.confirm = function(message, confirmLabel, cancelLabel) {
-    confirmLabel = confirmLabel || 'OK';
-    cancelLabel = cancelLabel || 'Cancel';
-    return new Promise(function(resolve) {
+window.up.confirm = function (
+    message,
+    confirmLabel = 'OK',
+    cancelLabel = 'Cancel'
+) {
+    return new Promise(function (resolve) {
         var overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center;';
+        overlay.style.cssText =
+            'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center;';
 
         var dialog = document.createElement('div');
-        dialog.style.cssText = 'background:#fff;border-radius:4px;padding:20px;max-width:400px;width:90%;box-shadow:0 4px 12px rgba(0,0,0,0.3);';
+        dialog.style.cssText =
+            'background:#fff;border-radius:4px;padding:20px;max-width:400px;width:90%;box-shadow:0 4px 12px rgba(0,0,0,0.3);';
 
-        var msg = document.createElement('p');
-        msg.textContent = message;
-        msg.style.cssText = 'margin:0 0 16px;font-size:14px;';
+        var message_ = document.createElement('p');
+        message_.textContent = message;
+        message_.style.cssText = 'margin:0 0 16px;font-size:14px;';
 
-        var btnRow = document.createElement('div');
-        btnRow.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;';
+        var buttonRow = document.createElement('div');
+        buttonRow.style.cssText =
+            'display:flex;justify-content:flex-end;gap:8px;';
 
-        var cancelBtn = document.createElement('button');
-        cancelBtn.textContent = cancelLabel;
-        cancelBtn.className = 'btn btn-secondary';
+        var cancelButton = document.createElement('button');
+        cancelButton.textContent = cancelLabel;
+        cancelButton.className = 'btn btn-secondary';
 
-        var confirmBtn = document.createElement('button');
-        confirmBtn.textContent = confirmLabel;
-        confirmBtn.className = 'btn btn-primary';
+        var confirmButton = document.createElement('button');
+        confirmButton.textContent = confirmLabel;
+        confirmButton.className = 'btn btn-primary';
 
         function close(result) {
             if (document.activeElement) document.activeElement.blur();
@@ -267,27 +302,31 @@ window.up.confirm = function(message, confirmLabel, cancelLabel) {
             resolve(result);
         }
 
-        cancelBtn.addEventListener('click', function() { close(false); });
-        confirmBtn.addEventListener('click', function() { close(true); });
+        cancelButton.addEventListener('click', function () {
+            close(false);
+        });
+        confirmButton.addEventListener('click', function () {
+            close(true);
+        });
 
-        btnRow.appendChild(cancelBtn);
-        btnRow.appendChild(confirmBtn);
-        dialog.appendChild(msg);
-        dialog.appendChild(btnRow);
-        overlay.appendChild(dialog);
-        document.body.appendChild(overlay);
-        confirmBtn.focus();
+        buttonRow.append(cancelButton);
+        buttonRow.append(confirmButton);
+        dialog.append(message_);
+        dialog.append(buttonRow);
+        overlay.append(dialog);
+        document.body.append(overlay);
+        confirmButton.focus();
     });
 };
 
 // Register jQuery plugin - aggr loads before up.jQuery is set via noConflict,
 // so register on window.jQuery now (same object that becomes up.jQuery after noConflict)
 // and also re-register when up.jQuery is confirmed available.
-(function() {
+(function () {
     function registerPlugin(jq) {
         if (jq && jq.fn && !jq.fn.createRatingModal) {
-            jq.fn.createRatingModal = function() {
-                return this.each(function() {
+            jq.fn.createRatingModal = function () {
+                return this.each(function () {
                     if (!this.modernRatingModal) {
                         this.modernRatingModal = new ModernRatingModal(this);
                     }
@@ -298,7 +337,7 @@ window.up.confirm = function(message, confirmLabel, cancelLabel) {
     // Register on current jQuery (before noConflict runs)
     if (window.jQuery) registerPlugin(window.jQuery);
     // Also register once DOM is ready in case up.jQuery differs
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         if (window.up && window.up.jQuery) registerPlugin(window.up.jQuery);
     });
 })();

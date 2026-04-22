@@ -6,7 +6,10 @@
 
 class ModernParameterEditor {
     constructor(container, options = {}) {
-        this.container = typeof container === 'string' ? document.querySelector(container) : container;
+        this.container =
+            typeof container === 'string'
+                ? document.querySelector(container)
+                : container;
         this.options = {
             parameterNamePrefix: '',
             parameterBindName: '',
@@ -23,113 +26,124 @@ class ModernParameterEditor {
                 addItemLinkExtraClass: '',
                 addValueLink: 'add-parameter-value-link',
                 addValueLinkExtraClass: '',
-                inputElementExtraClass: ''
+                inputElementExtraClass: '',
             },
             messages: {
                 remove: 'Remove',
                 removeParameter: 'Delete Preference',
-                addValue: 'Add value'
+                addValue: 'Add value',
             },
             selectors: {
-                preferencesTable: 'tbody'
+                preferencesTable: 'tbody',
             },
-            ...options
+            ...options,
         };
-        
+
         this.dialogInitialized = false;
         this.init();
     }
-    
+
     init() {
         this.bindExistingElements();
         this.bindAddParameterAction();
     }
-    
+
     bindExistingElements() {
         // Bind existing delete parameter links
-        this.container.querySelectorAll(`.${this.options.displayClasses.deleteItemLink}`).forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
+        for (const link of this.container.querySelectorAll(
+            `.${this.options.displayClasses.deleteItemLink}`
+        )) {
+            link.addEventListener('click', (event_) => {
+                event_.preventDefault();
                 this.removeParameter(link);
             });
-        });
-        
+        }
+
         // Bind existing delete value links
-        this.container.querySelectorAll(`.${this.options.displayClasses.deleteValueLink}`).forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
+        for (const link of this.container.querySelectorAll(
+            `.${this.options.displayClasses.deleteValueLink}`
+        )) {
+            link.addEventListener('click', (event_) => {
+                event_.preventDefault();
                 this.removeValue(link);
             });
-        });
-        
+        }
+
         // Bind existing add value links
-        this.container.querySelectorAll(`.${this.options.displayClasses.addValueLink}`).forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
+        for (const link of this.container.querySelectorAll(
+            `.${this.options.displayClasses.addValueLink}`
+        )) {
+            link.addEventListener('click', (event_) => {
+                event_.preventDefault();
                 this.addValue(link);
             });
-        });
+        }
     }
-    
+
     bindAddParameterAction() {
         // Ensure add button exists
         this.ensureAddButton();
-        
+
         // Bind add parameter link
-        const addLinks = this.container.querySelectorAll(`.${this.options.displayClasses.addItemLink}`);
-        addLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
+        const addLinks = this.container.querySelectorAll(
+            `.${this.options.displayClasses.addItemLink}`
+        );
+        for (const link of addLinks) {
+            link.addEventListener('click', (event_) => {
+                event_.preventDefault();
                 this.showAddParameterDialog();
             });
-        });
+        }
     }
-    
+
     ensureAddButton() {
         // Check if add button already exists
-        const existingAddLink = this.container.querySelector(`.${this.options.displayClasses.addItemLink}`);
+        const existingAddLink = this.container.querySelector(
+            `.${this.options.displayClasses.addItemLink}`
+        );
         if (!existingAddLink && this.options.dialog) {
             // Create add button
             const addButtonContainer = document.createElement('p');
             const addButton = document.createElement('a');
             addButton.href = 'javascript:void(0)';
             addButton.className = `${this.options.displayClasses.addItemLink} btn btn-primary`;
-            addButton.innerHTML = 'Add Preference&nbsp;&nbsp;<i class="fa fa-plus-circle"></i>';
-            
-            addButtonContainer.appendChild(addButton);
-            this.container.appendChild(addButtonContainer);
+            addButton.innerHTML =
+                'Add Preference&nbsp;&nbsp;<i class="fa fa-plus-circle"></i>';
+
+            addButtonContainer.append(addButton);
+            this.container.append(addButtonContainer);
         }
     }
-    
+
     getParameterPath(name) {
         return `${this.options.parameterBindName}['${this.options.parameterNamePrefix}${name}'].value`;
     }
-    
+
     getAuxiliaryPath(name) {
         return `${this.options.auxiliaryBindName}['${this.options.parameterNamePrefix}${name}'].value`;
     }
-    
+
     addParameter(form) {
         const nameInput = form.querySelector('input[name=name]');
         if (!nameInput) return false;
-        
+
         const name = nameInput.value;
         if (!name.trim()) return false;
-        
+
         const parameterPath = this.getAuxiliaryPath(name);
-        
+
         // Create new row
         const tr = document.createElement('tr');
-        
+
         // Add parameter name cell
         const nameCell = document.createElement('td');
         nameCell.textContent = name;
-        tr.appendChild(nameCell);
-        
+        tr.append(nameCell);
+
         // Add parameter value cell
         const valueCell = document.createElement('td');
-        tr.appendChild(valueCell);
-        
+        tr.append(valueCell);
+
         if (this.options.multivalued) {
             // Create add value link for multivalued parameters
             const addValueLink = document.createElement('a');
@@ -137,14 +151,14 @@ class ModernParameterEditor {
             addValueLink.setAttribute('paramName', name);
             addValueLink.className = `${this.options.displayClasses.addValueLink} ${this.options.displayClasses.addValueLinkExtraClass} btn btn-sm btn-info`;
             addValueLink.innerHTML = `${this.options.messages.addValue}&nbsp;&nbsp;<i class="fa fa-plus-circle"></i>`;
-            
-            addValueLink.addEventListener('click', (e) => {
-                e.preventDefault();
+
+            addValueLink.addEventListener('click', (event_) => {
+                event_.preventDefault();
                 this.addValue(addValueLink);
             });
-            
-            valueCell.appendChild(addValueLink);
-            
+
+            valueCell.append(addValueLink);
+
             // Add initial value
             this.addValue(addValueLink);
         } else {
@@ -152,10 +166,11 @@ class ModernParameterEditor {
             const input = document.createElement('input');
             input.type = 'text';
             input.name = parameterPath;
-            input.className = this.options.displayClasses.inputElementExtraClass;
-            valueCell.appendChild(input);
+            input.className =
+                this.options.displayClasses.inputElementExtraClass;
+            valueCell.append(input);
         }
-        
+
         // Add auxiliary checkbox if needed
         if (this.options.useAuxiliaryCheckbox) {
             const checkboxCell = document.createElement('td');
@@ -163,93 +178,95 @@ class ModernParameterEditor {
             checkbox.type = 'checkbox';
             checkbox.name = this.getAuxiliaryPath(name);
             checkbox.value = 'true';
-            checkboxCell.appendChild(checkbox);
-            tr.appendChild(checkboxCell);
+            checkboxCell.append(checkbox);
+            tr.append(checkboxCell);
         }
-        
+
         // Add remove parameter cell
         const removeCell = document.createElement('td');
         const removeLink = document.createElement('a');
         removeLink.href = '#';
         removeLink.className = `${this.options.displayClasses.deleteItemLink} ${this.options.displayClasses.deleteItemLinkExtraClass} btn btn-warning`;
         removeLink.innerHTML = `${this.options.messages.removeParameter}&nbsp;&nbsp;<i class="fa fa-trash-o"></i>`;
-        
-        removeLink.addEventListener('click', (e) => {
-            e.preventDefault();
+
+        removeLink.addEventListener('click', (event_) => {
+            event_.preventDefault();
             this.removeParameter(removeLink);
         });
-        
-        removeCell.appendChild(removeLink);
-        tr.appendChild(removeCell);
-        
+
+        removeCell.append(removeLink);
+        tr.append(removeCell);
+
         // Add row to table
-        const tbody = this.container.querySelector(this.options.selectors.preferencesTable);
+        const tbody = this.container.querySelector(
+            this.options.selectors.preferencesTable
+        );
         if (tbody) {
-            tbody.appendChild(tr);
+            tbody.append(tr);
         }
-        
+
         // Close dialog
         if (this.options.dialog && up.jQuery) {
             up.jQuery(this.options.dialog).dialog('close');
         }
-        
+
         return false;
     }
-    
+
     removeParameter(link) {
         const row = link.closest('tr');
         if (row) {
             row.remove();
         }
     }
-    
+
     addValue(link) {
-        const paramName = link.getAttribute('paramName');
-        if (!paramName) return;
-        
-        const parameterPath = this.getParameterPath(paramName);
-        
+        const parameterName = link.getAttribute('paramName');
+        if (!parameterName) return;
+
+        const parameterPath = this.getParameterPath(parameterName);
+
         // Create value container
         const valueDiv = document.createElement('div');
-        
+
         // Create input
         const input = document.createElement('input');
         input.type = 'text';
         input.name = parameterPath;
         input.className = this.options.displayClasses.inputElementExtraClass;
-        valueDiv.appendChild(input);
-        
+        valueDiv.append(input);
+
         // Add spacing
-        valueDiv.appendChild(document.createTextNode('  '));
-        
+        valueDiv.append(document.createTextNode('  '));
+
         // Create remove link
         const removeLink = document.createElement('a');
         removeLink.href = '#';
         removeLink.className = `${this.options.displayClasses.deleteValueLink} ${this.options.displayClasses.deleteValueLinkExtraClass}`;
         removeLink.innerHTML = `${this.options.messages.remove}&nbsp;&nbsp;<i class="fa fa-minus-circle"></i>`;
-        
-        removeLink.addEventListener('click', (e) => {
-            e.preventDefault();
+
+        removeLink.addEventListener('click', (event_) => {
+            event_.preventDefault();
             this.removeValue(removeLink);
         });
-        
-        valueDiv.appendChild(removeLink);
-        
+
+        valueDiv.append(removeLink);
+
         // Insert before the add link
         link.parentNode.insertBefore(valueDiv, link);
     }
-    
+
     removeValue(link) {
         const valueDiv = link.parentNode;
         if (valueDiv) {
             valueDiv.remove();
         }
     }
-    
+
     showAddParameterDialog() {
         const dialog = this.options.dialog;
         if (!dialog) return;
-        
+
         if (this.dialogInitialized) {
             // Reset form and open dialog
             const form = dialog.querySelector('form');
@@ -263,17 +280,17 @@ class ModernParameterEditor {
             // Initialize dialog
             const form = dialog.querySelector('form');
             if (form) {
-                form.addEventListener('submit', (e) => {
-                    e.preventDefault();
+                form.addEventListener('submit', (event_) => {
+                    event_.preventDefault();
                     return this.addParameter(form);
                 });
             }
-            
+
             // Open dialog using jQuery UI
             if (up.jQuery) {
                 up.jQuery(dialog).dialog();
             }
-            
+
             this.dialogInitialized = true;
         }
     }
@@ -298,6 +315,6 @@ window.toggleChevron = toggleChevron;
 
 // Global initialization function to replace Fluid component
 window.up = window.up || {};
-window.up.ParameterEditor = function(container, options) {
+window.up.ParameterEditor = function (container, options) {
     return new ModernParameterEditor(container, options);
 };

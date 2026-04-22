@@ -27,7 +27,7 @@ class ModernUrlProvider {
         this.container = container;
         this.options = {
             portalContext: '/uPortal',
-            ...options
+            ...options,
         };
     }
 
@@ -45,6 +45,7 @@ class ModernUrlProvider {
 }
 
 // Maintain backward compatibility
-up.UrlProvider = function(container, options) {
+up.UrlProvider = function (container, options) {
     return new ModernUrlProvider(container, options);
 };
+window.ModernUrlProvider = ModernUrlProvider;

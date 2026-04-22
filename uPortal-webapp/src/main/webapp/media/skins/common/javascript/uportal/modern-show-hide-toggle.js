@@ -23,43 +23,50 @@
  */
 class ModernShowHideToggle {
     constructor(container, options = {}) {
-        this.container = typeof container === 'string' ? document.querySelector(container) : container;
+        this.container =
+            typeof container === 'string'
+                ? document.querySelector(container)
+                : container;
         this.options = {
             showmessage: 'Show Stack Trace',
             hidemessage: 'Hide Stack Trace',
             selectors: {
                 stacktracediv: '.stacktrace',
-                stacktracetoggle: '.stacktracetoggle'
+                stacktracetoggle: '.stacktracetoggle',
             },
-            ...options
+            ...options,
         };
-        
+
         this.init();
     }
-    
+
     init() {
-        this.stacktraceDiv = this.container.querySelector(this.options.selectors.stacktracediv);
-        this.toggleButton = this.container.querySelector(this.options.selectors.stacktracetoggle);
-        
+        this.stacktraceDiv = this.container.querySelector(
+            this.options.selectors.stacktracediv
+        );
+        this.toggleButton = this.container.querySelector(
+            this.options.selectors.stacktracetoggle
+        );
+
         if (!this.stacktraceDiv || !this.toggleButton) {
             console.warn('ModernShowHideToggle: Required elements not found');
             return;
         }
-        
+
         // Initially hide the stacktrace
         this.stacktraceDiv.style.display = 'none';
         this.isVisible = false;
-        
+
         // Set initial button text
         this.toggleButton.textContent = this.options.showmessage;
-        
+
         // Bind click event
-        this.toggleButton.addEventListener('click', (e) => {
-            e.preventDefault();
+        this.toggleButton.addEventListener('click', (event_) => {
+            event_.preventDefault();
             this.toggle();
         });
     }
-    
+
     toggle() {
         if (this.isVisible) {
             this.hide();
@@ -67,13 +74,13 @@ class ModernShowHideToggle {
             this.show();
         }
     }
-    
+
     show() {
         this.stacktraceDiv.style.display = 'block';
         this.toggleButton.textContent = this.options.hidemessage;
         this.isVisible = true;
     }
-    
+
     hide() {
         this.stacktraceDiv.style.display = 'none';
         this.toggleButton.textContent = this.options.showmessage;
@@ -83,6 +90,6 @@ class ModernShowHideToggle {
 
 // Global namespace compatibility
 window.up = window.up || {};
-window.up.showHideToggle = function(container, options) {
+window.up.showHideToggle = function (container, options) {
     return new ModernShowHideToggle(container, options);
 };

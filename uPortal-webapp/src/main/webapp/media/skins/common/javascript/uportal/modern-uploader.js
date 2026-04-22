@@ -24,20 +24,23 @@ var up = up || {};
  */
 class ModernUploader {
     constructor(container, options = {}) {
-        this.container = typeof container === 'string' ? document.querySelector(container) : container;
+        this.container =
+            typeof container === 'string'
+                ? document.querySelector(container)
+                : container;
         const defaultQueueSettings = {
             uploadURL: '/api/import',
-            fileQueueLimit: 1
+            fileQueueLimit: 1,
         };
         const providedQueueSettings = options.queueSettings || {};
         this.options = {
             ...options,
             queueSettings: {
                 ...defaultQueueSettings,
-                ...providedQueueSettings
-            }
+                ...providedQueueSettings,
+            },
         };
-        
+
         this.files = [];
         this.init();
     }
@@ -54,32 +57,45 @@ class ModernUploader {
         this.fileInput.type = 'file';
         this.fileInput.multiple = this.options.queueSettings.fileQueueLimit > 1;
         this.fileInput.style.display = 'none';
-        this.container.appendChild(this.fileInput);
+        this.container.append(this.fileInput);
 
         // Setup browse button
-        const browseBtn = this.container.querySelector('.uploader-button-browse');
-        if (browseBtn) {
-            browseBtn.innerHTML = '<button type="button" class="btn btn-primary">Browse Files</button>';
-            browseBtn.addEventListener('click', () => this.fileInput.click());
+        const browseButton = this.container.querySelector(
+            '.uploader-button-browse'
+        );
+        if (browseButton) {
+            browseButton.innerHTML =
+                '<button type="button" class="btn btn-primary">Browse Files</button>';
+            browseButton.addEventListener('click', () =>
+                this.fileInput.click()
+            );
         }
 
-        this.fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+        this.fileInput.addEventListener('change', (event_) =>
+            this.handleFileSelect(event_)
+        );
     }
 
     setupQueue() {
         this.queueTable = this.container.querySelector('.uploader-queue tbody');
         this.template = this.container.querySelector('.uploader-file-template');
-        this.errorTemplate = this.container.querySelector('.uploader-file-error-template');
-        this.totalProgress = this.container.querySelector('.uploader-total-progress-text p');
+        this.errorTemplate = this.container.querySelector(
+            '.uploader-file-error-template'
+        );
+        this.totalProgress = this.container.querySelector(
+            '.uploader-total-progress-text p'
+        );
     }
 
     setupButtons() {
-        this.uploadBtn = this.container.querySelector('.uploader-button-upload');
+        this.uploadBtn = this.container.querySelector(
+            '.uploader-button-upload'
+        );
         this.pauseBtn = this.container.querySelector('.uploader-button-pause');
 
         if (this.uploadBtn) {
-            this.uploadBtn.addEventListener('click', (e) => {
-                e.preventDefault();
+            this.uploadBtn.addEventListener('click', (event_) => {
+                event_.preventDefault();
                 this.uploadFiles();
             });
         }
@@ -87,13 +103,13 @@ class ModernUploader {
 
     handleFileSelect(event) {
         const files = Array.from(event.target.files);
-        
+
         // Clear existing files if limit is 1
         if (this.options.queueSettings.fileQueueLimit === 1) {
             this.clearQueue();
         }
 
-        files.forEach(file => this.addFile(file));
+        for (const file of files) this.addFile(file);
         this.updateUI();
     }
 
@@ -102,39 +118,42 @@ class ModernUploader {
             return;
         }
 
-        const fileObj = {
+        const fileObject = {
             id: Date.now() + Math.random(),
             file: file,
             name: file.name,
             size: file.size,
-            status: 'queued'
+            status: 'queued',
         };
 
-        this.files.push(fileObj);
-        this.renderFileRow(fileObj);
+        this.files.push(fileObject);
+        this.renderFileRow(fileObject);
     }
 
-    renderFileRow(fileObj) {
+    renderFileRow(fileObject) {
         const row = this.template.cloneNode(true);
         row.classList.remove('uploader-file-template', 'd-none');
-        row.setAttribute('data-file-id', fileObj.id);
+        row.dataset.fileId = fileObject.id;
 
         const nameCell = row.querySelector('.uploader-file-name');
         const sizeCell = row.querySelector('.uploader-file-size');
-        const actionBtn = row.querySelector('.uploader-file-action');
+        const actionButton = row.querySelector('.uploader-file-action');
 
-        if (nameCell) nameCell.textContent = fileObj.name;
-        if (sizeCell) sizeCell.textContent = this.formatFileSize(fileObj.size);
-        
-        if (actionBtn) {
-            actionBtn.addEventListener('click', () => this.removeFile(fileObj.id));
+        if (nameCell) nameCell.textContent = fileObject.name;
+        if (sizeCell)
+            sizeCell.textContent = this.formatFileSize(fileObject.size);
+
+        if (actionButton) {
+            actionButton.addEventListener('click', () =>
+                this.removeFile(fileObject.id)
+            );
         }
 
-        this.queueTable.appendChild(row);
+        this.queueTable.append(row);
     }
 
     removeFile(fileId) {
-        this.files = this.files.filter(f => f.id !== fileId);
+        this.files = this.files.filter((f) => f.id !== fileId);
         const row = this.container.querySelector(`[data-file-id="${fileId}"]`);
         if (row) row.remove();
         this.updateUI();
@@ -142,8 +161,10 @@ class ModernUploader {
 
     clearQueue() {
         this.files = [];
-        const rows = this.queueTable.querySelectorAll('tr:not(.uploader-file-template):not(.uploader-file-error-template)');
-        rows.forEach(row => row.remove());
+        const rows = this.queueTable.querySelectorAll(
+            'tr:not(.uploader-file-template):not(.uploader-file-error-template)'
+        );
+        for (const row of rows) row.remove();
         this.updateUI();
     }
 
@@ -153,54 +174,56 @@ class ModernUploader {
         this.uploadBtn.disabled = true;
         if (this.pauseBtn) this.pauseBtn.classList.remove('d-none');
 
-        for (const fileObj of this.files) {
-            if (fileObj.status === 'queued') {
-                await this.uploadFile(fileObj);
+        for (const fileObject of this.files) {
+            if (fileObject.status === 'queued') {
+                await this.uploadFile(fileObject);
             }
         }
 
         this.uploadBtn.disabled = false;
         if (this.pauseBtn) this.pauseBtn.classList.add('d-none');
 
-        const hasErrors = this.files.some(f => f.status === 'error');
+        const hasErrors = this.files.some((f) => f.status === 'error');
         if (!hasErrors) {
             window.location.reload();
         }
     }
 
-    async uploadFile(fileObj) {
+    async uploadFile(fileObject) {
         const formData = new FormData();
-        formData.append('file', fileObj.file);
+        formData.append('file', fileObject.file);
 
         try {
-            fileObj.status = 'uploading';
-            
+            fileObject.status = 'uploading';
+
             const response = await fetch(this.options.queueSettings.uploadURL, {
                 method: 'POST',
-                body: formData
+                body: formData,
             });
 
             if (response.ok) {
-                fileObj.status = 'complete';
+                fileObject.status = 'complete';
             } else {
                 throw new Error(`Upload failed: ${response.statusText}`);
             }
         } catch (error) {
-            fileObj.status = 'error';
-            this.showError(fileObj, error.message);
+            fileObject.status = 'error';
+            this.showError(fileObject, error.message);
         }
     }
 
-    showError(fileObj, message) {
+    showError(fileObject, message) {
         const errorRow = this.errorTemplate.cloneNode(true);
         errorRow.classList.remove('uploader-file-error-template', 'd-none');
-        
+
         const errorCell = errorRow.querySelector('.uploader-file-error');
         if (errorCell) {
-            errorCell.textContent = `Error uploading ${fileObj.name}: ${message}`;
+            errorCell.textContent = `Error uploading ${fileObject.name}: ${message}`;
         }
 
-        const fileRow = this.container.querySelector(`[data-file-id="${fileObj.id}"]`);
+        const fileRow = this.container.querySelector(
+            `[data-file-id="${fileObject.id}"]`
+        );
         if (fileRow) {
             fileRow.parentNode.insertBefore(errorRow, fileRow.nextSibling);
         }
@@ -214,7 +237,10 @@ class ModernUploader {
 
         if (this.uploadBtn) {
             this.uploadBtn.disabled = this.files.length === 0;
-            this.uploadBtn.classList.toggle('opacity-50', this.files.length === 0);
+            this.uploadBtn.classList.toggle(
+                'opacity-50',
+                this.files.length === 0
+            );
         }
     }
 
@@ -222,12 +248,16 @@ class ModernUploader {
         if (bytes === 0) return '0 B';
         const k = 1024;
         const sizes = ['B', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        const index = Math.floor(Math.log(bytes) / Math.log(k));
+        return (
+            Number.parseFloat((bytes / Math.pow(k, index)).toFixed(1)) +
+            ' ' +
+            sizes[index]
+        );
     }
 }
 
 // Direct modern uploader - no Fluid compatibility needed
-up.uploader = function(container, options) {
+up.uploader = function (container, options) {
     return new ModernUploader(container, options);
 };

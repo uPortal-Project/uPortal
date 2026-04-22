@@ -12,15 +12,15 @@ class ModernConfigLightbox {
                 lightbox: '#config-lightbox',
                 title: '#config-lightbox .modal-title',
                 loading: '#config-lightbox .loading',
-                content: '#config-lightbox .modal-body-content'
+                content: '#config-lightbox .modal-body-content',
             },
             lightboxOptions: {
                 backdrop: 'static',
-                show: true
+                show: true,
             },
-            ...options
+            ...options,
         };
-        
+
         this.modal = null;
         this.init();
     }
@@ -52,30 +52,41 @@ class ModernConfigLightbox {
 
         // Set title if provided
         if (title) {
-            const titleElement = document.querySelector(this.options.selectors.title);
+            const titleElement = document.querySelector(
+                this.options.selectors.title
+            );
             if (titleElement) {
                 titleElement.textContent = title;
             }
         }
 
         // Show loading, hide content
-        const loadingElement = document.querySelector(this.options.selectors.loading);
-        const contentElement = document.querySelector(this.options.selectors.content);
-        
+        const loadingElement = document.querySelector(
+            this.options.selectors.loading
+        );
+        const contentElement = document.querySelector(
+            this.options.selectors.content
+        );
+
         if (contentElement) contentElement.style.display = 'none';
         if (loadingElement) loadingElement.style.display = 'block';
 
         // Show modal
-        const lightboxElement = document.querySelector(this.options.selectors.lightbox);
+        const lightboxElement = document.querySelector(
+            this.options.selectors.lightbox
+        );
         if (lightboxElement) {
-            this.modal = new bootstrap.Modal(lightboxElement, this.options.lightboxOptions);
+            this.modal = new bootstrap.Modal(
+                lightboxElement,
+                this.options.lightboxOptions
+            );
             this.modal.show();
         }
 
         try {
             const content = await this.loadContent(url);
             this.processContent(content);
-            
+
             // Hide loading, show content
             if (loadingElement) {
                 loadingElement.style.opacity = '0';
@@ -85,7 +96,7 @@ class ModernConfigLightbox {
                     loadingElement.style.opacity = '1';
                 }, 300);
             }
-            
+
             if (contentElement) {
                 contentElement.style.display = 'block';
                 contentElement.style.opacity = '0';
@@ -105,8 +116,8 @@ class ModernConfigLightbox {
         const response = await fetch(url, {
             method: 'GET',
             headers: {
-                'Content-Type': 'text/html'
-            }
+                'Content-Type': 'text/html',
+            },
         });
 
         if (!response.ok) {
@@ -117,32 +128,40 @@ class ModernConfigLightbox {
     }
 
     processContent(content) {
-        const contentElement = document.querySelector(this.options.selectors.content);
+        const contentElement = document.querySelector(
+            this.options.selectors.content
+        );
         if (!contentElement) return;
 
         // Create temporary container to process HTML
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = content;
+        const temporaryDiv = document.createElement('div');
+        temporaryDiv.innerHTML = content;
 
         // Rewrite form action URLs
-        tempDiv.querySelectorAll('form').forEach(form => {
+        for (const form of temporaryDiv.querySelectorAll('form')) {
             const action = form.getAttribute('action');
             if (action) {
-                form.setAttribute('action', this.convertExclusiveUrlToPageUrl(action));
+                form.setAttribute(
+                    'action',
+                    this.convertExclusiveUrlToPageUrl(action)
+                );
             }
-        });
+        }
 
         // Rewrite link href URLs
-        tempDiv.querySelectorAll('a').forEach(link => {
+        for (const link of temporaryDiv.querySelectorAll('a')) {
             const href = link.getAttribute('href');
             if (href) {
-                link.setAttribute('href', this.convertExclusiveUrlToPageUrl(href));
+                link.setAttribute(
+                    'href',
+                    this.convertExclusiveUrlToPageUrl(href)
+                );
             }
-        });
+        }
 
         // Clear content and append processed HTML
         contentElement.innerHTML = '';
-        contentElement.appendChild(tempDiv);
+        contentElement.append(temporaryDiv);
     }
 
     convertExclusiveUrlToPageUrl(url) {
@@ -167,9 +186,10 @@ class ModernConfigLightbox {
 
         // Try to retain state if editing the same portlet
         if (currentPagePortletId && portletId === currentPagePortletId) {
-            const stateMatches = /\/(normal|maximized|exclusive|detached)\/render\.uP/.exec(
-                window.location.pathname
-            );
+            const stateMatches =
+                /\/(normal|maximized|exclusive|detached)\/render\.uP/.exec(
+                    window.location.pathname
+                );
             if (stateMatches && stateMatches[1]) {
                 state = stateMatches[1];
             }
@@ -191,12 +211,12 @@ class ModernConfigLightbox {
 // Global initialization
 window.up = window.up || {};
 window.up.lightboxConfig = {
-    init: function(options) {
+    init: function (options) {
         if (!window.up.modernConfigLightbox) {
             window.up.modernConfigLightbox = new ModernConfigLightbox(options);
         }
         return window.up.modernConfigLightbox;
-    }
+    },
 };
 
 // Auto-initialize with default options

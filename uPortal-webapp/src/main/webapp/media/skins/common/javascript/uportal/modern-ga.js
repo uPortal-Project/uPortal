@@ -12,22 +12,25 @@ class ModernGoogleAnalytics {
 
     init() {
         this.propertyConfig = this.findPropertyConfig();
-        
+
         if (!this.propertyConfig) {
             return;
         }
 
         this.configureDefaults(this.propertyConfig);
         this.createTracker(this.propertyConfig);
-        
+
         const dimensions = this.getDimensions(this.propertyConfig);
-        
+
         // Page Event
         const pageVariables = this.getPageVariables();
-        
+
         // Don't send view in MAX WindowState
         if (window.up?.analytics?.pageData?.urlState !== 'MAX') {
-            window.up.gtag('event', 'page_view', { ...pageVariables, ...dimensions });
+            window.up.gtag('event', 'page_view', {
+                ...pageVariables,
+                ...dimensions,
+            });
         }
 
         // Timing event
@@ -36,12 +39,12 @@ class ModernGoogleAnalytics {
             name: this.getTabUri(),
             value: window.up?.analytics?.pageData?.executionTimeNano,
             ...pageVariables,
-            ...dimensions
+            ...dimensions,
         });
 
         // Portlet Events
         this.trackPortletEvents(dimensions);
-        
+
         // Add event handlers
         this.addFlyoutHandlers();
         this.addExternalLinkHandlers();
@@ -54,10 +57,10 @@ class ModernGoogleAnalytics {
         }
 
         const model = window.up.analytics.model;
-        
+
         if (Array.isArray(model.hosts)) {
-            const config = model.hosts.find(config => 
-                config.name === window.up.analytics.host
+            const config = model.hosts.find(
+                (config) => config.name === window.up.analytics.host
             );
             if (config) return config;
         }
@@ -67,31 +70,31 @@ class ModernGoogleAnalytics {
 
     configureDefaults(propertyConfig) {
         const defaults = propertyConfig.config || [];
-        defaults.forEach(setting => {
-            Object.keys(setting).forEach(key => {
+        for (const setting of defaults) {
+            for (const key of Object.keys(setting)) {
                 window.up.gtag('set', key, setting[key]);
-            });
-        });
+            }
+        }
     }
 
     getDimensions(propertyConfig) {
         const dimensions = {};
-        (propertyConfig.dimensionGroups || []).forEach(setting => {
+        for (const setting of propertyConfig.dimensionGroups || []) {
             dimensions[`dimension${setting.name}`] = setting.value;
-        });
+        }
         return dimensions;
     }
 
     createTracker(propertyConfig) {
         const createSettings = {};
-        (propertyConfig.config || []).forEach(setting => {
+        for (const setting of propertyConfig.config || []) {
             if (setting.name !== 'name') {
                 createSettings[setting.name] = setting.value;
             }
-        });
-        
+        }
+
         window.up.gtag('config', propertyConfig.propertyId, {
-            send_page_view: false
+            send_page_view: false,
         });
     }
 
@@ -122,15 +125,15 @@ class ModernGoogleAnalytics {
         let title;
         if (tabName) {
             title = `Tab: ${tabName}`;
-        } else if (!pageData?.urlState) {
-            title = 'Portal Home';
-        } else {
+        } else if (pageData?.urlState) {
             title = 'No Tab';
+        } else {
+            title = 'Portal Home';
         }
 
         return {
             page_location: this.getTabUri(fragmentName, tabName),
-            page_title: title
+            page_title: title,
         };
     }
 
@@ -140,13 +143,17 @@ class ModernGoogleAnalytics {
     }
 
     getRenderedPortletTitle(windowId) {
-        const wrapper = document.querySelector(`div.up-portlet-windowId-content-wrapper.${windowId}`);
+        const wrapper = document.querySelector(
+            `div.up-portlet-windowId-content-wrapper.${windowId}`
+        );
         if (!wrapper) return this.getPortletFname(windowId);
 
         const portletWrapper = wrapper.closest('div.up-portlet-wrapper-inner');
         if (!portletWrapper) return this.getPortletFname(windowId);
 
-        const titleLink = portletWrapper.querySelector('div.up-portlet-titlebar h2 a');
+        const titleLink = portletWrapper.querySelector(
+            'div.up-portlet-titlebar h2 a'
+        );
         return titleLink?.textContent?.trim() || this.getPortletFname(windowId);
     }
 
@@ -156,14 +163,14 @@ class ModernGoogleAnalytics {
 
     getPortletVariables(windowId, portletData) {
         const portletTitle = this.getRenderedPortletTitle(windowId);
-        
+
         if (!portletData) {
             portletData = window.up?.analytics?.portletData?.[windowId];
         }
-        
+
         return {
             page_title: `Portlet: ${portletTitle}`,
-            page_location: this.getPortletUri(portletData.fname)
+            page_location: this.getPortletUri(portletData.fname),
         };
     }
 
@@ -176,32 +183,42 @@ class ModernGoogleAnalytics {
         if (!classAttribute) return null;
 
         const classes = classAttribute.split(/\s+/);
-        return classes.find(cls => !excludedClasses.includes(cls));
+        return classes.find((cls) => !excludedClasses.includes(cls));
     }
 
     getFlyoutFname(clickedLink) {
-        const wrapper = clickedLink.closest('div.up-portlet-fname-subnav-wrapper');
+        const wrapper = clickedLink.closest(
+            'div.up-portlet-fname-subnav-wrapper'
+        );
         return this.getInfoClass(wrapper, 'up-portlet-fname-subnav-wrapper');
     }
 
     getExternalLinkWindowId(clickedLink) {
-        const wrapper = clickedLink.closest('div.up-portlet-windowId-content-wrapper');
-        return this.getInfoClass(wrapper, 'up-portlet-windowId-content-wrapper');
+        const wrapper = clickedLink.closest(
+            'div.up-portlet-windowId-content-wrapper'
+        );
+        return this.getInfoClass(
+            wrapper,
+            'up-portlet-windowId-content-wrapper'
+        );
     }
 
     handleLinkClickEvent(event, clickedLink, eventOptions) {
-        const newWindow = event.button === 1 || 
-                         event.metaKey || 
-                         event.ctrlKey || 
-                         clickedLink.target;
+        const newWindow =
+            event.button === 1 ||
+            event.metaKey ||
+            event.ctrlKey ||
+            clickedLink.target;
 
-        const clickFunction = newWindow ? 
-            () => {} : 
-            () => { document.location = clickedLink.href; };
+        const clickFunction = newWindow
+            ? () => {}
+            : () => {
+                  document.location = clickedLink.href;
+              };
 
         window.up.gtag('event', 'page_view', {
             event_callback: clickFunction,
-            ...eventOptions
+            ...eventOptions,
         });
 
         if (!newWindow) {
@@ -212,10 +229,10 @@ class ModernGoogleAnalytics {
 
     trackPortletEvents(dimensions) {
         const portletData = window.up?.analytics?.portletData || {};
-        
-        Object.entries(portletData).forEach(([windowId, data]) => {
+
+        for (const [windowId, data] of Object.entries(portletData)) {
             if (data.fname === 'google-analytics-config') {
-                return;
+                continue;
             }
 
             const portletVariables = this.getPortletVariables(windowId, data);
@@ -225,17 +242,21 @@ class ModernGoogleAnalytics {
                 name: this.getTabUri(),
                 value: window.up?.analytics?.pageData?.executionTimeNano,
                 ...portletVariables,
-                ...dimensions
+                ...dimensions,
             });
-        });
+        }
     }
 
     addFlyoutHandlers() {
         document.addEventListener('click', (event) => {
-            const link = event.target.closest('ul.fl-tabs li.portal-navigation a.portal-subnav-link');
+            const link = event.target.closest(
+                'ul.fl-tabs li.portal-navigation a.portal-subnav-link'
+            );
             if (!link) return;
 
-            const portletFlyoutTitle = link.querySelector('span.portal-subnav-label')?.textContent || '';
+            const portletFlyoutTitle =
+                link.querySelector('span.portal-subnav-label')?.textContent ||
+                '';
             const fname = this.getFlyoutFname(link);
             const pageVariables = this.getPageVariables();
 
@@ -243,7 +264,7 @@ class ModernGoogleAnalytics {
                 event_category: 'Flyout Link',
                 event_action: this.getPortletUri(fname),
                 event_label: portletFlyoutTitle,
-                ...pageVariables
+                ...pageVariables,
             });
         });
     }
@@ -256,15 +277,15 @@ class ModernGoogleAnalytics {
             const linkHost = new URL(link.href, document.baseURI).hostname;
             if (linkHost && linkHost !== document.domain) {
                 const windowId = this.getExternalLinkWindowId(link);
-                const eventVariables = windowId ? 
-                    this.getPortletVariables(windowId) : 
-                    this.getPageVariables();
+                const eventVariables = windowId
+                    ? this.getPortletVariables(windowId)
+                    : this.getPageVariables();
 
                 this.handleLinkClickEvent(event, link, {
                     event_category: 'Outbound Link',
                     event_action: link.href,
                     event_label: link.textContent,
-                    ...eventVariables
+                    ...eventVariables,
                 });
             }
         });
@@ -277,7 +298,9 @@ class ModernGoogleAnalytics {
 
             const ownerDiv = tab.querySelector('div.up-tab-owner');
             const fragmentName = this.getInfoClass(ownerDiv, 'up-tab-owner');
-            const tabName = tab.querySelector('span.up-tab-name')?.textContent?.trim();
+            const tabName = tab
+                .querySelector('span.up-tab-name')
+                ?.textContent?.trim();
             const pageVariables = this.getPageVariables(fragmentName, tabName);
 
             window.up.gtag('event', 'page_view', pageVariables);
