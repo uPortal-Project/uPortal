@@ -24,7 +24,7 @@ import org.apereo.portal.utils.TeeWriter;
  * Subclass of {@link TeeWriter} that stops writing to the branch once the limit is hit by calling
  * {@link #setBranch(Writer)} with {@link NullWriter}.
  *
- * <p>A callback {@link Function} to be executed when the limit is hit can be provided as well.
+ * <p>A callback {@link Consumer} to be executed when the limit is hit can be provided as well.
  */
 public class LimitingTeeWriter extends TeeWriter {
     private final long maximumCharacters;

@@ -24,7 +24,7 @@ import org.apereo.portal.utils.TeeOutputStream;
  * Subclass of {@link TeeOutputStream} that stops writing to the branch once the limit is hit by
  * calling {@link #setBranch(OutputStream)} with {@link NullOutputStream}.
  *
- * <p>A callback {@link Function} to be executed when the limit is hit can be provided as well.
+ * <p>A callback {@link Consumer} to be executed when the limit is hit can be provided as well.
  */
 public class LimitingTeeOutputStream extends TeeOutputStream {
     private final long maximumBytes;
