@@ -21,16 +21,16 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
 
-<div id="${n}" class="fl-widget portlet error view-detailed" role="section">
+<div id="${n}" class="card portlet error view-detailed" role="section">
 
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="card-header titlebar portlet-titlebar" role="sectionhead">
         <p><spring:message code="errorportlet.main"/></p>
 
         <div class="breadcrumb">
             <portlet:actionURL var="userResetUrl">
                 <portlet:param name="failedPortletWindowId" value="${ portletWindowId.stringId}"/>
             </portlet:actionURL>
-            <span class="breadcrumb-1"><a data-href="${ userResetUrl }" href="javascript:void(0)"><spring:message code="errorportlet.reset"/></a></span>
+            <span class="breadcrumb-item breadcrumb-1"><a data-href="${ userResetUrl }" href="javascript:void(0)"><spring:message code="errorportlet.reset"/></a></span>
         </div> <!-- end breadcrumbs -->
 
     </div> <!-- end sectionhead -->
@@ -40,7 +40,7 @@
 <script type="text/javascript">
 (function($) {
     // Reset requests must be an actionURL and a POST...
-    $('#${n} .breadcrumb a').click(function() {
+    $('#${n} .breadcrumb a').on('click', function() {
         var url = $(this).attr('data-href');
         var form = $('<form />', {
             action: url,

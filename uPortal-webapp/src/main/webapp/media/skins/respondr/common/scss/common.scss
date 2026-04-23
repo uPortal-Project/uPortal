@@ -1,0 +1,653 @@
+/**
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+
+/* ==========================================================================*
+    Bootstrap 5
+    ========================================================================== */
+
+/*
+ * Import Bootstrap 5 SCSS from webjars
+ */
+@import "bootstrap";
+
+/* Reset root font-size to match Bootstrap 3 behavior */
+html {
+  font-size: 10px;
+}
+
+body {
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   Variables
+   ========================================================================== */
+@import "variables";
+
+/* ==========================================================================
+   Utility mixins
+   ========================================================================== */
+@import "mixins";
+
+/* ==========================================================================
+   Regions
+   ========================================================================== */
+@import "regions";
+
+/* ==========================================================================
+   Gallery
+   ========================================================================== */
+@import "gallery";
+
+/* ==========================================================================
+   Native Tags
+   ========================================================================== */
+@import "tags";
+
+/* ==========================================================================
+   Namespace: .portal
+   ========================================================================== */
+
+/*
+ * Everything in this stylesheet is scoped (nested) within ".portal".
+ * As a best practice, anything added to this stylesheet (that is not a variable
+ * or mixin) should also be scoped within the namespace.
+ */
+
+.portal {
+  /*
+   * Using the Google Font "Oxygen" as the base font.
+   * Font is currently being included in the markup.
+   */
+
+  // font-family: 'Oxygen', sans-serif;
+
+  /* ==========================================================================
+     Header
+     ========================================================================== */
+  @import "header";
+
+  /* ==========================================================================
+     Navigation
+     ========================================================================== */
+  @import "navigation";
+
+  /* ==========================================================================
+     Content
+     ========================================================================== */
+  @import "content";
+
+  /* ==========================================================================
+     Portlet
+     ========================================================================== */
+  @import "portlet";
+
+  /* ==========================================================================
+     Portlets without chrome
+     ========================================================================== */
+  @import "no-chrome";
+
+  /* ==========================================================================
+     Personalization
+     ========================================================================== */
+  @import "personalization";
+
+  /* ==========================================================================
+     Portlet Config
+     ========================================================================== */
+  @import "portlet-manager";
+
+  /* ==========================================================================
+     Portal Administration
+     ========================================================================== */
+  @import "portal-admin";
+
+  /* ==========================================================================
+     Rating
+     ========================================================================== */
+  @import "rating";
+
+  /* ==========================================================================
+     Search
+     ========================================================================== */
+  @import "search";
+
+  /* ==========================================================================
+     Entity Selector
+     ========================================================================== */
+  @import "entity-selector";
+
+  /* ==========================================================================
+     Footer
+     ========================================================================== */
+  @import "footer";
+
+  /* ==========================================================================
+     Fluid stop-gap file - This will be removed when Universality and Fluid Components are EOL
+     ========================================================================== */
+  @import "fluid_stopgap";
+
+  /* ==========================================================================
+     JSR 168 and JSR 268 css.
+     ========================================================================== */
+  @import "jsr-168";
+
+  /* ==========================================================================
+     View styles targeting a single specific view within uPortal.
+     ========================================================================== */
+  @import "views";
+
+  /* ==========================================================================
+     Plain css flex and grid layouts.
+     ========================================================================== */
+  @import "grids";
+
+  /* ==========================================================================
+     Fragment Permissions
+     ========================================================================== */
+  @import "fragment-permissions";
+
+  /* ==========================================================================
+     jQuery UI Dialog Fixes
+     ========================================================================== */
+  // Note: Close button styling reverted due to hover state and icon positioning issues
+}
+  /* ==========================================================================
+     User Administration Form Fixes
+     ========================================================================== */
+  
+  // Fix form control sizing to match Bootstrap 3 behavior
+  .form-control {
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+  }
+  
+  // Fix column padding to match Bootstrap 3 grid
+  .col-md-6 {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  // Fix button styling to match Bootstrap 3 behavior
+  .btn {
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 20px;
+    border-radius: 4px;
+    background-color: #efefef;
+    color: #696969;
+  }
+  
+  // Fix DataTables filtering and pagination styling
+  .view-filter {
+    padding: 15px;
+    margin: 0px -15px 20px;
+    border-radius: 4px;
+  }
+  
+  .dataTables-inline.dataTables-right {
+    display: inline-block;
+  }
+  
+  .dataTables_length select {
+    height: 20px;
+    padding: 0px;
+    font-size: 14px;
+    border: 1px solid #767676;
+    border-radius: 0px;
+    background-color: #ffffff;
+  }
+  
+  /* Permission lookup form styling fixes */
+  .permission-lookup {
+    .form-control {
+      height: 34px;
+      padding: 6px 12px;
+      font-size: 14px;
+      line-height: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    
+    .btn {
+      height: 34px;
+      padding: 6px 12px;
+      font-size: 14px;
+      line-height: 20px;
+      border-radius: 4px;
+    }
+    
+    .btn-primary {
+      border: 1px solid #2e6da4;
+    }
+  }
+  
+  /* Import/Export portlet button styling fixes */
+  .imp-exp {
+    .btn {
+      font-size: 14px;
+      line-height: 20px;
+      border-radius: 4px;
+    }
+    
+    .btn-group .btn {
+      height: 36px;
+      padding: 0px 5px;
+      color: #333;
+    }
+    
+    .btn-group .btn:first-child {
+      border-radius: 4px 0px 0px 4px;
+    }
+    
+    .btn-group .btn:last-child {
+      border-radius: 0px 4px 4px 0px;
+    }
+    
+    .btn-primary,
+    .btn-success,
+    .btn-danger,
+    .btn-warning,
+    .btn-default {
+      height: 34px;
+      padding: 6px 12px;
+    }
+    
+    .btn-default {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      color: #333;
+    }
+    
+    .btn-warning {
+      background-color: #f0ad4e;
+      border: 1px solid #eea236;
+      color: #fff;
+    }
+    
+    .btn-success {
+      background-color: #5cb85c;
+      border: 1px solid #4cae4c;
+      color: #fff;
+    }
+    
+    .btn-danger {
+      background-color: #d9534f;
+      border: 1px solid #d43f3a;
+      color: #fff;
+    }
+  }
+  
+  /* Permission lookup form layout and styling fixes */
+  .permission-lookup form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    
+    .principal-input,
+    .activity-input {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .form-label {
+      margin-bottom: 0;
+      white-space: nowrap;
+    }
+    
+    .btn-primary {
+      background-color: #337ab7;
+      border-color: #2e6da4;
+      color: #fff;
+    }
+    
+    .punctuation {
+      font-weight: bold;
+      margin: 0 4px;
+    }
+  }
+  
+  /* Fragment admin dropdown styling fixes */
+  #fragmentOwner {
+    width: 224px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Portlet options menu button styling fixes */
+  .portlet-options-menu .btn {
+    background-color: transparent;
+  }
+  
+  /* Panel list and card list button styling fixes */
+  .panel-list .btn-primary,
+  .card-list .btn-primary {
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    color: #fff;
+  }
+  
+  /* Global primary button styling fixes */
+  .btn-primary {
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    color: #fff;
+  }
+  
+  /* Logout button styling fixes */
+  .portal-logout.btn {
+    background-color: transparent;
+    padding: 1px 5px;
+    font-size: 12px;
+  }
+  
+  /* View filter and DataTables layout fixes */
+  .view-filter {
+    display: block;
+    flex-wrap: nowrap;
+  }
+  
+  .dataTables-inline.dataTables-right {
+    display: inline-block;
+    float: none;
+    width: auto;
+  }
+  
+  .dataTables-inline.dataTables-left {
+    display: block;
+    float: left;
+    width: auto;
+  }
+  
+  /* Alert info background color fix */
+  .alert-info {
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    color: #31708f;
+  }
+  
+  /* DataTables pagination styling fixes */
+  .dataTables_length select {
+    width: auto;
+    height: 20px;
+    padding: 0px;
+    font-size: 14px;
+    border: 1px solid #767676;
+    border-radius: 0px;
+    background-color: #ffffff;
+    vertical-align: baseline;
+  }
+  
+  .pagination .page-link {
+    background-color: transparent;
+    border: none;
+    color: #337ab7;
+    padding: 3px 6px;
+  }
+  
+  .pagination .page-item.active .page-link {
+    background-color: transparent;
+    border: none;
+    color: #000;
+    font-weight: bold;
+  }
+  
+  .pagination .page-item.disabled .page-link {
+    background-color: transparent;
+    border: none;
+    color: #999;
+  }
+  
+
+  
+  /* Badge styling fixes - Bootstrap 5 compatibility */
+  .badge {
+    display: inline-block;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 10px;
+    background-color: #777; /* Default gray background like Bootstrap 3 */
+  }
+  
+  .badge:empty {
+    display: none;
+  }
+  
+  /* Badge color variants */
+  .badge.badge-primary {
+    background-color: #337ab7;
+  }
+  
+  .badge.badge-success {
+    background-color: #5cb85c;
+  }
+  
+  .badge.badge-info {
+    background-color: #5bc0de;
+  }
+  
+  .badge.badge-warning {
+    background-color: #f0ad4e;
+  }
+  
+  .badge.badge-danger {
+    background-color: #d9534f;
+  }
+  
+  /* Badge in buttons */
+  .btn .badge {
+    position: relative;
+    top: -1px;
+  }
+  
+  /* Badge hover states for links */
+  a.badge:hover,
+  a.badge:focus {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  /* Portlet controls fixes - Bootstrap 5 compatibility */
+  .grab-handle.hidden {
+    display: none !important;
+  }
+  
+  /* Remove unwanted Bootstrap 5 dropdown caret */
+  .portlet-options-menu .dropdown-toggle::after {
+    display: none;
+  }
+  
+  /* Ensure dropdown functionality works */
+  .portlet-options-menu .dropdown-menu {
+    position: absolute;
+    z-index: 1000;
+  }
+  
+  /* Fix z-index layering - Vue component overlaying controls */
+  .up-portlet-titlebar {
+    position: relative;
+  }
+  
+  .portlet-controls {
+    position: absolute;
+  }
+  
+  .portlet-options-menu {
+    position: relative;
+  }
+  
+  /* Ensure Vue components don't overlay portlet controls */
+  esco-content-grid {
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Portlet options dropdown menu styling - Bootstrap 3 compatibility */
+  .portlet-options-menu .dropdown-menu {
+    border-radius: 4px;
+    padding: 5px 0;
+    font-size: 14px;
+    min-width: 160px;
+  }
+  
+  .portlet-options-menu .dropdown-menu li {
+    display: list-item;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .portlet-options-menu .dropdown-menu li a {
+    display: block;
+    padding: 3px 20px;
+    color: #333;
+    text-decoration: none;
+    background: transparent;
+  }
+  
+  .portlet-options-menu .dropdown-menu li a:hover,
+  .portlet-options-menu .dropdown-menu li a:focus {
+    background-color: #f5f5f5;
+    color: #262626;
+  }
+  
+  /* Welcome fragment fixes - Bootstrap 5 compatibility */
+  
+  /* 1. Fix portlet font to match Bootstrap 3 */
+  .portal .portlet-font {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 14px !important;
+    color: #333333 !important;
+    line-height: 1.42857143 !important;
+  }
+  
+  /* 2. Fix button styling - Bootstrap 3 behavior */
+  .btn-default {
+    background-color: #fff !important;
+    border-color: #ccc !important;
+    color: #333 !important;
+  }
+  
+  .btn-default:hover,
+  .btn-default:focus {
+    background-color: #e6e6e6 !important;
+    border-color: #adadad !important;
+    color: #333 !important;
+  }
+  
+  /* 3. Fix My Drives portlet width restriction */
+  .up-portlet-content {
+    width: 100% !important;
+    max-width: none !important;
+  }
+  
+  .up-portlet-content .container,
+  .up-portlet-content .container-fluid {
+    width: 100% !important;
+    max-width: none !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+  
+  /* Fix My Drives portlet - restore clearfix for .fl-fix and .row */
+  .fl-fix::before,
+  .fl-fix::after {
+    content: " ";
+    display: table;
+  }
+  
+  .fl-fix::after {
+    clear: both;
+  }
+  
+  /* Override Bootstrap 5 flexbox for specific portlet toolbars */
+  #toolbar.row {
+    display: block !important;
+  }
+  
+  #toolbar.row::before,
+  #toolbar.row::after {
+    content: " ";
+    display: table;
+  }
+  
+  #toolbar.row::after {
+    clear: both;
+  }
+  
+  /* Fix Fluid Framework layout classes for My Drives portlet */
+  .fl-col-flex2 {
+    display: block !important;
+    width: 100%;
+  }
+  
+  .fl-col-flex2::before,
+  .fl-col-flex2::after {
+    content: " ";
+    display: table;
+  }
+  
+  .fl-col-flex2::after {
+    clear: both;
+  }
+  
+  .fl-force-left {
+    float: left !important;
+  }
+  
+  .fl-force-right {
+    float: right !important;
+    width: calc(100% - 33.333333%) !important; /* Take remaining space after col-md-4 */
+  }
+  
+  /* Ensure browser area takes full remaining width within portlets */
+  .up-portlet-content #browserArea.fl-force-right {
+    width: calc(100% - 33.333333%) !important; /* Match toolbar width */
+  }
+  
+  /* Fix My Drives portlet content area width to match toolbar */
+  .fl-col-flex2.row {
+    width: calc(100% + 15px) !important;
+  }
+  
+  /* Bootstrap 5 modal close button styling */
+  .btn-close {
+    width: 1em;
+    height: 1em;
+    padding: 0.25em;
+    color: #000;
+    background: transparent;
+    border: 0;
+    border-radius: 0.25rem;
+    opacity: 1;
+  }
+  

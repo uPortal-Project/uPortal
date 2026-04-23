@@ -16,7 +16,6 @@ package org.apereo.portal.io.xml;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Files;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -27,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -494,7 +494,12 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
             final ArchiveInputStream resourceStream,
             BatchImportOptions options) {
 
-        final File tempDir = Files.createTempDir();
+        final File tempDir;
+        try {
+            tempDir = Files.createTempDirectory("uPortal-import").toFile();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to create temp directory for archive import", e);
+        }
         try {
             ArchiveEntry archiveEntry;
             while ((archiveEntry = resourceStream.getNextEntry()) != null) {
@@ -690,7 +695,11 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     private File determineLogDirectory(final BatchOptions options, String operation) {
         File logDirectoryParent = options != null ? options.getLogDirectoryParent() : null;
         if (logDirectoryParent == null) {
-            logDirectoryParent = Files.createTempDir();
+            try {
+                logDirectoryParent = Files.createTempDirectory("uPortal-import-log").toFile();
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to create temp directory for import log", e);
+            }
         }
         File logDirectory = new File(logDirectoryParent, "data-" + operation + "-reports");
         try {

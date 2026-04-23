@@ -33,7 +33,7 @@
    <input name="propertyName" value="{{= name }}"/>
 
    <div>
-       <label>Property Id:</label><input name="propertyId" value="{{= propertyId }}"/>
+       <label class="form-label">Property Id:</label><input name="propertyId" value="{{= propertyId }}"/>
    </div>
    <div class="property-config">
    </div>

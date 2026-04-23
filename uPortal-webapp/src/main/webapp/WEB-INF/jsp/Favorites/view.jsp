@@ -30,76 +30,73 @@
     <style>#fav-portlet-${n} .favorites-list { max-height: ${maxHeightPixels}px; overflow-y: auto; }</style>
 </c:if>
 
-<nav class="navbar navbar-default" id="${n}">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#fav-portlet-${n}">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" id="${n}">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
         <a class="navbar-brand" href="#"><spring:message code="favorites"/></a>
-    </div>
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#fav-portlet-${n}" aria-controls="fav-portlet-${n}" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="fav-portlet-${n}">
-        <ul class="list-group favorites-list">
-            <c:forEach var="collection" items="${collections}">
-                <li class="list-group-item">
-                    <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i>
-                    <a href="${renderRequest.contextPath}/f/${collection.id}/render.uP">
-                        <span class="favorites-icon">
-                            <i class="fa fa-sitemap" aria-hidden="true"></i>
-                        </span>
-                        <c:out value="${collection.name}" />
-                    </a>
-                </li>
-            </c:forEach>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="fav-portlet-${n}">
+            <ul class="list-group favorites-list">
+                <c:forEach var="collection" items="${collections}">
+                    <li class="list-group-item">
+                        <i class="fa fa-chevron-right float-end" aria-hidden="true"></i>
+                        <a href="${renderRequest.contextPath}/f/${collection.id}/render.uP">
+                            <span class="favorites-icon">
+                                <i class="fa fa-sitemap" aria-hidden="true"></i>
+                            </span>
+                            <c:out value="${collection.name}" />
+                        </a>
+                    </li>
+                </c:forEach>
 
-            <c:forEach var="favorite" items="${favorites}">
-                <li class="list-group-item">
-                    <a class="up-favorite-remove pull-right" data-portlet-id="${favorite.channelPublishId}" title="<spring:message code="remove.from.my.favorites" />" href="javascript:void(0);">
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                    </a>
-                    <c:set var="favoriteAnchorContentTarget">
-                        <c:choose>
-                            <c:when test="${not empty favorite.parameterMap['alternativeMaximizedLinkTarget']}">${favorite.parameterMap['alternativeMaximizedLinkTarget']}</c:when>
-                            <c:otherwise>_blank</c:otherwise>
-                        </c:choose>
-                    </c:set>
-                    <c:set var="favoriteAnchorContent">
-                        <c:choose>
-                            <c:when test="${not empty favorite.parameterMap['alternativeMaximizedLink']}">href="${favorite.parameterMap['alternativeMaximizedLink']}" target="${favoriteAnchorContentTarget}" rel="noopener noreferrer"</c:when>
-                            <c:otherwise>href="${renderRequest.contextPath}/p/${favorite.functionalName}/render.uP"</c:otherwise>
-                        </c:choose>
-                    </c:set>
-                    <a ${favoriteAnchorContent}>
-                        <span class="favorites-icon">
+                <c:forEach var="favorite" items="${favorites}">
+                    <li class="list-group-item">
+                        <a class="up-favorite-remove float-end" data-portlet-id="${favorite.channelPublishId}" title="<spring:message code="remove.from.my.favorites" />" href="javascript:void(0);">
+                            <i class="fa fa-star" aria-hidden="true"></i>
+                        </a>
+                        <c:set var="favoriteAnchorContentTarget">
                             <c:choose>
-                                <c:when test="${not empty favorite.parameterMap['iconUrl']}">
-                                    <img src="${favorite.parameterMap['iconUrl']}" class="img-responsive" alt="Icon for ${favorite.name}" aria-hidden="true" />
-                                </c:when>
-                                <c:otherwise>
-                                    <i class="fa fa-picture-o" aria-hidden="true"></i>
-                                </c:otherwise>
+                                <c:when test="${not empty favorite.parameterMap['alternativeMaximizedLinkTarget']}">${favorite.parameterMap['alternativeMaximizedLinkTarget']}</c:when>
+                                <c:otherwise>_blank</c:otherwise>
                             </c:choose>
-                        </span>
-                        <c:out value="${favorite.name}" />
-                    </a>
-                </li>
-            </c:forEach>
-        </ul>
+                        </c:set>
+                        <c:set var="favoriteAnchorContent">
+                            <c:choose>
+                                <c:when test="${not empty favorite.parameterMap['alternativeMaximizedLink']}">href="${favorite.parameterMap['alternativeMaximizedLink']}" target="${favoriteAnchorContentTarget}" rel="noopener noreferrer"</c:when>
+                                <c:otherwise>href="${renderRequest.contextPath}/p/${favorite.functionalName}/render.uP"</c:otherwise>
+                            </c:choose>
+                        </c:set>
+                        <a ${favoriteAnchorContent}>
+                            <span class="favorites-icon">
+                                <c:choose>
+                                    <c:when test="${not empty favorite.parameterMap['iconUrl']}">
+                                        <img src="${favorite.parameterMap['iconUrl']}" class="img-fluid" alt="Icon for ${favorite.name}" aria-hidden="true" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <i class="fa fa-picture-o" aria-hidden="true"></i>
+                                    </c:otherwise>
+                                </c:choose>
+                            </span>
+                            <c:out value="${favorite.name}" />
+                        </a>
+                    </li>
+                </c:forEach>
+            </ul>
 
-        <%-- Display link to Marketplace if available, suppress otherwise --%>
-        <c:if test="${not empty marketplaceUrl}">
-            <span class="pull-right">
-                <a href="${marketplaceUrl}">
-                <spring:message code="favorites.invitation.to.marketplace.short" text="Visit Marketplace"/>
-                </a>
-            </span>
-        </c:if>
-    </div><!-- /.navbar-collapse -->
+            <%-- Display link to Marketplace if available, suppress otherwise --%>
+            <c:if test="${not empty marketplaceUrl}">
+                <span class="float-end">
+                    <a href="${marketplaceUrl}">
+                    <spring:message code="favorites.invitation.to.marketplace.short" text="Visit Marketplace"/>
+                    </a>
+                </span>
+            </c:if>
+        </div><!-- /.navbar-collapse -->
+    </div>
 </nav>
 
 <div class="up-favorite-info alert alert-info">
@@ -109,7 +106,7 @@
 
 <script type="text/javascript">
 (function($){
-    $('#${n} .up-favorite-remove').click({
+    $('#${n} .up-favorite-remove').on('click', {
         context : '${renderRequest.contextPath}'
     }, function(event) {
         event.data.portletId = $(this).attr('data-portlet-id');

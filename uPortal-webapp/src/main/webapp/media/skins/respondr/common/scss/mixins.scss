@@ -1,0 +1,258 @@
+/**
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/*
+ * Simple float. Pass in the direction; default is left.
+ */
+@mixin float($direction: left) {
+  float: $direction;
+}
+
+@mixin text-shadow($string: 0 1px 3px rgba(0, 0, 0, 0.25)) {
+  text-shadow: $string;
+}
+
+@mixin box-shadow($string) {
+  box-shadow: $string;
+}
+
+@mixin drop-shadow($x: 0, $y: 1px, $blur: 2px, $spread: 0, $alpha: 0.25) {
+  box-shadow: $x $y $blur $spread rgba(0, 0, 0, $alpha);
+}
+
+@mixin inner-shadow($x: 0, $y: 1px, $blur: 2px, $spread: 0, $alpha: 0.25) {
+  box-shadow: inset $x $y $blur $spread rgba(0, 0, 0, $alpha);
+}
+
+@mixin box-sizing($type: border-box) {
+  box-sizing: $type;
+}
+
+@mixin border-radius($radius: 5px) {
+  border-radius: $radius;
+  background-clip: padding-box;
+}
+
+@mixin border-radiuses($topleft: 0, $topright: 0, $bottomright: 0, $bottomleft: 0) {
+  border-radius: $topleft $topright $bottomright $bottomleft;
+  background-clip: padding-box;
+}
+
+@mixin border($color: $grayscale3, $size: 1px) {
+  border: $size solid $color;
+}
+
+@mixin opacity($opacity: 0.5) {
+  opacity: $opacity;
+}
+
+@mixin vertical-gradient($startColor: #eee, $endColor: white) {
+  background-color: $startColor;
+  background: linear-gradient(to bottom, $startColor, $endColor);
+}
+
+@mixin horizontal-gradient($startColor: #eee, $endColor: white) {
+  background-color: $startColor;
+  background-image: linear-gradient(to right, $startColor, $endColor);
+}
+
+@mixin transition($transition) {
+  transition: $transition;
+}
+
+@mixin transform($string) {
+  transform: $string;
+}
+
+@mixin scale($factor) {
+  transform: scale($factor);
+}
+
+@mixin rotate($deg) {
+  transform: rotate($deg);
+}
+
+@mixin translate($x, $y: 0) {
+  transform: translate($x, $y);
+}
+
+@mixin translate3d($x, $y: 0, $z: 0) {
+  transform: translate3d($x, $y, $z);
+}
+
+/*
+ * Base formatting for converting a block-list to an inline-list.
+ */
+@mixin inline-block-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/*
+ * Useful CSS3 SCSS Mixins
+ * Converted from LESS to SCSS
+ */
+
+@mixin text-shadow($string: 0 1px 3px rgba(0, 0, 0, 0.25)) {
+  text-shadow: $string;
+}
+
+@mixin box-shadow($string) {
+  box-shadow: $string;
+}
+
+@mixin drop-shadow($x: 0, $y: 1px, $blur: 2px, $spread: 0, $alpha: 0.25) {
+  box-shadow: $x $y $blur $spread rgb(0 0 0 / $alpha);
+}
+
+@mixin inner-shadow($x: 0, $y: 1px, $blur: 2px, $spread: 0, $alpha: 0.25) {
+  box-shadow: inset $x $y $blur $spread rgb(0 0 0 / $alpha);
+}
+
+@mixin box-sizing($type: border-box) {
+  box-sizing: $type;
+}
+
+@mixin border-radius($radius: 5px) {
+  border-radius: $radius;
+  background-clip: padding-box;
+}
+
+@mixin border-radiuses($topright: 0, $bottomright: 0, $bottomleft: 0, $topleft: 0) {
+  border-radius: $topleft $topright $bottomright $bottomleft;
+  background-clip: padding-box;
+}
+
+@mixin border-radiuses-top($top: 0) {
+  border-top-right-radius: $top;
+  border-top-left-radius: $top;
+}
+
+@mixin border-radiuses-bottom($bottom: 0) {
+  border-bottom-right-radius: $bottom;
+  border-bottom-left-radius: $bottom;
+}
+
+@mixin border($color: $grayscale3, $size: 1px) {
+  border: $size solid $color;
+}
+
+@mixin opacity($opacity: 0.5) {
+  opacity: $opacity;
+}
+
+@mixin vertical-gradient($startColor: #eee, $endColor: white) {
+  background-color: $startColor;
+  background: linear-gradient(to bottom, $startColor, $endColor);
+}
+
+@mixin horizontal-gradient($startColor: #eee, $endColor: white) {
+  background-color: $startColor;
+  background-image: linear-gradient(to right, $startColor, $endColor);
+}
+
+@mixin gradient($background, $gradient: false) {
+  background-color: $background;
+  @if $gradient == true {
+    background: linear-gradient(to bottom, $background, darken($background, 10%));
+  }
+}
+
+@mixin animation($name, $duration: 300ms, $delay: 0, $ease: ease) {
+  animation: $name $duration $delay $ease;
+}
+
+@mixin transition($transition) {
+  transition: $transition;
+}
+
+@mixin transform($string) {
+  transform: $string;
+}
+
+@mixin scale($factor) {
+  transform: scale($factor);
+}
+
+@mixin rotate($deg) {
+  transform: rotate($deg);
+}
+
+@mixin skew($deg, $deg2) {
+  transform: skew($deg, $deg2);
+}
+
+@mixin translate($x, $y: 0) {
+  transform: translate($x, $y);
+}
+
+@mixin translate3d($x, $y: 0, $z: 0) {
+  transform: translate3d($x, $y, $z);
+}
+
+@mixin perspective($value: 1000) {
+  perspective: $value;
+}
+
+@mixin transform-origin($x: center, $y: center) {
+  transform-origin: $x $y;
+}
+
+@mixin pretty-buttons($color, $background, $text-shadow: none) {
+  background-color: lighten($background, 5%);
+  background: linear-gradient(to bottom, lighten($background, 5%), darken($background, 10%));
+  color: $color;
+  border-color: darken($background, 10%);
+  border-bottom-color: darken($background, 20%);
+  text-shadow: $text-shadow;
+  @include box-shadow(inset 0 1px 0 rgba(255, 255, 255, 0.1));
+
+  &:hover,
+  &:focus,
+  &:active,
+  &.active {
+    background: linear-gradient(to bottom, $background, darken($background, 10%));
+    border-color: darken($background, 20%);
+    color: $color;
+  }
+
+  &.disabled,
+  &:disabled,
+  fieldset[disabled] & {
+    &,
+    &:hover,
+    &:focus,
+    &:active,
+    &.active {
+      background-color: $background;
+      border-color: darken($background, 5%);
+    }
+  }
+}
+
+@mixin contrasted($background-color, $dark: $contrasted-dark-default, $light: $contrasted-light-default, $threshold: $contrasted-lightness-threshold) {
+  background: $background-color;
+  // SCSS doesn't have contrast() function like LESS, use manual logic
+  @if lightness($background-color) > $threshold {
+    color: $dark;
+  } @else {
+    color: $light;
+  }
+}

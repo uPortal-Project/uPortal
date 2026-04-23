@@ -27,17 +27,17 @@
 </portlet:actionURL>
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="card portlet" role="section">
 
     <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
+  <div class="card-header portlet-title" role="sectionhead">
     <h2 role="heading">SQL Query Portlet Configuration</h2>
   </div> <!-- end: portlet-title -->
   
   <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body">
+  <div class="card-body portlet-body">
 
-    <form:form class="form-horizontal" role="form" modelAttribute="form" action="${formUrl}" method="POST">
+    <form:form class="" role="form" modelAttribute="form" action="${formUrl}" method="POST">
     
     <!-- Portlet Messages -->
     <spring:hasBindErrors name="form">
@@ -51,7 +51,7 @@
       <div class="portlet-section-body">
     
         <p>
-    	    <label class="portlet-form-field-label">SQL query:</label>
+    	    <label class="portlet-form-field-label form-label">SQL query:</label>
 	       <form:textarea path="sqlQuery" rows="4" cols="120"/>
             <div>Allows Spring Expression Language (SpEL) expressions such as \${request.contextPath}, \${userInfo['user.login.id']}, or @MyBeanName<br/>
               You typically define a default using the elvis operator ?: in case an attribute has no value to avoid sql grammar errors; e.g. something like<br/>
@@ -62,17 +62,17 @@
 	    </p>
 
 	    <p>
-    	    <label class="portlet-form-field-label">Spring data source bean name:</label>
+    	    <label class="portlet-form-field-label form-label">Spring data source bean name:</label>
 	       <form:input path="dataSource" size="50"/>
 	    </p>
 	
         <p>
-	       <label class="portlet-form-field-label">Spring view:</label>
+	       <label class="portlet-form-field-label form-label">Spring view:</label>
 	       <form:input path="viewName" size="50"/>
 	    </p>
 
         <p>
-            <label class="portlet-form-field-label">Cache name:</label>
+            <label class="portlet-form-field-label form-label">Cache name:</label>
             <form:input path="cacheName" size="50"/>
             <div><em>Enter 'org.apereo.portal.portlets.sqlquery.SqlQueryPortletController.queryResults' for preconfigured cache.</em> If other than the preconfigured cache name, you must create a cache in ehcache.xml with the name you enter here.
                  <br/>Leave empty to disable caching. <em>WARNING!</em> This would impact performance and scalability!

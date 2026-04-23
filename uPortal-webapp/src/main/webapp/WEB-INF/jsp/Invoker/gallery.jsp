@@ -21,8 +21,8 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <div class="up-gallery">
-    <div class="fl-fix fl-col-mixed fl-col-mixed2 gallery-inner" style="display:none">
-        <div class="fl-col-side fl-force-left menu-wrapper">
+    <div class="clearfix row row2 gallery-inner" style="display:none">
+        <div class="col-auto float-start menu-wrapper">
             <ul class="menu" role="menu">
                 <li class="add-content-link active" role="tab">
                     <a href="#"><span><spring:message code="add.stuff"/></span></a>
@@ -41,18 +41,16 @@
                 <a class="button"><span><spring:message code="im.done"/></span></a>
             </div-->
         </div>
-        <div class="fl-col-main content-wrapper" role="tabpanel">
-            <div class="fl-fix content">
-                <div class="fl-fix fl-col-mixed fl-col-mixed2 pane add-content">
-                    <div class="fl-col-fixed fl-force-left content-filters-wrapper">
+        <div class="col content-wrapper" role="tabpanel">
+            <div class="clearfix content">
+                <div class="clearfix row row2 pane add-content">
+                    <div class="col-auto float-start content-filters-wrapper">
                         <div class="categories-column active">
                             <h3 class="portlet-list-link"><span><spring:message code="stuff"/></span></h3>
                             <div class="categories-wrapper active">
                                <div class="portlet-search-view">
                                     <form class="portlet-search-form">
-                                        <label for="portletSearch"><spring:message code="search.stuff.add"/></label>
-                                        <input id="portletSearch" name="portletSearch" class="portlet-search-input" type="text" value="<spring:message code="search"/>" />
-                                        <input type="submit" value="<spring:message code="search"/>" class="portlet-search-submit"/>
+                                        <input id="portletSearch" name="portletSearch" class="portlet-search-input" type="text" placeholder="Search for stuff" />
                                     </form>
                                 </div>
                                 <div class="categories">
@@ -71,41 +69,41 @@
                             </div>
                         </div>
                     </div>
-                    <div class="content-results-wrapper fl-col-main">
+                    <div class="content-results-wrapper col">
                         <div class="column-inner">
-                            <div class="results-wrapper fl-col-mixed2">
-                                <div class="pager-column fl-col-side fl-force-right">
+                            <div class="results-wrapper row2">
+                                <div class="pager-column col-auto float-end">
                                     <div class="column-inner">
                                     </div>
                                 </div>
-                                <div class="results-column fl-col-main fl-fix">
-                                    <div class="results-wrapper portlet-results fl-col-mixed2">
-                                        <div class="pager-column fl-col-side fl-force-right">
+                                <div class="results-column col clearfix">
+                                    <div class="results-wrapper portlet-results row2">
+                                        <div class="pager-column col-auto float-end">
                                             <div class="column-inner">
-                                                <div class="pager flc-pager-top">
+                                                <div class="pager pager-top">
                                                     <!--Previous-->
-                                                    <div class="pager-button-up flc-pager-previous">
+                                                    <div class="pager-button-up pager-previous">
                                                         <a class="pager-button-up-inner" href="#">
                                                             <span><spring:message code="up"/></span>
                                                         </a>
                                                     </div>
                                                     <!--Pager Links-->
                                                     <div style="display:none">
-                                                        <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
-                                                            <li class="flc-pager-pageLink"><a href="#">1</a></li>
-                                                            <li class="flc-pager-pageLink-disabled">2</li>
-                                                            <li class="flc-pager-pageLink"><a href="#">3</a></li>
+                                                        <ul class="pagination-links pager-links" style="margin:0; display:inline">
+                                                            <li class="pager-pageLink"><a href="#">1</a></li>
+                                                            <li class="pager-pageLink-disabled">2</li>
+                                                            <li class="pager-pageLink"><a href="#">3</a></li>
                                                         </ul>
                                                     </div>
                                                     <!--Pagination-->
                                                     <div class="pager-pagination"></div>
                                                     <!--Pager Summary-->
                                                     <div style="display:none">
-                                                        <span class="flc-pager-summary"><spring:message code="show"/></span>
-                                                        <span><select class="pager-page-size flc-pager-page-size"></select></span>
+                                                        <span class="pager-summary"><spring:message code="show"/></span>
+                                                        <span><select class="pager-page-size pager-page-size"></select></span>
                                                     </div>
                                                     <!--Next-->
-                                                    <div class="pager-button-down flc-pager-next">
+                                                    <div class="pager-button-down pager-next">
                                                         <a class="pager-button-down-inner" href="#">
                                                             <span><spring:message code="down"/></span>
                                                         </a>
@@ -113,8 +111,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="results-column fl-col-main ui-helper-clearfix">
-                                            <ul id="addContentPortletList" class="results-list portlet-list">
+                                        <div class="results-column col ui-helper-clearfix">
+                                            <ul id="addContentPortletList" class="results-list portlet-list modern-portlet-container">
                                                 <li class="result-item portlet">
                                                     <div class="ri-wrapper portlet-wrapper">
                                                         <a class="ri-utility portlet-thumb-gripper" href="#" title="<spring:message code="drag.to.add.content"/>"><span>Drag Handle</span></a>
@@ -141,16 +139,14 @@
                     <div class="content-modal content-loading"></div>
                 </div>
 
-                <div class="fl-fix fl-col-mixed fl-col-mixed2 use-content" style="display:none">
-                    <div class="fl-col-fixed fl-force-left content-filters-wrapper">
+                <div class="clearfix row row2 use-content" style="display:none">
+                    <div class="col-auto float-start content-filters-wrapper">
                         <div class="categories-column active">
                             <h3 class="portlet-list-link"><span><spring:message code="stuff"/></span></h3>
                             <div class="categories-wrapper active">
                                 <div class="portlet-search-view">
                                     <form class="portlet-search-form">
-                                        <div class="search">
-                                            <input class="portlet-search-input" type="text"/>
-                                        </div>
+                                        <input class="portlet-search-input" type="text" placeholder="Search for stuff" />
                                     </form>
                                 </div>
                                 <div class="categories">
@@ -169,41 +165,41 @@
                             </div>
                         </div>
                     </div>
-                    <div class="content-results-wrapper fl-col-main">
+                    <div class="content-results-wrapper col">
                         <div class="column-inner">
-                            <div class="results-wrapper fl-col-mixed2">
-                                <div class="pager-column fl-col-side fl-force-right">
+                            <div class="results-wrapper row2">
+                                <div class="pager-column col-auto float-end">
                                     <div class="column-inner">
                                     </div>
                                 </div>
-                                <div class="results-column fl-col-main fl-fix">
-                                    <div class="results-wrapper portlet-results fl-col-mixed2">
-                                        <div class="pager-column fl-col-side fl-force-right">
+                                <div class="results-column col clearfix">
+                                    <div class="results-wrapper portlet-results row2">
+                                        <div class="pager-column col-auto float-end">
                                             <div class="column-inner">
-                                                <div class="pager flc-pager-top">
+                                                <div class="pager pager-top">
                                                     <!--Previous-->
-                                                    <div class="pager-button-up flc-pager-previous">
+                                                    <div class="pager-button-up pager-previous">
                                                         <a class="pager-button-up-inner" href="#">
                                                             <span><spring:message code="up"/></span>
                                                         </a>
                                                     </div>
                                                     <!--Pager Links-->
                                                     <div style="display:none">
-                                                        <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
-                                                            <li class="flc-pager-pageLink"><a href="#">1</a></li>
-                                                            <li class="flc-pager-pageLink-disabled">2</li>
-                                                            <li class="flc-pager-pageLink"><a href="#">3</a></li>
+                                                        <ul class="pagination-links pager-links" style="margin:0; display:inline">
+                                                            <li class="pager-pageLink"><a href="#">1</a></li>
+                                                            <li class="pager-pageLink-disabled">2</li>
+                                                            <li class="pager-pageLink"><a href="#">3</a></li>
                                                         </ul>
                                                     </div>
                                                     <!--Pagination-->
                                                     <div class="pager-pagination"></div>
                                                     <!--Pager Summary-->
                                                     <div style="display:none">
-                                                        <span class="flc-pager-summary"><spring:message code="show"/></span>
-                                                        <span><select class="pager-page-size flc-pager-page-size"></select></span>
+                                                        <span class="pager-summary"><spring:message code="show"/></span>
+                                                        <span><select class="pager-page-size pager-page-size"></select></span>
                                                     </div>
                                                     <!--Next-->
-                                                    <div class="pager-button-down flc-pager-next">
+                                                    <div class="pager-button-down pager-next">
                                                         <a class="pager-button-down-inner" href="#">
                                                             <span><spring:message code="down"/></span>
                                                         </a>
@@ -211,8 +207,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="results-column fl-col-main ui-helper-clearfix">
-                                            <ul id="useContentPortletList" class="results-list portlet-list">
+                                        <div class="results-column col ui-helper-clearfix">
+                                            <ul id="useContentPortletList" class="results-list portlet-list modern-portlet-container">
                                                 <li class="result-item portlet">
                                                     <div class="ri-wrapper portlet-wrapper">
                                                         <div class="ri-utility"></div>

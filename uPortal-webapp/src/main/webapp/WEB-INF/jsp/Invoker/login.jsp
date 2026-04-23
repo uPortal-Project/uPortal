@@ -21,19 +21,17 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <c:set var="request" value="${pageContext.request}" />
 
-<div id="webLoginContainer" class="fl-widget portal-login">
-  <div class="fl-widget-inner">
-    <div class="fl-widget-content">
-        <div id="portalCASLogin" class="fl-widget-content">
-            <a id="portalCASLoginLink" class="btn" title="<spring:message code="sign.in.via.cas"/>" href="${casRefUrlEncoder.getCasLoginUrl(request)}">
-                <i class="fa fa-sign-in" aria-hidden="true"></i>
-                <spring:message code="sign.in"/>
-            </a>
-            <a id="portalCASLoginNewLink" title="<spring:message code="create.new.portal.account"/>" href="http://www.jasig.org/cas" class="btn">
-                <i class="fa fa-user-plus" aria-hidden="true"></i>
-                <spring:message code="new.user.question"/>
-            </a>
-        </div>
+<div id="webLoginContainer" class="portal-login">
+  <div class="portal-login-inner">
+    <div id="portalCASLogin">
+        <a id="portalCASLoginLink" class="btn btn-primary" title="<spring:message code="sign.in.via.cas"/>" href="${casRefUrlEncoder.getCasLoginUrl(request)}">
+            <i class="fa fa-sign-in" aria-hidden="true"></i>
+            <spring:message code="sign.in"/>
+        </a>
+        <a id="portalCASLoginNewLink" title="<spring:message code="create.new.portal.account"/>" href="https://apereo.org/programs/software/cas" class="btn btn-secondary">
+            <i class="fa fa-user-plus" aria-hidden="true"></i>
+            <spring:message code="new.user.question"/>
+        </a>
     </div>
   </div>
 </div>

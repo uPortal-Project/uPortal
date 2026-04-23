@@ -44,6 +44,12 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         uses: gradle/actions/dependency-submission@v4
       - name: Build and Test
-        run: ./gradlew -S --no-daemon --no-parallel build jacocoAggregateReport coveralls
+        run: ./gradlew -S --stacktrace --no-daemon --no-parallel build jacocoAggregateReport coveralls
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ matrix.platform }}-${{ matrix.java-distribution }}-${{ matrix.java-version }}
+          path: '**/build/reports/tests/'
       - name: Lint JavaScript
         run: ./gradlew -S --no-daemon --no-parallel :npm_run_lint-js

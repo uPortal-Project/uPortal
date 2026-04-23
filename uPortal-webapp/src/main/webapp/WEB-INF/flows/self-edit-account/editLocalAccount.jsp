@@ -26,15 +26,15 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet user-mgr view-reviewuser" role="section">
+<div class="card portlet user-mgr view-reviewuser" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="card-header titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="edit.my.account"/></h2>
     </div> <!-- end: portlet-titlebar -->
 
     <!-- Portlet Body -->
-    <div class="fl-widget-content content portlet-content">
+    <div class="card-body content portlet-content">
 
         <form:form id="${n}accountForm" modelAttribute="accountForm" action="${formUrl}" method="POST">
 
@@ -59,7 +59,7 @@
                             <c:forEach items="${ editAttributes }" var="attribute">
                                 <tr>
                                     <td class="attribute-name">
-                                        <label for="${ n }${ attribute.name }">
+                                        <label for="${ n }${ attribute.name }" class="form-label">
                                             <strong>
                                                 <spring:message code="${ attribute.label }"/>
                                             </strong>
@@ -104,7 +104,7 @@
                             <!--  Password and confirm password -->
                             <tr>
                                 <td class="attribute-name">
-                                  <label for="${n}password">
+                                  <label for="${n}password" class="form-label">
                                       <strong>
                                           <spring:message code="password"/>
                                       </strong>
@@ -116,7 +116,7 @@
                             </tr>
                             <tr>
                                 <td class="attribute-name">
-                                    <label for="${n}confirmPassword">
+                                    <label for="${n}confirmPassword" class="form-label">
                                         <strong>
                                             <spring:message code="confirm.password"/>
                                         </strong>
@@ -159,13 +159,13 @@
 <script type="text/javascript">
     up.jQuery(function() {
         var $ = up.jQuery;
-        $(document).ready(function(){
-            up.ParameterEditor(
-                $("#${n}userAttributes"),
+        $(function(){
+            new ModernParameterEditor(
+                $("#${n}userAttributes")[0],
                 {
                     parameterBindName: 'attributes',
                     multivalued: true,
-                    dialog: $("#${n}parameterForm"),
+                    dialog: $("#${n}parameterForm")[0],
                     displayClasses: {
                         deleteItemLink: "delete-attribute-link",
                         deleteValueLink: "delete-attribute-value-link",
@@ -178,7 +178,7 @@
                     }
                 }
             );
-            $("#${n}accountForm").submit(function(e) {
+            $("#${n}accountForm").on('submit', function(e) {
                 if ($("#${n}password").get(0).textLength > 0
                        && $("#${n}password").get(0).value != $("#${n}confirmPassword").get(0).value) {
                     alert ("<spring:message code="passwords.must.match" htmlEscape="false" javaScriptEscape="true"/>");

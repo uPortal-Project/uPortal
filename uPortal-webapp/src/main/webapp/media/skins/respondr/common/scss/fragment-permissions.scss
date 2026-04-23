@@ -1,0 +1,164 @@
+/**
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/* Fragment Admin Mode Permissions Styling */
+
+/* Page permissions section */
+#portalEditPagePermissions {
+  margin-bottom: 15px;
+  text-align: right;
+  
+  .button {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    
+    &:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+      color: white;
+      text-decoration: none;
+    }
+    
+    i {
+      margin-right: 5px;
+    }
+  }
+}
+
+
+
+/* Permission links should look like links, not buttons */
+#portalEditPagePermissions .button,
+.portal-column-permissions-link.button {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  color: rgb(0, 90, 169) !important;
+  text-decoration: none !important;
+  border-radius: 0 !important;
+  display: inline !important;
+  
+  &:hover {
+    color: rgb(0, 70, 130) !important;
+    text-decoration: underline !important;
+    background: transparent !important;
+  }
+  
+  i {
+    margin-right: 5px;
+  }
+}
+
+/* Column permissions */
+.column-permissions {
+  margin-bottom: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid #dee2e6;
+  
+  .icon.permissions {
+    margin-right: 5px;
+    
+    &:before {
+      content: "\f084"; /* FontAwesome key icon */
+      font-family: "FontAwesome";
+    }
+  }
+}
+
+/* Ensure permissions elements don't interfere with normal layout */
+.up-fragment-admin {
+  .column-permissions {
+    position: relative;
+    z-index: 10;
+  }
+  
+  #portalEditPagePermissions {
+    position: relative;
+    z-index: 10;
+  }
+}
+
+/* Hide permissions in focused mode */
+.up-focused {
+  .column-permissions,
+  #portalEditPagePermissions {
+    display: none !important;
+  }
+}
+
+/* Dialog styling for permissions dialogs */
+.edit-page-permissions-dialog,
+.edit-column-permissions-dialog,
+.edit-portlet-permissions-dialog {
+  .fl-widget {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    
+    .fl-widget-titlebar {
+      background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+      border-bottom: 1px solid #dee2e6;
+      padding: 10px;
+      border-radius: 5px 5px 0 0;
+      
+      h2 {
+        margin: 0;
+        font-size: 16px;
+        color: #495057;
+      }
+    }
+    
+    .fl-widget-content {
+      padding: 15px;
+      
+      form {
+        p {
+          margin-bottom: 10px;
+          
+          input[type="checkbox"] {
+            margin-right: 8px;
+          }
+        }
+        
+        .buttons {
+          margin-top: 15px;
+          text-align: right;
+          
+          .button.primary {
+            background-color: #007bff;
+            color: white;
+            border: 1px solid #007bff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            
+            &:hover {
+              background-color: #0056b3;
+              border-color: #0056b3;
+            }
+          }
+        }
+      }
+    }
+  }
+}

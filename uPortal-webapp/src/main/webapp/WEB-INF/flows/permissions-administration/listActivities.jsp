@@ -32,19 +32,19 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | the user interface of this portlet
 | including HTML, CSS, JavaScript, accessibilty,
 | naming conventions, 3rd Party libraries
-| (like jQuery and the Fluid Skinning System)
+| (like jQuery and Bootstrap)
 | and more, refer to:
 | docs/SKINNING_UPORTAL.md
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet prm-mgr view-listperms" role="section">
+<div class="card portlet prm-mgr view-listperms" role="section">
 
 
   <!-- Portlet Titlebar -->
-	<div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
+	<div role="sectionhead" class="card-header titlebar portlet-titlebar">
 	  	<div class="breadcrumb">
-	    	<span class="breadcrumb-1"><a href="${ backUrl }"><spring:message code="categories"/></a></span>
+	    	<span class="breadcrumb-item breadcrumb-1"><a href="${ backUrl }"><spring:message code="categories"/></a></span>
 	        <span class="separator">&gt; </span>
 	    </div>
 	    <h2 class="title" role="heading"><spring:message code="permissions.in"/> <span class="name">${ fn:escapeXml(owner.name )}</span></h2>
@@ -53,7 +53,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content">
+  <div class="card-body portlet-content">
 
     <!-- Portlet Section -->
 

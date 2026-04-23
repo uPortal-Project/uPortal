@@ -251,6 +251,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="description" content="{upMsg:getMessage('portal.page.meta.description', $USER_LANG)}" />
@@ -269,9 +270,7 @@
   <script type="text/javascript">
     var up = up || {};
     up.jQuery = jQuery.noConflict(true);
-    up.fluid = fluid;
-    fluid = null;
-    fluid_1_5 = null;
+
     up._ = _.noConflict();
     up._.templateSettings = {
       interpolate : /{{=(.+?)}}/g,
@@ -291,7 +290,8 @@
         var navMenuToggle = function() {
           var menu = $(".portal-nav .menu"), menuToggle = $("#up-sticky-nav .menu-toggle");
           // Toggle the nav visibility when the button is clicked.
-          menuToggle.click(function() {
+          menuToggle.on('click', function(e) {
+            e.preventDefault();
             // Open and animate the offcanvas
             $('.row-offcanvas').toggleClass('active');
             // show the nav
@@ -322,7 +322,8 @@
           $('div.hover-toolbar').filter('.hidden').has('li').removeClass('hidden');
 
           // Attach behavior to the Move Portlet options menu
-          $('.portlet-options-menu .up-portlet-control.move').click(function() {
+          $('.portlet-options-menu .up-portlet-control.move').on('click', function(e) {
+             e.preventDefault();
              // If Move Portlet, unhide the grab handle and change the menu text
              if ($(this).text() === $(this).attr('data-move-text')) {
                 $(this).parents('.up-portlet-titlebar').find('.grab-handle').removeClass('hidden');
@@ -380,7 +381,7 @@
 <xsl:template name="page.dialogs.dashboard">
 
     <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-        <div class="edit-page-permissions-dialog" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
+        <div class="edit-page-permissions-dialog" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}" style="display:none;">
             <div class="fl-widget portlet">
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"><xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/></h2>
@@ -408,7 +409,7 @@
                 </div>
             </div>
         </div>
-        <div class="edit-column-permissions-dialog" title="{upMsg:getMessage('edit.column.permissions', $USER_LANG)}">
+        <div class="edit-column-permissions-dialog" title="{upMsg:getMessage('edit.column.permissions', $USER_LANG)}" style="display:none;">
             <div class="fl-widget portlet">
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"></h2>
@@ -430,7 +431,7 @@
                 </div>
             </div>
         </div>
-        <div class="edit-portlet-permissions-dialog" title="{upMsg:getMessage('edit.portlet.permissions', $USER_LANG)}">
+        <div class="edit-portlet-permissions-dialog" title="{upMsg:getMessage('edit.portlet.permissions', $USER_LANG)}" style="display:none;">
             <div class="fl-widget portlet">
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"></h2>
@@ -471,12 +472,17 @@
             }
 
             <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-            up.FragmentPermissionsManager("body", {
-                savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
-                messages: {
-                    columnX: '<xsl:value-of select="upMsg:getMessageForEmacsScript('column.x', $USER_LANG)"/>',
-                }
-            });
+            try {
+                up.FragmentPermissionsManager("body", {
+                    savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
+                    messages: {
+                        columnX: '<xsl:value-of select="upMsg:getMessageForEmacsScript('column.x', $USER_LANG)"/>',
+                    }
+                });
+                console.log('FragmentPermissionsManager initialized successfully');
+            } catch (e) {
+                console.error('FragmentPermissionsManager initialization failed:', e);
+            }
             </xsl:if>
             <xsl:if test="$AUTHENTICATED='true'">
             var options = {
@@ -547,11 +553,9 @@
                 }
             };
             var layoutPreferences = up.LayoutPreferences("body", options);
-            // For the portlet/Respondr version of the gallery control,
-            // we must open it ourselves (if present) when the page loads.
-            if (layoutPreferences.components.gallery) {
-                layoutPreferences.components.gallery.openGallery();
-            }
+            // Store global reference for debugging and external access
+            window.up.layoutPreferences = layoutPreferences;
+            // Gallery will only open when user clicks the customize button
             </xsl:if>
         });
     </script>
@@ -582,7 +586,7 @@
                       <xsl:when test="$unlockedTab">
                         <xsl:for-each select="/layout/navigation/tab[@dlm:hasColumnAddChildAllowed='true']">
                             <input name="targetTab" id="targetTab{@ID}" value="{@ID}" type="radio" />
-                            <label for="targetTab{@ID}" class="portlet-form-field-label">
+                            <label for="targetTab{@ID}" class="portlet-form-field-label form-label">
                                 <xsl:value-of select="@name" />
                             </label>
                             <br />
@@ -663,7 +667,7 @@
                 <header class="portal-header" role="banner">
                     <div id="up-sticky-nav" class="container-fluid">
                         <div class="portal-global row">
-                            <a href="javascript:void(0);" tabindex="0" class="menu-toggle pull-left" aria-label="{upMsg:getMessage('menu', $USER_LANG)}" role="button" title="{upMsg:getMessage('menu', $USER_LANG)}" data-toggle="offcanvas" aria-expanded="false" aria-haspopup="true" aria-controls="sidebar">
+                            <a href="javascript:void(0);" tabindex="0" class="menu-toggle float-start" aria-label="{upMsg:getMessage('menu', $USER_LANG)}" role="button" title="{upMsg:getMessage('menu', $USER_LANG)}" data-bs-toggle="offcanvas" aria-expanded="false" aria-haspopup="true" aria-controls="sidebar">
                                 <div class="hamburger hamburger-arrow">
                                    <div class="hamburger-box">
                                      <div class="hamburger-inner"></div>
@@ -711,16 +715,13 @@
                                 <xsl:call-template name="focused-fragment-header" />
                                 <xsl:call-template name="region.pre-content" />
                                 <!-- For editing page permissions in fragment-admin mode  -->
-                                <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-                                    <div class="row">
-                                        <div class="col-md-9"></div>
-                                        <div class="col-md-3">
-                                            <div id="portalEditPagePermissions" class="fl-fix">
-                                                <a class="button" id="editPagePermissionsLink" href="#" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
-                                                    <i class="fa fa-align-justify"></i>
-                                                    <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
-                                                </a>
-                                            </div>
+                                <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true' and $PORTAL_VIEW!='focused'">
+                                    <div class="d-flex justify-content-end mb-3" style="position: relative; left: 0; right: auto; margin-left: 0; float: none;">
+                                        <div id="portalEditPagePermissions" class="fl-fix">
+                                            <a class="button" id="editPagePermissionsLink" href="#" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
+                                                <i class="fa fa-align-justify"></i>
+                                                <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
+                                            </a>
                                         </div>
                                     </div>
                                 </xsl:if>
@@ -811,7 +812,7 @@
                             <div class="container-fluid">
                                 <div class="portal-user">
                                     <div class="navbar-header">
-                                        <a href="javascript:window.location = document.referrer || '{$CONTEXT_PATH}';" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control hide-content pull-left fa fa-home portal-return-to-dashboard"></a>
+                                        <a href="javascript:window.location = document.referrer || '{$CONTEXT_PATH}';" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control hide-content float-start fa fa-home portal-return-to-dashboard"></a>
                                     </div>
                                     <div class="navbar-collapse collapse">
                                         <xsl:choose>

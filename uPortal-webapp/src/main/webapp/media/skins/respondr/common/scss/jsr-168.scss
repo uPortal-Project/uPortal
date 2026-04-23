@@ -1,0 +1,290 @@
+/**
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/* variables */
+$dim-font-by-this-percentage: 10%;
+
+/* dropdown's which occur within portlet menu variables. */
+$dropdown-inside-of-menu-top: 0px;
+$dropdown-inside-of-menu-position: relative;
+$dropdown-inside-of-menu-margin: 0px;
+$dropdown-inside-of-menu-padding: 0px;
+$dropdown-inside-of-menu-shadow: none;
+$dropdown-inside-of-menu-list-style: none;
+$dropdown-inside-of-menu-border: none;
+$dropdown-inside-of-menu-width: 100%;
+
+/* dropdown which occurs stand alone */
+$stand-along-dropdown-float: left;
+$stand-along-dropdown-list-style: outside none none;
+$stand-along-dropdown-margin: 2px 0 0;
+$stand-along-dropdown-min-width: 160px;
+$stand-along-dropdown-padding: 5px 0;
+$stand-along-dropdown-position: absolute;
+$stand-along-dropdown-text-align: left;
+$stand-along-dropdown-top: 100%;
+$stand-along-dropdown-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176);
+$stand-along-dropdown-border: 1px solid $dropdown-border-color;
+$stand-along-dropdown-background-clip: padding-box;
+$stand-along-dropdown-left: 0px;
+
+.portlet-font {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  color: $body-color;
+  line-height: $line-height-base;
+}
+
+.portlet-font-dim {
+  color: lighten($body-color, $dim-font-by-this-percentage);
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+}
+
+.portlet-msg-info {
+  @extend .alert;
+  @extend .alert-info;
+}
+
+.portlet-msg-error {
+  @extend .alert;
+  @extend .alert-danger;
+}
+
+.portlet-msg-alert {
+  @extend .alert;
+  @extend .alert-warning;
+}
+
+.portlet-msg-success {
+  @extend .alert;
+  @extend .alert-success;
+}
+
+/* table and section sections */
+.portlet-section-header,
+.portlet-table-header {
+  @extend h3;
+}
+
+.portlet-section-alternate,
+.portlet-table-alternate {
+  background: $table-striped-bg;
+}
+
+.portlet-section-selected,
+.portlet-table-selected {
+  background: $table-active-bg;
+}
+
+.portlet-section-subheader,
+.portlet-table-subheader {
+  @extend h4;
+}
+
+.portlet-section-footer,
+.portlet-table-footer {
+  @extend h5;
+}
+
+.portlet-section-text,
+.portlet-table-text {
+  color: $info;
+}
+
+/* forms */
+.portlet-form-label {
+  @extend h3;
+}
+
+.portlet-form-input-field:not([type="radio"]):not([type="checkbox"]) {
+  @extend .form-control;
+}
+
+.portlet-form-input-field[type="radio"],
+.portlet-form-input-field[type="checkbox"] {
+  display: block;
+  width: 54px;
+  height: 34px;
+  margin: 4px 0 0;
+  cursor: pointer;
+}
+
+.portlet-form-button {
+  @extend .btn;
+  background-color: $primary;
+  border-color: $primary;
+  color: $white;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.portlet-icon-label {
+  @extend label;
+}
+
+.portlet-form-field-label {
+  @extend label;
+}
+
+/* portlet menus */
+.portlet-menu {
+  @extend .nav;
+  @extend .nav-pills;
+
+  li.portlet-menu-item {
+    &.active,
+    .portlet-menu-item-selected {
+      &:hover,
+      &:focus {
+        background-color: $nav-pills-link-active-bg;
+        color: $nav-pills-link-active-color;
+        border-radius: $nav-pills-border-radius;
+
+        > a {
+          &:hover,
+          &:focus {
+            background: inherit;
+            color: $white;
+            border-radius: $nav-pills-border-radius;
+          }
+        }
+      }
+
+      > a {
+        background-color: $nav-pills-link-active-bg;
+        color: $nav-pills-link-active-color;
+      }
+    }
+
+    a {
+      border-radius: $nav-pills-border-radius;
+      display: block;
+      padding: $nav-link-padding-y $nav-link-padding-x;
+      position: relative;
+      text-decoration: none;
+      color: $link-color;
+
+      &:hover,
+      &:focus {
+        background-color: var(--bs-secondary-bg);
+        color: $navbar-light-color;
+      }
+    }
+
+    .dropdown-menu,
+    .portlet-menu-cascade,
+    .portlet-menu-cascade-item-selected {
+      top: $dropdown-inside-of-menu-top;
+      position: $dropdown-inside-of-menu-position;
+      margin: $dropdown-inside-of-menu-margin;
+      padding: $dropdown-inside-of-menu-padding;
+      box-shadow: $dropdown-inside-of-menu-shadow;
+      list-style: $dropdown-inside-of-menu-list-style;
+      border: $dropdown-inside-of-menu-border;
+      width: $dropdown-inside-of-menu-width;
+      background: $dropdown-bg;
+      color: $dropdown-header-color;
+
+      li,
+      .portlet-menu-cascade-item {
+        a {
+          &.disabled {
+            color: $dropdown-link-disabled-color;
+          }
+
+          &:hover,
+          &.portlet-menu-item-hover,
+          &.portlet-menu-cascade-item-hover {
+            color: $navbar-light-hover-color;
+          }
+        }
+
+        &:active,
+        &.portlet-menu-cascade-item-selected {
+          background-color: $nav-pills-link-active-bg;
+          color: $nav-pills-link-active-color;
+
+          > a {
+            background-color: $nav-pills-link-active-bg;
+            color: $nav-pills-link-active-color;
+          }
+        }
+      }
+    }
+  }
+
+  .portlet-menu-description {
+    color: $info;
+  }
+
+  .portlet-menu-caption {
+    @extend h3;
+  }
+}
+
+.dropdown-menu {
+  background-clip: $stand-along-dropdown-background-clip;
+  background: $dropdown-bg;
+  border: $stand-along-dropdown-border;
+  border-radius: $nav-pills-border-radius;
+  box-shadow: $stand-along-dropdown-box-shadow;
+  float: $stand-along-dropdown-float;
+  font-size: $font-size-base;
+  left: $stand-along-dropdown-left;
+  list-style: $stand-along-dropdown-list-style;
+  margin: $stand-along-dropdown-margin;
+  min-width: $stand-along-dropdown-min-width;
+  padding: $stand-along-dropdown-padding;
+  position: $stand-along-dropdown-position;
+  text-align: $stand-along-dropdown-text-align;
+  top: $stand-along-dropdown-top;
+  z-index: $zindex-dropdown;
+  color: $dropdown-header-color;
+
+  li {
+    a {
+      color: $dropdown-link-color;
+
+      &.disabled {
+        color: $dropdown-link-disabled-color;
+      }
+
+      &:hover,
+      &.portlet-menu-item-hover,
+      &.portlet-menu-cascade-item-hover {
+        background: $dropdown-link-hover-bg;
+        color: $dropdown-link-hover-color;
+      }
+    }
+
+    &:active {
+      background-color: $nav-pills-link-active-bg;
+      color: $nav-pills-link-active-color;
+
+      > a {
+        background-color: $nav-pills-link-active-bg;
+        color: $nav-pills-link-active-color;
+      }
+    }
+  }
+}

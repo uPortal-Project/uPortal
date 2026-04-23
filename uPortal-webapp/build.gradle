@@ -79,12 +79,16 @@ dependencies {
      */
     providedRuntime "org.hsqldb:hsqldb:${hsqldbVersion}"
 
+    implementation "org.webjars:webjars-locator-core:0.59"
+    
+    webjars "org.jasig.resourceserver:resource-server-content:${resourceServerVersion}"
     webjars "org.webjars.npm:bootstrap:${bootstrapVersion}"
     webjars "org.webjars.npm:core-js-bundle:${coreJsBundleVersion}"
     webjars "org.webjars.npm:jstree:${jstreeVersion}"
     webjars "org.webjars.npm:regenerator-runtime:${regeneratorRuntimeVersion}"
     webjars "org.webjars.npm:webcomponents__webcomponentsjs:${webComponentPolyfillVersion}"
     webjars "org.webjars.npm:whatwg-fetch:${whatwgFetchPolyfillVersion}"
+
 }
 
 node {
@@ -97,6 +101,9 @@ import org.apache.tools.ant.filters.ReplaceTokens
 processResources {
     filter(ReplaceTokens, tokens:['projectVersion': project.version])
 }
+
+// Bootstrap path variables
+ext.bootstrapJsPath = "${buildDir}/generated-sources/skin/main/webapp/rs"
 
 task prepareSkinResources {
     // Unpack WebJars (part of the skin)
@@ -118,6 +125,15 @@ task prepareSkinResources {
                 into "${buildDir}/generated-sources/skin/main/webapp/webjars/${webjarName}"
             }
         }
+        // Stage 3: Copy rs directory from resource-server-content for SCSS compilation
+        if (webjarName == 'resource-server-content') {
+            doLast {
+                copy {
+                    from "${buildDir}/webjars/${webjarName}-${webjarVersion}/rs"
+                    into "${buildDir}/generated-sources/skin/main/webapp/rs"
+                }
+            }
+        }
     }
     // Add Respondr LESS sources
     doLast {
@@ -132,33 +148,32 @@ import org.jasig.resource.aggr.AggregationRequest
 import org.jasig.resource.aggr.ResourcesAggregator
 import org.jasig.resource.aggr.ResourcesAggregatorImpl
 task aggregateRespondrSkins {
+    inputs.files fileTree('src/main/webapp/media/skins/common')
     doLast {
         final ResourcesAggregator aggr = new ResourcesAggregatorImpl();
-        aggr.setDisplayJsWarnings(false);
 
         final File resourcesXmlFile = new File(projectDir, 'src/main/webapp/media/skins/respondr/defaultSkin/skin.xml');
         final File fullOutputDirectory = new File(buildDir, 'generated-sources/skin/main/webapp/media/skins/respondr/defaultSkin');
         final File sharedJavaScriptDirectory = new File(buildDir, 'generated-sources/skin/main/webapp/media/skins/respondr');
-
-        // Provide the paths we evaluated in DEBUG logging
-        logger.debug("resourcesXmlFile=${resourcesXmlFile}");
-        logger.debug("fullOutputDirectory=${fullOutputDirectory}");
-        logger.debug("sharedJavaScriptDirectory=${sharedJavaScriptDirectory}");
 
         final AggregationRequest aggregationRequest = new AggregationRequest();
         aggregationRequest
                 .setResourcesXml(resourcesXmlFile)
                 .setOutputBaseDirectory(fullOutputDirectory)
                 .addAdditionalSourceDirectory(fullOutputDirectory)
+                .addAdditionalSourceDirectory(new File(projectDir, 'src/main/webapp/media/skins/common'))
+                .addAdditionalSourceDirectory(new File(buildDir, 'generated-sources/skin/main/webapp'))
+                .addAdditionalSourceDirectory(new File(bootstrapJsPath))
                 .setSharedJavaScriptDirectory(sharedJavaScriptDirectory);
+        
         aggr.aggregate(aggregationRequest);
 
     }
 }
 
 // Generate CSS for Respondr skins
-project.tasks.getByName('npm_run_compile-less').dependsOn(prepareSkinResources)
-aggregateRespondrSkins.dependsOn('npm_run_compile-less')
+project.tasks.getByName('npm_run_compile-scss').dependsOn(prepareSkinResources)
+aggregateRespondrSkins.dependsOn('npm_run_compile-scss')
 processResources.dependsOn(aggregateRespondrSkins)
 
 war {
@@ -167,4 +182,12 @@ war {
         from "${buildDir}/generated-sources/skin/main/webapp"
         into '/'
     }
+}
+
+
+// Override the root maven publication for this WAR project — publish only the WAR artifact.
+// components.java (from root) would fail because jar.enabled = false.
+afterEvaluate {
+    publishing.publications.maven.artifacts.clear()
+    publishing.publications.maven.artifact(war)
 }

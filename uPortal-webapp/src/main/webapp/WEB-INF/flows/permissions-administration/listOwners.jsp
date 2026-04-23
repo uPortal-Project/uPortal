@@ -33,32 +33,32 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | the user interface of this portlet
 | including HTML, CSS, JavaScript, accessibilty,
 | naming conventions, 3rd Party libraries
-| (like jQuery and the Fluid Skinning System)
+| (like jQuery and Bootstrap)
 | and more, refer to:
 | docs/SKINNING_UPORTAL.md
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet prm-mgr view-listperms container-fluid" role="section">
+<div class="card portlet prm-mgr view-listperms container-fluid" role="section">
 
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+  <div class="card-header titlebar portlet-titlebar" role="sectionhead">
       <h2 role="heading" class="title"><spring:message code="permissions.by.category"/></h2>
   </div>
   <!-- end: portlet-titlebar -->
 
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content row">
+  <div class="card-body portlet-content row">
 
     <div class="permission-lookup">
-        <form id="${n}permissionLookupForm" class="form-inline" action="${permissionLookupUrl}" method="POST">
-            <div id="${n}principalSuggest" class="principal-input form-group">
-                <label for="${n}principalSuggest">
+        <form id="${n}permissionLookupForm" class="d-flex flex-wrap align-items-center gap-3" action="${permissionLookupUrl}" method="POST">
+            <div id="${n}principalSuggest" class="principal-input">
+                <label for="${n}principalSuggest" class="form-label">
                   <spring:message code="permission.suggest.principal"/>
                 </label>
                 <input class="up-autocomplete-searchterm form-control" type="text" name="principalDisplayName" value="<spring:message code="permission.suggest.principal.value"/>" aria-labelledby="<spring:message code="permission.suggest.principal.label"/>" autocomplete="off"/>
                 <input class="form-control" type="hidden" name="principal"/>
-                <label for="${n}permissionSuggest">
+                <label for="${n}permissionSuggest" class="form-label">
                   <spring:message code="permission.suggest.permission"/>
                 </label>
                 <div class="up-autocomplete-dropdown">
@@ -76,7 +76,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <div class="up-autocomplete-close"><a href="#"><spring:message code="close"/></a></div>
                 </div>
             </div>
-            <div id="${n}permissionSuggest" class="activity-input form-group">
+            <div id="${n}permissionSuggest" class="activity-input">
                 <input class="up-autocomplete-searchterm form-control" type="text" name="activityDisplayName" value="<spring:message code="permission.suggest.permission.value"/>" aria-labelledby="<spring:message code="permission.suggest.permission.label"/>" autocomplete="off"/>
                 <input type="hidden" name="activity"/>
                 <span class="punctuation">?</span>
@@ -100,18 +100,18 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <span class="permission-lookup-error-container" style="font-size: 13px; color: #dd7615;"></span>
     </div>
 
-  	<!-- Panel list -->
-    <div class="fl-col-flex2 panel-list icon-large">
+  	<!-- Card list -->
+    <div class="fl-col-flex2 card-list icon-large">
 
         <!-- 2 column layout -->
-        <div class="fl-col fl-force-left">
+        <div class="fl-col float-start">
             <c:set var="numOwners" value="${ fn:length(owners) }" />
             <c:set var="split" value="${ numOwners / 2 }" />
             <c:forEach items="${ owners }" var="owner" varStatus="ownerStatus">
-            	<!-- Panel -->
-                <div class="permission-owner ${ fn:escapeXml(owner.fname )} panel">
-                	<div class="titlebar">
-                        <h2 class="title">
+            	<!-- Card -->
+                <div class="permission-owner ${ fn:escapeXml(owner.fname )} card">
+                	<div class="card-header titlebar">
+                        <h2 class="card-title title">
                             <portlet:renderURL var="ownerUrl">
                                 <portlet:param name="execution" value="${flowExecutionKey}" />
                                 <portlet:param name="_eventId" value="listActivities"/>
@@ -121,7 +121,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         </h2>
                         <h3 class="subtitle">${ fn:escapeXml(owner.description )}</h3>
                     </div>
-                    <div class="content">
+                    <div class="card-body content">
                         <span class="link-list">
                             <c:forEach items="${ owner.activities }" var="activity" varStatus="status">
                                 <portlet:renderURL var="activityUrl">
@@ -134,7 +134,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             </c:forEach>
                         </span>
                     </div>
-                </div> <!-- end: panel -->
+                </div> <!-- end: card -->
                 <c:if test="${ split <= ownerStatus.index+1 and ownerStatus.index+1 < split+1 }">
                     </div>
                     <!-- Second column -->
@@ -145,7 +145,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
             </div>
 
-        </div> <!-- end: panel list -->
+        </div> <!-- end: card list -->
 
   </div> <!-- end: portlet-content -->
 
@@ -155,7 +155,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 up.jQuery(function() {
     var $ = up.jQuery;
 
-    $(document).ready(function(){
+    $(function(){
 
         var submitForm = function(form){
             if (!principalSuggest.getValue() || !permissionSuggest.getValue()) {
@@ -168,7 +168,7 @@ up.jQuery(function() {
         };
 
         var principalSuggest = up.Autocomplete(
-            "#${n}principalSuggest",
+            document.querySelector("#${n}principalSuggest"),
             {
                 initialText: "John",
                 searchFunction: function(searchterm) {
@@ -195,7 +195,7 @@ up.jQuery(function() {
         );
 
         var permissionSuggest = up.Autocomplete(
-            "#${n}permissionSuggest",
+            document.querySelector("#${n}permissionSuggest"),
             {
                 initialText: '<spring:message code="permission" htmlEscape="false" javaScriptEscape="true"/>',
                 searchFunction: function(searchterm) {
@@ -215,7 +215,7 @@ up.jQuery(function() {
             }
         );
 
-        $("#${n}permissionLookupForm").submit(function () {
+        $("#${n}permissionLookupForm").on('submit', function () {
             var form, errorContainer;
             form = this;
             errorContainer = $(form).find(".permission-lookup-error-container");

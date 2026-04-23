@@ -9,14 +9,14 @@
     "eslint-plugin-sonarjs": "^1.0.0",
     "eslint-plugin-unicorn": "^55.0.0",
     "globals": "^15.1.0",
-    "postcss-less": "^6.0.0",
+    "postcss-scss": "^4.0.9",
     "prettier": "~3.5.0",
     "remark-cli": "^12.0.0",
     "remark-preset-lint-consistent": "^6.0.0",
     "remark-preset-lint-recommended": "^7.0.0",
     "remark-validate-links": "^13.0.0",
     "stylelint": "^16.0.0",
-    "stylelint-config-standard-less": "^3.0.0",
+    "stylelint-config-standard-scss": "^13.1.0",
     "stylelint-prettier": "^5.0.0"
   },
   "workspaces": [
@@ -24,10 +24,10 @@
   ],
   "scripts": {
     "lint-js": "eslint . --report-unused-disable-directives --max-warnings 0",
-    "lint-less": "stylelint **/*.less !**/bootstrap/**/*.less !**/build/**/*.less",
+    "lint-scss": "stylelint **/*.scss !**/bootstrap/**/*.scss !**/build/**/*.scss",
     "lint-md": "remark -f *.md docs/**",
     "format-js": "npm run lint-js -- --fix",
-    "format-less": "npm run lint-less -- --fix"
+    "format-scss": "npm run lint-scss -- --fix"
   },
   "remarkConfig": {
     "plugins": [
@@ -36,16 +36,16 @@
     ]
   },
   "stylelint": {
-    "customSyntax": "postcss-less",
+    "customSyntax": "postcss-scss",
     "extends": [
-      "stylelint-config-standard-less",
+      "stylelint-config-standard-scss",
       "stylelint-prettier/recommended"
     ],
     "rules": {
       "at-rule-no-unknown": null,
       "declaration-block-no-shorthand-property-overrides": null,
       "function-no-unknown": null,
-      "less/no-duplicate-variables": null,
+      "scss/no-duplicate-dollar-variables": null,
       "media-feature-range-notation": [
         "prefix"
       ],

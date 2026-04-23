@@ -23,10 +23,10 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="card portlet" role="section">
   
   <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body">
+  <div class="card-body portlet-body">
   
     <!-- Portlet Section -->
     <div id="${n}" class="portlet-section" role="region">

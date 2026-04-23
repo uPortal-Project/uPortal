@@ -24,15 +24,15 @@
 </portlet:actionURL>
     
 <!-- Portlet -->
-<div class="fl-widget portlet toggle-aggr view-main" role="section">
+<div class="card portlet toggle-aggr view-main" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="card-header titlebar portlet-titlebar" role="sectionhead">
     	<h2 class="title" role="heading">Toggle Aggregation</h2>
     </div>
     
     <!-- Portlet Body -->
-    <div class="fl-widget-content content portlet-content">
+    <div class="card-body content portlet-content">
 	
         <div class="portlet-form">
             <form action="${actionUrl}" method="POST">

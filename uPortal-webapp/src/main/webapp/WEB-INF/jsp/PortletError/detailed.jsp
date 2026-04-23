@@ -21,20 +21,20 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/>-${portletWindowId}-</c:set>
 
-<div id="${n}" class="fl-widget portlet error view-detailed" role="section">
+<div id="${n}" class="card portlet error view-detailed" role="section">
 
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="card-header titlebar portlet-titlebar" role="sectionhead">
         <p><spring:message code="errorportlet.main"/></p>
         <div class="breadcrumb">
             <portlet:actionURL var="userResetUrl">
                 <portlet:param name="failedPortletWindowId" value="${ portletWindowId.stringId}"/>
             </portlet:actionURL>
-            <span class="breadcrumb-1"><a href="${ adminRetryUrl }"><spring:message code="errorportlet.retry"/></a></span>
-            <span class="breadcrumb-2"><a data-href="${ userResetUrl }" href="javascript:void(0)"><spring:message code="errorportlet.reset"/> (User Facing)</a></span>
+            <span class="breadcrumb-item breadcrumb-1"><a href="${ adminRetryUrl }"><spring:message code="errorportlet.retry"/></a></span>
+            <span class="breadcrumb-item breadcrumb-2"><a data-href="${ userResetUrl }" href="javascript:void(0)"><spring:message code="errorportlet.reset"/> (User Facing)</a></span>
         </div> <!-- end breadcrumbs -->
     </div> <!-- end section head -->
 
-    <div class="fl-widget-content fl-fix up-portlet-content-wrapper">
+    <div class="card-body clearfix up-portlet-content-wrapper">
         <ul>
             <li>Portlet Window ID: ${fn:escapeXml(portletWindowId)}</li>
             <li>Channel Definition Name: ${fn:escapeXml(channelDefinition.name)}</li>
@@ -53,7 +53,7 @@
 <script type="text/javascript">
 (function($) {
 
-    $(document).ready(function(){
+    $(function(){
     	up.showHideToggle('#${n}stacktracecontainer', {
         	showmessage: '<spring:message code="errorportlet.toggleshow" htmlEscape="false" javaScriptEscape="true"/>',
         	hidemessage: '<spring:message code="errorportlet.togglehide" htmlEscape="false" javaScriptEscape="true"/>'
@@ -61,7 +61,7 @@
     });
 
     // Reset requests must be an actionURL and a POST...
-    $('#${n} .breadcrumb a').click(function() {
+    $('#${n} .breadcrumb a').on('click', function() {
         var url = $(this).attr('data-href');
         var form = $('<form />', {
             action: url,

@@ -24,9 +24,9 @@
 </portlet:actionURL>
         
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="card portlet" role="section">
   <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body">
+  <div class="card-body portlet-body">
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <div class="portlet-section-body">   
