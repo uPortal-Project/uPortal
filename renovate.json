@@ -13,6 +13,31 @@
   "forkProcessing": "enabled",
   "packageRules": [
     {
+      "matchPackageNames": [
+        "/^org.springframework:/",
+        "/^org.springframework.data:/",
+        "/^org.springframework.webflow:/"
+      ],
+      "allowedVersions": "< 5.0",
+      "description": "Pinned to Spring Framework 4.3.x. Spring 5+ is a coordinated migration (API changes); Spring 6+ additionally needs Jakarta EE + Java 17."
+    },
+    {
+      "matchPackageNames": [
+        "/^org.springframework.security:/",
+        "/^org.springframework.security.oauth:/"
+      ],
+      "allowedVersions": "< 5.0",
+      "description": "Pinned to Spring Security 4.2.x. Bound to the Spring Framework 4.3.x line; bumps in lockstep with a Spring core migration."
+    },
+    {
+      "matchPackageNames": [
+        "/^org.hibernate:/",
+        "/^org.hibernate.orm:/"
+      ],
+      "allowedVersions": "< 5.0",
+      "description": "Pinned to Hibernate 4.2.x. Hibernate 5+ requires a coordinated migration (API + EntityManager changes); Hibernate 6+ (groupId rename to org.hibernate.orm) needs Jakarta EE and Java 17+."
+    },
+    {
       "groupName": "uPortal",
       "matchPackageNames": ["/^org.jasig.portal:/"]
     },
