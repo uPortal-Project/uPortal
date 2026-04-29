@@ -74,7 +74,7 @@ public class LimitingTeeOutputStreamTest {
         assertArrayEquals(subContent, byteStream.toByteArray());
 
         // now write the remainder
-        stream.write(content, 5, content.length);
+        stream.write(content, 5, content.length - 5);
 
         assertTrue(stream.isLimitReached());
         assertArrayEquals(new byte[0], byteStream.toByteArray());
