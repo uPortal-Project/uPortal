@@ -1,5 +1,15 @@
 ## Next Release
 
+## v5.17.3
+
+- substantial frontend modernization landed in [#2915](https://github.com/uPortal-Project/uPortal/pull/2915):
+  Bootstrap 3 → 5, jQuery upgraded, LESS → SCSS, and Fluid Infusion
+  removed from the `respondr` skin. **Customized skins will need
+  updating** — review your overrides under
+  `uPortal-webapp/src/main/webapp/media/skins/` for `.less` files
+  (now `.scss`), Bootstrap 3/4 class names, and any direct uses of the
+  Fluid library.
+
 ## v5.15.2
 
 - new external storage option (Redis) for sessions; see `README.md` under new uPortal-session submodule

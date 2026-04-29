@@ -50,6 +50,16 @@ provides high-level information about earlier versions of uPortal.
 
   - [All releases](https://github.com/uPortal-Project/uPortal/releases)
 
+  Note: 5.3 through 5.16 are not enumerated below. See the link above
+  for the full list.
+
+### 5.17
+
+  - [5.17.3 29-Apr-2026](https://github.com/uPortal-Project/uPortal/releases/tag/v5.17.3)
+  - [5.17.2 02-Apr-2026](https://github.com/uPortal-Project/uPortal/releases/tag/v5.17.2)
+  - [5.17.1 18-Apr-2025](https://github.com/uPortal-Project/uPortal/releases/tag/v5.17.1)
+  - [5.17.0 24-Sep-2024](https://github.com/uPortal-Project/uPortal/releases/tag/v5.17.0)
+
 ### 5.2
 
   - [5.2.1 06-Aug-2018](https://github.com/uPortal-Project/uPortal/releases/tag/v5.2.1)
