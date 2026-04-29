@@ -10,6 +10,15 @@
   (now `.scss`), Bootstrap 3/4 class names, and any direct uses of the
   Fluid library.
 
+## v5.17.2
+
+- **Java 11 is now the minimum required version.** `sourceCompatibility`
+  was bumped from `1.8` to `11` in `build.gradle`. Deployers running
+  Java 8 must upgrade their JVM before deploying this release. The
+  bump was driven by a CVE fix in a transitive dependency that
+  required Java 11; uPortal-start's Tomcat runtime should already be
+  on Java 11.
+
 ## v5.15.2
 
 - new external storage option (Redis) for sessions; see `README.md` under new uPortal-session submodule
