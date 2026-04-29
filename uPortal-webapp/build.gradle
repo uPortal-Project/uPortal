@@ -9,6 +9,17 @@ buildscript {
         classpath 'com.sun.xml.bind:jaxb-xjc:2.3.9'
         classpath 'com.sun.xml.bind:jaxb-impl:2.3.9'
     }
+    // commons-compress 1.28+ uses commons-lang3.SystemProperties which calls
+    // StringUtils.getIfEmpty(CharSequence, Supplier) — added in lang3 3.10.
+    // Gradle 6.9.4 bundles lang3 3.7 in its parent classloader, so the call
+    // resolves to a method that doesn't exist there. Pin compress to 1.27.x
+    // for the buildscript classpath; runtime uses commonsCompressVersion
+    // separately and is unaffected.
+    configurations.classpath {
+        resolutionStrategy {
+            force "org.apache.commons:commons-compress:${commonsCompressVersion}"
+        }
+    }
 }
 
 plugins {
