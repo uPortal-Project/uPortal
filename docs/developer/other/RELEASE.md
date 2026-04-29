@@ -156,22 +156,6 @@ curl -X GET \
 
 Open a Pull Request on `uPortal-start` to update `uPortalVersion` to the new release.
 
-## Publish new docker demo of Quickstart
-
-Publish a new apereo/uPortal-demo Docker image and update the `:latest` tag.
-Prerequisites:
-  - Docker Cloud account (<https://cloud.docker.com>)
-  - Access to post to the apereo Docker group
-  - The uPortal version has been added to `uPortal-start`
-
-```sh
-$ cd {uPortal-start repo}
-$ ./gradlew dockerBuildImageDemo
-$ docker login
-$ docker tag {version in format like 5.1.0} apereo/uportal-demo:latest
-$ docker push apereo/uportal-demo:latest
-```
-
 ## Update Community
 For any non-snapshot release, email an announcement to `uportal-dev`, `uportal-user`, and `jasig-announce`.
   - Be sure to acknowledge those who contributed to the release.
