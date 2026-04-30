@@ -66,6 +66,11 @@
 <script language="javascript" type="text/javascript">
 (function() { // Prevent adding to the global namespace
 
+    // Bail out if already claimed by a prior render of this JSP
+    var holder = document.getElementById('sitemap-holder');
+    if (holder.dataset.sitemapInit) return;
+    holder.dataset.sitemapInit = '1';
+
     // If a path check fails, it'll throw an error.
     function sitemapJsonCheck(jsonObj, pathChecks, errMsg) {
         return !_.every(pathChecks, function(pathCheck) {
@@ -78,7 +83,6 @@
     }
 
     fetch('${layoutApiUrl}', {credentials: 'same-origin'})
-        // check for HTTP 2XX Okay response
         .then(function (response) {
             if (response.status >= 200 && response.status < 300) {
                 return response;
@@ -154,13 +158,12 @@
                 }
             });
         })
-        // Let user know and log error to browser console
         .catch(function(error) {
-            var errTemplate = document.getElementById('sitemap-tab-row-template');
-            var errDiv = document.importNode(errTemplate.content, true).querySelector('div');
-            errDiv.textContent = '${i18n_error_loading_sitemap}';
-            document.getElementById('sitemap-holder').appendChild(errDiv);
-            console.log('${i18n_error_loading_sitemap}', error);
+            console.error('Sitemap generation failed:', error.message);
+            var msg = document.createElement('p');
+            msg.setAttribute('role', 'alert');
+            msg.textContent = '${i18n_error_loading_sitemap}';
+            document.getElementById('sitemap-holder').appendChild(msg);
         });
 
 })();

@@ -1,0 +1,51 @@
+/*
+ * Modern portlet list carousel styling
+ * Float-based layout matching release version
+ */
+
+/* Container layout matching release */
+.results-list,
+.portlet-list {
+    overflow: hidden;
+    padding: 5px 0px 0px;
+    position: relative;
+}
+
+/* Portlet items with float layout - 3 per row - more specific selector */
+.up-gallery .results-wrapper .portlet-list li.result-item.portlet {
+    width: 32% !important;
+    height: 50% !important;
+    margin: 0px 5px 5px 0px !important;
+    float: left !important;
+}
+
+/* Clear every 3rd item to force new row */
+.result-item.portlet:nth-child(3n+1) {
+    clear: left;
+}
+
+/* Clearfix for container */
+.results-list::after,
+.portlet-list::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Wrapper containers */
+.results-wrapper,
+.portlet-results {
+    overflow: hidden;
+    position: relative;
+}
+
+.results-column {
+    margin: 0px 74px 0px 0px;
+    position: relative;
+}
+
+/* Icon layout */
+.up-gallery .portlet-wrapper .ri-icon {
+    float: left;
+    margin-right: 8px;
+}

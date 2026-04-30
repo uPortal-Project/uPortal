@@ -32,12 +32,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | the user interface of this portlet
 | including HTML, CSS, JavaScript, accessibilty,
 | naming conventions, 3rd Party libraries
-| (like jQuery and the Fluid Skinning System)
+| (like jQuery and Bootstrap)
 | and more, refer to:
 | docs/SKINNING_UPORTAL.md
 -->
 <style>
-    .form-group {
+    .row {
         margin-top: 10px;
     }
     .buttons {
@@ -47,10 +47,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 </style>
     
 <!-- Portlet -->
-<div class="fl-widget portlet ptl-mgr view-chooseportlet bootstrap-styles container-fluid" role="section">
+<div class="card portlet ptl-mgr view-chooseportlet bootstrap-styles container-fluid" role="section">
     <div class="row">
         <!-- Portlet Titlebar -->
-        <div class="fl-widget-titlebar titlebar portlet-titlebar col-md-12" role="sectionhead">
+        <div class="card-header titlebar portlet-titlebar col-md-12" role="sectionhead">
             <h2 class="title" role="heading">
                 <spring:message code="register.new.portlet"/>
             </h2>
@@ -58,26 +58,26 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div>
 
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content row">
+    <div class="card-body content portlet-content row">
 
         <!-- Portlet Messages -->
         <spring:hasBindErrors name="portlet">
-            <div class="col-md-6 col-md-offset-2">
+            <div class="col-md-6 offset-md-2">
                 <div class="portlet-msg-error portlet-msg error alert alert-danger" role="alert">
                     <form:errors path="*" element="div" />
                 </div> <!-- end: portlet-msg -->
             </div>
         </spring:hasBindErrors>
 
-        <form action="${queryUrl}" method="POST" class="form-horizontal" role="form">
+        <form action="${queryUrl}" method="POST" class="" role="form">
 
             <!-- Title -->
             <div class="titlebar">
                 <h3 class="title" role="heading"><spring:message code="summary.information"/></h3>
             </div>
             <!-- Application Dropdown -->
-            <div class="form-group">
-                <div class=" col-md-3"><label> <spring:message code="application.information"/>
+            <div class="row mb-3">
+                <div class="col-md-3"><label class="form-label"> <spring:message code="application.information"/>
                     <select name="application" class="form-control">
                         <c:forEach items="${contexts}" var="context">
                             <option value="${fn:escapeXml(context.name)}">${fn:escapeXml(context.name)}</option>
@@ -87,8 +87,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 </div>
             </div>
             <!-- Portlet Dropdown -->
-            <div class="form-group">
-                <div class="col-md-3"><label><spring:message code="portlet.information"/>
+            <div class="row mb-3">
+                <div class="col-md-3"><label class="form-label"><spring:message code="portlet.information"/>
                     <select name="portlet" class="form-control col-md-4"> 
                         <c:forEach items="${contexts[0].portlets}" var="portlet">
                             <option value="${fn:escapeXml(portlet.portletName)}
@@ -100,7 +100,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 </div>
             </div>
             <!-- Buttons -->
-            <div class="form-group">
+            <div class="row mb-3">
                 <div class="buttons">
                     <c:choose>
                         <c:when test="${ completed }">
@@ -126,7 +126,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	        <c:forEach items="${contexts}" var="context">
 	            portlets['${context.name}'] = [<c:forEach items="${context.portlets}" var="portlet" varStatus="status">{name: '${portlet.portletName}', title: '${fn:length(portlet.displayNames) > 0 ? fn:replace(portlet.displayNames[0].displayName, "'", "\\'") : fn:replace(portlet.portletName, "'", "\\'")}'}${status.last ? '' : ','}</c:forEach>];
 		</c:forEach>
-	        $(document).ready(function(){
+	        $(function(){
 	            $("select[name=application]").change(function(){
 	                var select = $("select[name=portlet]").html("");
 	                var p = portlets[$(this).val()];

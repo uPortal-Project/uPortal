@@ -22,6 +22,7 @@ export default [
                 _: false,
                 up: false,
                 fluid: false,
+                bootstrap: false,
             },
         },
         rules: {

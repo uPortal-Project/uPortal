@@ -14,7 +14,6 @@
  */
 package org.apereo.portal.portlet.container.cache;
 
-import com.google.common.base.Function;
 import java.io.IOException;
 import org.apache.commons.io.output.NullWriter;
 import org.apache.commons.io.output.StringBuilderWriter;
@@ -60,13 +59,9 @@ public class LimitingTeeWriterTest {
                         content.length() - 1,
                         NullWriter.NULL_WRITER,
                         stringWriter,
-                        new Function<LimitingTeeWriter, Object>() {
-                            @Override
-                            public Object apply(LimitingTeeWriter input) {
-                                final StringBuilder builder = stringWriter.getBuilder();
-                                builder.delete(0, builder.length());
-                                return null;
-                            }
+                        input -> {
+                            final StringBuilder builder = stringWriter.getBuilder();
+                            builder.delete(0, builder.length());
                         });
         // write the first few chars
         writer.write(content.substring(0, 5));

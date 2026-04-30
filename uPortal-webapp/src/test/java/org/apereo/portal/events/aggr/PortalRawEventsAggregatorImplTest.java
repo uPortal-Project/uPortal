@@ -175,13 +175,15 @@ public class PortalRawEventsAggregatorImplTest {
                         new Answer<Boolean>() {
                             @Override
                             public Boolean answer(InvocationOnMock invocation) throws Throwable {
-                                ((Function<PortalEvent, Boolean>) invocation.getArguments()[3])
-                                        .apply(
-                                                new MockPortalEvent(
-                                                        this,
-                                                        "serverName",
-                                                        "eventSessionId",
-                                                        person));
+                                Boolean ignored =
+                                        ((Function<PortalEvent, Boolean>)
+                                                        invocation.getArguments()[3])
+                                                .apply(
+                                                        new MockPortalEvent(
+                                                                this,
+                                                                "serverName",
+                                                                "eventSessionId",
+                                                                person));
 
                                 return false;
                             }

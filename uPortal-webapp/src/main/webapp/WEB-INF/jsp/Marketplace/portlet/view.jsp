@@ -31,13 +31,13 @@
     width: 100%;
 }
 
-#${n}marketplace .dataTables_wrapper {
+#${n}marketplace .dt-container {
     position: relative;
     clear: both;
-    zoom: 1; /* Feeling sorry for IE */
+    zoom: 1;
 }
 
-#${n}marketplace  .dataTables_processing {
+#${n}marketplace .dt-processing {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -52,7 +52,7 @@
     background-color: white;
 }
 
-#${n}marketplace .dataTables_paginate{
+#${n}marketplace .dt-paging {
     white-space:nowrap;
 }
 
@@ -89,11 +89,23 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables row classes
  */
-#${n}marketplace tr.odd {
+#${n}marketplace tr.odd td,
+#${n}marketplace tr.odd th {
     background-color: #eee;
 }
 
-#${n}marketplace tr.even {
+#${n}marketplace tr.even td,
+#${n}marketplace tr.even th {
+    background-color: #fff;
+}
+
+#${n}marketplace tbody tr:nth-child(odd) td,
+#${n}marketplace tbody tr:nth-child(odd) th {
+    background-color: #eee;
+}
+
+#${n}marketplace tbody tr:nth-child(even) td,
+#${n}marketplace tbody tr:nth-child(even) th {
     background-color: #fff;
 }
 
@@ -110,7 +122,7 @@
     margin-right: 10px;
  }
 
-#${n}marketplace.top .dataTables_info {
+#${n}marketplace .dt-info {
     float: none;
 }
 
@@ -118,11 +130,11 @@
     clear: both;
 }
 
-#${n}marketplace .dataTables_empty {
+#${n}marketplace .dt-empty {
     text-align: center;
 }
 
-#${n}marketplace .example_alt_pagination div.dataTables_info {
+#${n}marketplace .example_alt_pagination div.dt-info {
     width: 40%;
 }
 
@@ -172,14 +184,14 @@
 @media only screen and (max-width: 768px) {
     #${n}marketplace #unseen table td:nth-child(2),
     #unseen table th:nth-child(2){display: none;}
-    #${n}marketplace .dataTables_filter{
+    #${n}marketplace .dt-search {
         text-align: left;
     }
-    #${n}marketplace .dataTables_filter>label{
+    #${n}marketplace .dt-search>label {
         width: 100%;
         float: left;
     }
-    #${n}marketplace .dataTables_filter>label>input{
+    #${n}marketplace .dt-search>label>input {
         width: 90%;
         float: right:
     }
@@ -202,8 +214,77 @@
     margin-top: 30px;
 }
 
-#${n}marketplace .dataTables_length, .dataTables_filter {
+#${n}marketplace .dt-length, .dt-search {
     text-align:right;
+}
+
+#${n}marketplace .dt-length select {
+    width: auto;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#${n}marketplace .dt-length label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#${n}marketplace .dt-paging {
+    text-align: center;
+}
+
+#${n}marketplace .dt-paging .pagination {
+    display: inline-flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin: 4px 0;
+    border-radius: 4px;
+}
+
+#${n}marketplace .dt-paging .pagination .dt-paging-button {
+    list-style: none;
+}
+
+#${n}marketplace .dt-paging .pagination .dt-paging-button .page-link {
+    position: relative;
+    float: left;
+    padding: 6px 12px;
+    line-height: 1.42857143;
+    color: #428bca;
+    text-decoration: none;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    margin-left: -1px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#${n}marketplace .dt-paging .pagination .dt-paging-button .page-link:hover {
+    background-color: #eee;
+}
+
+#${n}marketplace .dt-paging .pagination .dt-paging-button.active .page-link {
+    color: #fff;
+    background-color: #428bca;
+    border-color: #428bca;
+    z-index: 2;
+}
+
+#${n}marketplace .dt-paging .pagination .dt-paging-button.disabled .page-link {
+    color: #777;
+    cursor: not-allowed;
+    background-color: #fff;
+}
+
+#${n}marketplace .dt-paging .pagination .dt-paging-button:first-child .page-link {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+#${n}marketplace .dt-paging .pagination .dt-paging-button:last-child .page-link {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
 }
 
 #${n}marketplace a:hover {
@@ -215,12 +296,12 @@
     padding-top: 1em;
 }
 
-#${n}marketplace .marketplaceSection .panel {
+#${n}marketplace .marketplaceSection .card {
     padding: 0;
     border: none;
 }
 
-#${n}marketplace .marketplaceSection .panel .portlet-box {
+#${n}marketplace .marketplaceSection .card .portlet-box {
     height: 112px;
     max-height: 112px;
     margin: 0;
@@ -235,22 +316,22 @@
     overflow: hidden;
 }
 
-#${n}marketplace .marketplaceSection .panel .portlet-box:hover {
+#${n}marketplace .marketplaceSection .card .portlet-box:hover {
     background-color: #eee;
     cursor: pointer;
 }
 
-#${n}marketplace .marketplaceSection .panel .portlet-box a {
+#${n}marketplace .marketplaceSection .card .portlet-box a {
     width: 100%;
     display: block;
 }
 
-#${n}marketplace .marketplaceSection .panel .portlet-box a:hover {
+#${n}marketplace .marketplaceSection .card .portlet-box a:hover {
     text-decoration: none;
     color: #000000;
 }
 
-#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-icon {
+#${n}marketplace .marketplaceSection .card .portlet-box .portlet-icon {
     width: 92px;
     height: 92px;
     max-height: 92px;
@@ -261,26 +342,26 @@
     text-align: center;
 }
 
-#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-icon img {
+#${n}marketplace .marketplaceSection .card .portlet-box .portlet-icon img {
     width: 72px;
     height: 72px;
     margin-top: 7px;
 
 }
 
-#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-details {
+#${n}marketplace .marketplaceSection .card .portlet-box .portlet-details {
     text-align: left;
     color: #000;
     margin-right: 0;
 }
 
-#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-details h5 {
+#${n}marketplace .marketplaceSection .card .portlet-box .portlet-details h5 {
     font-size: 16px;
     margin: 0 0 3px 0;
 }
 
 
-#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-details p {
+#${n}marketplace .marketplaceSection .card .portlet-box .portlet-details p {
     font-size: 11px;
     margin: 0;
 }
@@ -307,7 +388,7 @@
                     <portlet:param name="fName" value="${featuredPortlet.fname}"/>
                 </portlet:renderURL>
                 <div class="col-sm-6 col-lg-3">
-                    <div class="panel panel-default">
+                    <div class="card">
                         <div class="row portlet-box">
                             <a href="${entryURL}">
                                 <div class="portlet-icon">
@@ -348,12 +429,12 @@
         </div>
         <div class="col-sm-8">
             <div class="sort_buttons_group">
-                <button type="button" id="${n}alphabetical-sort-button" class="btn btn-default">
+                <button type="button" id="${n}alphabetical-sort-button" class="btn btn-secondary">
                     <spring:message code="marketplace.azIndex" />
                 </button>
                 <!-- Offer Browse By: Category (but only if there are categories in the list) -->
                 <c:if test="${not empty categoryList}">
-                    <button type="button" id="${n}category-sort-button" class="btn btn-default">
+                    <button type="button" id="${n}category-sort-button" class="btn btn-secondary">
                         <spring:message code="marketplace.categories" />
                     </button>
                 </c:if>
@@ -362,26 +443,24 @@
         <div class="col-sm-3">
             <div class="input-group">
                 <input type="search" class="form-control" id="${n}portletTable_filter" placeholder="<spring:message code="marketplace.searchPortlets"/>" aria-label="<spring:message code="marketplace.searchPortlets"/>">
-                <span class="input-group-btn">
-                    <button class="btn btn-default" id="${n}clear_filter_button" aria-controls="${n}portletTable_filter">
-                        <spring:message code="marketplace.clear" />
-                    </button>
-                </span>
+                <button class="btn btn-secondary" id="${n}clear_filter_button" aria-controls="${n}portletTable_filter">
+                    <spring:message code="marketplace.clear" />
+                </button>
             </div>
         </div>
     </div>
 </div>
 
 
-<div id="${n}categoryListContainer" class="marketplace_center_text panel panel-default" style="display:none">
-    <div class="panel-body">
+<div id="${n}categoryListContainer" class="marketplace_center_text card" style="display:none">
+    <div class="card-body">
         <c:set var="categoryCount" value="0" />
         <c:forEach var="category" items="${categoryList}">
             <c:if test="${categoryCount mod 4 == 0}">
                 <div class="row">
-                    <div class="col-xs-0 col-md-2"></div>
+                    <div class="col-0 col-md-2"></div>
             </c:if>
-            <div class="col-xs-6 col-sm-3 col-md-2">
+            <div class="col-6 col-sm-3 col-md-2">
                 <a class="${n}marketplace_category_link">
                     ${category.name}
                 </a>
@@ -450,7 +529,7 @@
     var $ = up.jQuery;
     (function($) {
         up.jQuery(function() {
-        $(document).ready(function() {
+        $(function() {
 
             var trim11 =function(str) {
                 str = str.replace(/^\s+/, '');
@@ -479,34 +558,38 @@
                 }
             };
 
-            var myDataTable = $('#${n}portletTable').dataTable({
-                "aoColumnDefs": [{"bSortable": false, "aTargets": [ 2 ] }, { "bVisible": false, "aTargets": [ 3 ] }],
-                "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
-                       applyEllipsis(nRow,0,75);
-                      },
-                "sDom": '<rt'+
-                    '<"row ${n}bottom" <"col-xs-6 col-sm-8 col-md-3" i>'+
-                    '<"col-xs-6 col-md-push-6 col-sm-4 col-md-3"l>'+
-                    '<"col-xs-12 col-md-pull-3 col-md-6"p>>',
-                "bStateSave": false,
-                "bAutoWidth":false
+            var myDataTable = $('#${n}portletTable').DataTable({
+                columnDefs: [{orderable: false, targets: [2]}, {visible: false, targets: [3]}],
+                rowCallback: function(nRow, aData) {
+                    applyEllipsis(nRow, 0, 75);
+                },
+                dom: '<rt<"row ${n}bottom"<"col-6 col-sm-8 col-md-3"i><"col-6 col-sm-4 col-md-3 order-md-2"l><"col-12 col-md-6 order-md-1"p>>',
+                language: {
+                    lengthMenu: '_MENU_ records per page',
+                    paginate: {
+                        previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                        next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+                    }
+                },
+                stateSave: false,
+                autoWidth: false
             });
 
             $("#${n}featured").insertAfter($("#${n}marketplace .top"));
 
-            var setFilter = function(text){
-                myDataTable.fnFilter(text.trim());
+            var setFilter = function(text) {
+                myDataTable.search('').column(3).search(text.trim()).draw();
             };
 
-            var sortColumns = function(column){
-                myDataTable.fnSort([[column, 'asc']]);
-            }
+            var sortColumns = function(column) {
+                myDataTable.order([column, 'asc']).draw();
+            };
 
-            var clearFilter = function(){
-                myDataTable.fnFilter("");
+            var clearFilter = function() {
+                myDataTable.search('').column(3).search('').draw();
                 clearKeywordFilter();
                 $("#${n}portletTable_filter").focus();
-            }
+            };
 
             var clearKeywordFilter = function(){
                 $("#${n}portletTable_filter").val("");
@@ -530,7 +613,7 @@
                 $("#${n}alphabetical-sort-button").removeClass("active");
             } 
 
-            $(".${n}marketplace_category_link").click(function(){
+            $(".${n}marketplace_category_link").on('click', function(){
                 setFilter(this.textContent);
                 clearKeywordFilter();
             });
@@ -538,14 +621,14 @@
             disableCategoriesWidgets();
             enableAZIndexWidgets();
 
-            $("#${n}alphabetical-sort-button").click(function(){
+            $("#${n}alphabetical-sort-button").on('click', function(){
                 disableCategoriesWidgets();
                 enableAZIndexWidgets();
                 clearFilter();
                 sortColumns(0);
             });
 
-            $("#${n}category-sort-button").click(function(){
+            $("#${n}category-sort-button").on('click', function(){
                 disableAZIndexWidgets();
                 enableCategoriesWidgets();
             });
@@ -553,10 +636,10 @@
             $("#${n}portletTable_filter").keyup(function(e) {
                 disableCategoriesWidgets();
                 enableAZIndexWidgets();
-                setFilter(this.value);
+                myDataTable.column(3).search('').search(this.value.trim()).draw();
             });
 
-            $("#${n}clear_filter_button").click(function(){
+            $("#${n}clear_filter_button").on('click', function(){
                 disableCategoriesWidgets();
                 enableAZIndexWidgets();
                 clearFilter();						

@@ -17,7 +17,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
 <template id="search-results-tab-header-template">
-    <li role="presentation" class="up-search-tab"><a href="" data-toggle="tab"></a></li>
+    <li role="presentation" class="nav-item up-search-tab"><a class="nav-link" href="" data-bs-toggle="tab"></a></li>
 </template>
 
 <template id="search-results-tab-panel-template">
@@ -28,15 +28,15 @@
 
 <template id="search-result-item-template">
     <li class="up-search-list-item list-group-item">
-        <span class="up-search-list-item-secondary-content pull-right">
+        <span class="up-search-list-item-secondary-content float-end">
             <a class="up-search-list-item-secondary-action" href="#">
                 <i class="fa fa-window-maximize" aria-hidden="true"></i>
             </a>
         </span>
         <span class="up-search-list-item-primary-content">
-            <i class="up-search-list-item-avatar pull-left fa"></i>
-            <h3 class="up-search-list-item-title list-group-item-heading"></h3>
-            <span class="up-search-list-item-body list-group-item-text">
+            <i class="up-search-list-item-avatar float-start fa"></i>
+            <h3 class="up-search-list-item-title"></h3>
+            <span class="up-search-list-item-body">
                 <dl></dl>
             </span>
         </span>

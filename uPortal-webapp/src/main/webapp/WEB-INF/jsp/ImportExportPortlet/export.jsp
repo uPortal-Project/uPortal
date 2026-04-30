@@ -21,23 +21,23 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- Portlet -->
-<section class="fl-widget portlet imp-exp view-export">
+<section class="card portlet imp-exp view-export">
 
     <!-- Portlet Titlebar -->
-    <header class="fl-widget-titlebar titlebar portlet-titlebar">
+    <header class="card-header titlebar portlet-titlebar">
         <h2 class="title">
             <spring:message code="export.portlet.entities"/>
         </h2>
         <nav class="toolbar">
             <ul class="btn-group">
                 <li class="btn"><a class="button btn btn-primary" href="<portlet:renderURL/>"><spring:message code="import"/> <i class="fa fa-upload"></i></a></li>
-                <li class="btn"><a class="button btn btn-default" href="<portlet:renderURL><portlet:param name="action" value="delete"/></portlet:renderURL>"><spring:message code="delete"/> <i class="fa fa-trash-o"></i></a></li>
+                <li class="btn"><a class="button btn btn-secondary" href="<portlet:renderURL><portlet:param name="action" value="delete"/></portlet:renderURL>"><spring:message code="delete"/> <i class="fa fa-trash-o"></i></a></li>
             </ul>
         </nav>
     </header>
 
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content">
+    <div class="card-body content portlet-content">
 
         <!-- Note -->
         <aside class="portlet-note">
@@ -45,8 +45,8 @@
         </aside>
 
         <div class="portlet-form">
-            <form id="${n}form" method="POST" class="form-inline" action="javascript:;">
-                <div class="form-group">
+            <form id="${n}form" method="POST" class="d-flex align-items-center gap-3" action="javascript:;">
+                <div>
                     <label class="portlet-form-label" for="${n}entityType"><spring:message code="type"/>:</label>
                     <select id="${n}entityType" class="form-control" name="entityType">
                         <option>[<spring:message code="select.type"/>]</option>
@@ -55,11 +55,11 @@
                         </c:forEach>
                     </select>
                 </div>
-                <div class="form-group">
+                <div>
                     <label class="portlet-form-label" for="${n}sysid"><spring:message code="id"/>:</label>
                     <input type="text" id="${n}sysid" class="form-control" name="sysid"/>
                 </div>
-                <div class="form-group">
+                <div>
                     <div class="buttons">
                         <a id="${n}exportLink" class="button btn btn-primary" target="_blank" rel="noopener noreferrer" href=""><spring:message code="export"/> <i class="fa fa-download"></i></a>
                     </div>

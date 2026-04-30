@@ -43,22 +43,22 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | the user interface of this portlet
 | including HTML, CSS, JavaScript, accessibilty,
 | naming conventions, 3rd Party libraries
-| (like jQuery and the Fluid Skinning System)
+| (like jQuery and Bootstrap)
 | and more, refer to:
 | docs/SKINNING_UPORTAL.md
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet prm-mgr" role="section">
+<div class="card portlet prm-mgr" role="section">
 
 <!-- Portlet Titlebar -->
-	<div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
+	<div role="sectionhead" class="card-header titlebar portlet-titlebar">
     	<div class="breadcrumb">
-        	<span class="breadcrumb-1"><a href="${ ownersUrl }"><spring:message code="categories"/></a></span>
+        	<span class="breadcrumb-item breadcrumb-1"><a href="${ ownersUrl }"><spring:message code="categories"/></a></span>
             <span class="separator">&gt; </span>
-            <span class="breadcrumb-2"><a href="${ activitiesUrl }">${ fn:escapeXml(owner.name )}</a></span>
+            <span class="breadcrumb-item breadcrumb-2"><a href="${ activitiesUrl }">${ fn:escapeXml(owner.name )}</a></span>
             <span class="separator">&gt; </span>
-            <span class="breadcrumb-3"><a href="${ permissionsUrl }">${ fn:escapeXml(activity.name )}</a></span>
+            <span class="breadcrumb-item breadcrumb-3"><a href="${ permissionsUrl }">${ fn:escapeXml(activity.name )}</a></span>
             <span class="separator">&gt; </span>
         </div>
         <h2 class="title" role="heading"><spring:message code="add.assignment.to"/> <span class="name">${ fn:escapeXml(activity.name )}</span></h2>
@@ -68,12 +68,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content">
+  <div class="card-body portlet-content">
 
     <!-- Portlet Section -->
     <div class="portlet-form">
         <form id="${n}targetForm" action="${ formUrl }" method="POST">
-            <label for="${n}targetSuggest"><spring:message code="select.target.instruction"/>:</label>
+            <label for="${n}targetSuggest" class="form-label"><spring:message code="select.target.instruction"/>:</label>
             <div id="${n}targetSuggest" class="target-input">
                 <input class="up-autocomplete-searchterm" type="text" name="targetDisplayName" value="<spring:message code="target"/>" autocomplete="off"/>
                 <input type="hidden" name="target"/>
@@ -117,7 +117,7 @@ up.jQuery(function() {
     };
 
     var targetSuggest = up.Autocomplete(
-            "#${n}targetSuggest",
+            document.querySelector("#${n}targetSuggest"),
             {
                 initialText: '<spring:message code="target" htmlEscape="false" javaScriptEscape="true"/>',
                 searchFunction: function(searchterm) {
@@ -137,10 +137,10 @@ up.jQuery(function() {
             }
         );
 
-    $(document).ready(function(){
+    $(function(){
 
 
-        $("#${n}targetForm").submit(submitForm);
+        $("#${n}targetForm").on('submit', submitForm);
     });
 
 });

@@ -10,7 +10,7 @@ dependencies {
     api project(':uPortal-security:uPortal-security-core')
     implementation project(':uPortal-url')
 
-    implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonAnnotationsVersion}"
     implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
 

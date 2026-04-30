@@ -39,16 +39,16 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | the user interface of this portlet
 | including HTML, CSS, JavaScript, accessibilty,
 | naming conventions, 3rd Party libraries
-| (like jQuery and the Fluid Skinning System)
+| (like jQuery and Bootstrap)
 | and more, refer to:
 | docs/SKINNING_UPORTAL.md
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet ptl-mgr view-confirmremove" role="section">
+<div class="card portlet ptl-mgr view-confirmremove" role="section">
 
   <!-- Portlet Title -->
-  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+  <div class="card-header titlebar portlet-titlebar" role="sectionhead">
 
     <div class="breadcrumb">
         <c:forEach items="${ breadcrumbs }" var="breadcrumb" varStatus="status">
@@ -69,7 +69,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div> <!-- end: portlet-titlebar -->
 
   <!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content">
+  <div class="card-body content portlet-content">
 
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
@@ -80,8 +80,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div> <!-- end: portlet-section -->
 
     <div class="buttons">
-      <a href="${removeUrl}" class="button btn btn-default" name="_eventId_remove" id="${n}deletePermissionButton"><spring:message code="remove"/></a>
-      <a href="${cancelUrl}" class="button btn btn-default"><spring:message code="cancel"/></a>
+      <a href="${removeUrl}" class="button btn btn-secondary" name="_eventId_remove" id="${n}deletePermissionButton"><spring:message code="remove"/></a>
+      <a href="${cancelUrl}" class="button btn btn-secondary"><spring:message code="cancel"/></a>
     </div>
 
 
@@ -93,8 +93,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 up.jQuery(function() {
     var $ = up.jQuery;
 
-    $(document).ready(function(){
-        $('#${n}deletePermissionButton').click(function(e){
+    $(function(){
+        $('#${n}deletePermissionButton').on('click', function(e){
             e.preventDefault();
             $.ajax({
                 url: "<c:url value="/api/deletePermission"/>",

@@ -126,7 +126,7 @@
 </style>
 
 <div id="${n}background-edit-control">
-    <div class="background-edit-button fl-container-flex">
+    <div class="background-edit-button d-flex">
         <div class="edit-button-image"></div>
         <span class="edit-text">Change Background Image</span>
     </div>
@@ -199,16 +199,16 @@
             elements.menu = $('#${n}background-edit-control .background-edit-menu');
             elements.form = $("#${n}background-edit-control .background-edit-form");
 
-            elements.form.submit(function() {
+            elements.form.on('submit', function() {
                 $.post(this.action, elements.form.serialize());
                 return false;
             });
-            elements.button.click(function () {
+            elements.button.on('click', function () {
                 setWidth();
                 toggleMenu();
             });
 
-            elements.menu.find('a').click(function(e) {
+            elements.menu.find('a').on('click', function(e) {
                 e.preventDefault();
                 setBackground(this);
 

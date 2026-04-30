@@ -33,16 +33,16 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | the user interface of this portlet
 | including HTML, CSS, JavaScript, accessibilty,
 | naming conventions, 3rd Party libraries
-| (like jQuery and the Fluid Skinning System)
+| (like jQuery and Bootstrap)
 | and more, refer to:
 | docs/SKINNING_UPORTAL.md
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet prm-mgr view-editperm" role="section">
+<div class="card portlet prm-mgr view-editperm" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="card-header titlebar portlet-titlebar" role="sectionhead">
     	<div class="breadcrumb">
             <c:forEach items="${ breadcrumbs }" var="breadcrumb" varStatus="status">
                 <portlet:actionURL var="breadcrumbUrl">
@@ -72,7 +72,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div>
 
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content">
+    <div class="card-body content portlet-content">
 
             <form method="POST" id="${n}editPermissionForm" action="javascript:;">
 
@@ -176,7 +176,7 @@ up.jQuery(function() {
             );
     };
 
-    $(document).ready(renderPermissionMap);
+    $(renderPermissionMap);
 
 
 });

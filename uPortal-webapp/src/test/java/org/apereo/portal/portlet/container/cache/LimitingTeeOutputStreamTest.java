@@ -18,7 +18,6 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertArrayEquals;
 
-import com.google.common.base.Function;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -66,13 +65,7 @@ public class LimitingTeeOutputStreamTest {
                         content.length - 1,
                         NullOutputStream.NULL_OUTPUT_STREAM,
                         byteStream,
-                        new Function<LimitingTeeOutputStream, Object>() {
-                            @Override
-                            public Object apply(LimitingTeeOutputStream input) {
-                                byteStream.reset();
-                                return null;
-                            }
-                        });
+                        input -> byteStream.reset());
         // write the first few chars
         stream.write(content, 0, 5);
         // verify content successfully buffered
@@ -81,7 +74,7 @@ public class LimitingTeeOutputStreamTest {
         assertArrayEquals(subContent, byteStream.toByteArray());
 
         // now write the remainder
-        stream.write(content, 5, content.length);
+        stream.write(content, 5, content.length - 5);
 
         assertTrue(stream.isLimitReached());
         assertArrayEquals(new byte[0], byteStream.toByteArray());

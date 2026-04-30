@@ -21,10 +21,10 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- Portlet -->
-<section class="fl-widget portlet imp-exp view-delete">
+<section class="card portlet imp-exp view-delete">
 
     <!-- Portlet Titlebar -->
-    <header class="fl-widget-titlebar titlebar portlet-titlebar">
+    <header class="card-header titlebar portlet-titlebar">
         <h2 class="title">
             <spring:message code="delete.portlet.entities"/>
         </h2>
@@ -47,7 +47,7 @@
     </div>
 
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content">
+    <div class="card-body content portlet-content">
 
         <!-- Messages -->
         <div class="portlet-msg-error portlet-msg error alert alert-danger" role="alert">
@@ -73,7 +73,7 @@
         </div>
 
         <div class="portlet-form">
-            <form id="${n}form" class="form-inline" method="POST">
+            <form id="${n}form" class="d-flex align-items-center gap-2" method="POST">
                 <label class="portlet-form-label" for="entityType">
                     <spring:message code="type"/>:
                 </label>
@@ -106,7 +106,7 @@
     up.jQuery(document).ready(function () {
         var $ = up.jQuery;
 
-        $("#${n}form").submit(function () {
+        $("#${n}form").on('submit', function () {
            var form, entityType, sysId, href;
 
            form = this;

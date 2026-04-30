@@ -157,8 +157,8 @@ up.SessionTimeout =
                     return;
                 }
 
-                config.dialogEl.find('.refresh-session').click(doRefresh);
-                config.dialogEl.find('.logout').click(doLogout);
+                config.dialogEl.find('.refresh-session').on('click', doRefresh);
+                config.dialogEl.find('.logout').on('click', doLogout);
                 // grr.  would prefer to use bootstrap, but doesn't work well
                 // in universality.
                 config.dialogEl.dialog({

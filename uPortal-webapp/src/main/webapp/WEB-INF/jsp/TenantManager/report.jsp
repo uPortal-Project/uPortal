@@ -33,9 +33,9 @@
             <c:otherwise>danger</c:otherwise>
         </c:choose>
     </c:set>
-    <div class="panel panel-${resultCssClass}">
-        <div class="panel-heading"><span class="label label-${resultCssClass}"><c:out value="${response.result}" /></span> <c:out value="${response.tenantOperationsListener.name}" /></div>
-        <div class="panel-body">
+    <div class="card border-${resultCssClass}">
+        <div class="card-header"><span class="badge bg-${resultCssClass}"><c:out value="${response.result}" /></span> <c:out value="${response.tenantOperationsListener.name}" /></div>
+        <div class="card-body">
             <c:forEach items="${response.messages}" var="message">
                 <i class="fa fa-info-circle"></i> <c:out value="${message}" escapeXml="false" />
             </c:forEach>
@@ -50,5 +50,5 @@
     <c:if test="${not empty resultTenantAddMessage}">
         <spring:message code="${resultTenantAddMessage}" htmlEscape="false"/>
     </c:if>
-    <a class="btn btn-primary pull-right" href="<portlet:renderURL />" role="button"><spring:message code="done" /></a>
+    <a class="btn btn-primary float-end" href="<portlet:renderURL />" role="button"><spring:message code="done" /></a>
 </div>

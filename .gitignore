@@ -442,3 +442,5 @@ uPortal-webapp/out/
 !**/src/test/**/*.tar.gz
 !**/src/test/**/*.tgz
 !**/src/test/**/*.zip
+plans/
+.claude/settings.local.json

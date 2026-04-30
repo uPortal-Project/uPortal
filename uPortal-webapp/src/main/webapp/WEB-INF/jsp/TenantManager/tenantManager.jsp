@@ -22,10 +22,10 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <style>
-#${n}tenantManager .panel {
+#${n}tenantManager .card {
     margin-top: 15px;
 }
-#${n}tenantManager .panel-heading {
+#${n}tenantManager .card-header {
     font-weight: bold;
     position: relative;
 }
@@ -37,15 +37,15 @@
 
 <div id="${n}tenantManager">
 
-    <div class="panel panel-default tenant-manager">
-        <!-- Default panel contents -->
-        <div class="panel-heading clearfix">
+    <div class="card tenant-manager">
+        <!-- Default card contents -->
+        <div class="card-header clearfix">
             <spring:message code="tenant.manager" />
-            <div class="btn-group pull-right">
-                <a href="${showAddTenantUrl}" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> <spring:message code="tenant.manager.add" /></a>
+            <div class="btn-group float-end">
+                <a href="${showAddTenantUrl}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <spring:message code="tenant.manager.add" /></a>
             </div>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             <p><spring:message code="tenant.manager.welcome" /></p>
 
             <c:choose>
@@ -73,14 +73,14 @@
                                     <td><a href="${detailsUrl}" title="<spring:message code="tenant.manager.edit" /> ${tenant.name}"><c:out value="${tenant.name}" /></a></td>
                                     <td><c:out value="${tenant.fname}" /></td>
                                     <td><a href="mailto:${tenant.attributesMap['adminContactEmail']}" title="<spring:message code="tenant.manager.email.address.link" />">${tenant.attributesMap['adminContactUsername']}</a></td>
-                                    <td class="text-right"><a class="btn btn-xs btn-danger up-tenant-remove" data-href="${removeUrl}" data-confirm="<spring:message code="tenant.manager.remove.tenant.confirm" arguments="${tenant.name}" />" title="<spring:message code="tenant.manager.remove.tenant" />" href="javascript:void(0)"><span class="glyphicon glyphicon-trash"></span> <spring:message code="tenant.manager.remove" /></a></td>
+                                    <td class="text-end"><a class="btn btn-sm btn-danger up-tenant-remove" data-href="${removeUrl}" data-confirm="<spring:message code="tenant.manager.remove.tenant.confirm" arguments="${tenant.name}" />" title="<spring:message code="tenant.manager.remove.tenant" />" href="javascript:void(0)"><span class="glyphicon glyphicon-trash"></span> <spring:message code="tenant.manager.remove" /></a></td>
                                 </tr>
                             </c:forEach>
                         </tbody>
                     </table>
                 </c:when>
                 <c:otherwise>
-                    <div class="col-sm-8 col-sm-offset-2 alert alert-info"><spring:message code="tenant.manager.no.tenants" /></div>
+                    <div class="col-sm-8 offset-sm-2 alert alert-info"><spring:message code="tenant.manager.no.tenants" /></div>
                 </c:otherwise>
             </c:choose>
         </div>
@@ -90,7 +90,7 @@
 <script type="text/javascript">
 (function($) {
     // Deleting a tenant requires an actionURL and a POST...
-    $('#${n}tenantManager a.up-tenant-remove').click(function() {
+    $('#${n}tenantManager a.up-tenant-remove').on('click', function() {
         var confirmText = $(this).attr('data-confirm');
         if (confirm(confirmText)) {
             var url = $(this).attr('data-href');

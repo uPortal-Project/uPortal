@@ -49,7 +49,7 @@ Run `./gradlew :module-name:test` to confirm. Do not claim "done" without runnin
 
 ## Tech stack
 
-- **Java 8** source compatibility (sourceCompatibility 1.8) — CI-tested on both **Java 8 and Java 11** runtimes
+- **Java 11** source compatibility (sourceCompatibility 11) — CI-tested on **Java 11** runtime
 - **Gradle 8.5** multi-project build (~45 subprojects), Groovy DSL
 - **Spring Framework 4.3.30.RELEASE** — XML and annotation-based DI; no Spring Boot
 - **Hibernate 4.2.21.Final** with JPA
@@ -66,7 +66,30 @@ Run `./gradlew :module-name:test` to confirm. Do not claim "done" without runnin
 
 ### Java version details
 
-Source code MUST compile under Java 8 — no Java 9+ language features or APIs. The CI matrix tests builds on both Java 8 and Java 11 JVMs across three distributions (AdoptOpenJDK Hotspot, Eclipse Temurin, Azul Zulu) and three platforms (Linux, Windows, macOS). uPortal-start (the deployment tool) requires JDK 8.
+Source code MUST compile under Java 11. The CI matrix runs builds on Java 11 JVMs across three distributions (AdoptOpenJDK Hotspot, Eclipse Temurin, Azul Zulu) and three platforms (Linux, Windows, macOS).
+
+### SDKMAN for Java version management
+
+This project uses [SDKMAN](https://sdkman.io/) to manage Java versions. uPortal and uPortal-start both require **Java 11**. Common commands:
+
+```bash
+# List installed Java versions
+sdk list java
+
+# Install Java 11 (required for uPortal and uPortal-start)
+sdk install java 11.0.30-amzn
+
+# Switch Java version in the current shell
+sdk use java 11.0.30-amzn
+
+# Set a default Java version across all shells
+sdk default java 11.0.30-amzn
+
+# Verify active version
+java -version
+```
+
+Each repo has a `.sdkmanrc` that pins the expected version — `sdk env` inside the repo auto-activates it.
 
 ## Running uPortal locally
 
@@ -115,22 +138,118 @@ If using CAS authentication (default in uPortal-start), the login flow redirects
 
 ### Testing changes against a running portal
 
-```bash
-# If you modified uPortal source code and want to test in uPortal-start:
+uPortal source code is published as Maven artifacts (~48 JARs + 1 WAR). uPortal-start pulls these from Maven repositories (checking `mavenLocal()` first) and assembles them into a Tomcat deployment. To test local changes:
 
-# 1. In the uPortal repo — install to local Maven
+```bash
+# 1. In the uPortal repo — build and install to local Maven (~/.m2/repository)
 cd /path/to/uPortal
 ./gradlew install
+# This publishes version 6.0.0-SNAPSHOT (from gradle.properties) to ~/.m2/repository/org/jasig/portal/
 
-# 2. In uPortal-start — set uPortalVersion to the SNAPSHOT version from gradle.properties
-#    Edit uPortal-start/gradle.properties:
-#    uPortalVersion=6.0.0-SNAPSHOT
-
-# 3. Rebuild and redeploy
+# 2. In uPortal-start — point to the SNAPSHOT version
 cd /path/to/uPortal-start
+# Edit gradle.properties:
+#   uPortalVersion=6.0.0-SNAPSHOT
+
+# 3. Stop Tomcat if running, rebuild, and redeploy
+./gradlew tomcatStop
 ./gradlew tomcatDeploy
 ./gradlew tomcatStart
 ```
+
+### Verifying your changes are deployed
+
+After `tomcatDeploy`, check the JAR filenames in the deployed WAR — they include the version number:
+
+```bash
+# List deployed uPortal JARs and their versions
+ls .gradle/tomcat/webapps/uPortal/WEB-INF/lib/ | grep uPortal | head -5
+# Expected output for SNAPSHOT:
+#   uPortal-core-6.0.0-SNAPSHOT.jar
+#   uPortal-rendering-6.0.0-SNAPSHOT.jar
+#   ...
+# If you see 5.17.1 instead of 6.0.0-SNAPSHOT, the install didn't work
+
+# Check the timestamp on a specific JAR to confirm it was just built
+ls -la .gradle/tomcat/webapps/uPortal/WEB-INF/lib/uPortal-core-*.jar
+
+# Verify the local Maven cache has your SNAPSHOT
+ls ~/.m2/repository/org/jasig/portal/uPortal-core/6.0.0-SNAPSHOT/
+```
+
+**Common problems:**
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| JARs still show old version (e.g., `5.17.1`) | `uPortalVersion` not changed in uPortal-start `gradle.properties` | Set `uPortalVersion=6.0.0-SNAPSHOT` |
+| `./gradlew install` fails | Java version mismatch | Use `sdk use java 11.0.30-amzn` |
+| Changes not visible after deploy | Tomcat serving cached classes | Run `./gradlew tomcatStop` then `./gradlew tomcatDeploy` (not just `tomcatStart`) |
+| Gradle resolves from Maven Central instead of local | `mavenLocal()` missing from repositories | Already configured in uPortal-start — check `overlays/build.gradle` |
+
+## Playwright end-to-end tests
+
+End-to-end tests live in the [uPortal-start](https://github.com/uPortal-Project/uPortal-start) repository under `tests/`. They use **Playwright for Node.js** (TypeScript) and require a running portal instance.
+
+### Test structure
+
+```
+tests/
+  general-config.ts          # Shared config (base URL, user credentials)
+  uportal-pw.config.ts        # Playwright configuration
+  api/                        # API-level tests (no browser)
+    analytics.spec.ts
+    portlet-list.spec.ts
+    search-v5-0.spec.ts
+    utils/api-portlet-list-utils.ts
+  ux/                         # Browser-based UI tests
+    auth/uportal-auth.spec.ts
+    smoke/guest-page.spec.ts
+    smoke/per-role-pages.spec.ts
+    smoke/web-components.spec.ts
+    utils/ux-general-utils.ts   # Login/logout helpers
+```
+
+### Prerequisites
+
+1. Portal must be running (`./gradlew tomcatStart` in uPortal-start)
+2. Node.js and npm installed
+3. Install dependencies (from uPortal-start root):
+
+```bash
+npm install
+npx playwright install chromium
+npx playwright install-deps chromium
+```
+
+### Running tests
+
+```bash
+cd /path/to/uPortal-start
+
+# Run all tests
+npx playwright test --config=tests/uportal-pw.config.ts
+
+# Run a specific test file
+npx playwright test --config=tests/uportal-pw.config.ts tests/ux/smoke/guest-page.spec.ts
+
+# Run tests matching a grep pattern
+npx playwright test --config=tests/uportal-pw.config.ts -g "Admin smoke"
+
+# Run with headed browser (visible)
+npx playwright test --config=tests/uportal-pw.config.ts --headed
+
+# Run with debug inspector
+npx playwright test --config=tests/uportal-pw.config.ts --debug
+```
+
+### Writing new tests
+
+- Place API tests in `tests/api/`, UI tests in `tests/ux/`
+- Import shared config: `import { config } from "../../general-config";`
+- Use `loginUrl()` / `logout()` helpers from `tests/ux/utils/ux-general-utils.ts`
+- Available users: `config.users.admin`, `config.users.student`, `config.users.faculty`, `config.users.staff`
+- For portlet assertions, use `.up-portlet-titlebar` scoped selectors (e.g., `page.locator(".up-portlet-titlebar").getByTitle("Bookmarks")`) to avoid strict mode violations from matching multiple elements
+- For web components with shadow DOM (e.g., `waffle-menu`, `notification-icon`), use Playwright's built-in shadow DOM piercing
 
 ## Commands
 
@@ -215,6 +334,79 @@ uPortal-webapp/                     # WAR assembly, JSP views, LESS, JS, config 
 docs/                               # Project documentation (Markdown, Jekyll)
 .github/workflows/CI.yml            # GitHub Actions CI
 ```
+
+## Architecture
+
+### Rendering pipeline (decorator pattern)
+
+The core request flow is a composable pipeline of `CharacterPipelineComponent` stages defined in `RenderingPipelineConfiguration.java`:
+
+```
+HTTP Request → IPortalRenderingPipeline → RenderingPipelineBranchPoint[] → DynamicRenderingPipeline
+```
+
+Pipeline stages (bottom-to-top execution):
+1. **UserLayoutStoreComponent** — Loads user's layout XML from database
+2. **StructureAttributeIncorporationComponent** — Merges user preferences
+3. **StructureTransformComponent** — XSLT transform of layout structure
+4. **StructureCachingComponent** — Caches transformed structure
+5. **PortletRenderingInitiationComponent** — Spawns async portlet worker threads
+6. **ThemeAttributeIncorporationComponent** — Adds theme data
+7. **ThemeTransformComponent** — XSLT transform to HTML
+8. **StaxSerializingComponent** — SAX to character stream
+9. **PortletRenderingIncorporationComponent** — Embeds portlet output into page
+
+Adopters extend the pipeline via `RenderingPipelineBranchPoint` beans for conditional routing (e.g., redirect to CAS, alternate UIs).
+
+### Distributed Layout Management (DLM)
+
+Users' portal layouts are composed from a **base layout** merged with **layout fragments** owned by admin accounts. `DistributedLayoutManager` orchestrates this:
+
+- Fragments are portal user accounts that own reusable layout templates
+- Evaluators (group membership, person attributes, profile) determine which fragments apply to each user
+- The merged layout is an XML document of folders and channels (portlet references)
+
+### Authentication
+
+Pluggable via `ISecurityContext` implementations:
+- `RemoteUserSecurityContext` — HTTP REMOTE_USER from servlet container/reverse proxy
+- `CasAssertionSecurityContext` — CAS protocol
+- `SimpleLdapSecurityContext` — Direct LDAP bind
+- `TrustSecurityContext` — Pre-authenticated
+
+Each has a corresponding `ContextFactory`. Configuration is in the security Spring contexts.
+
+### Import/Export system
+
+`JaxbPortalDataHandlerService` handles batch import/export of portal data. Each data type (users, portlets, layouts, groups, permissions, etc.) has:
+- `IDataImporter` — XML to domain object
+- `IDataExporter` — Domain object to XML
+- `IDataUpgrader` — XSLT-based schema migration
+- `IDataTemplatingStrategy` — SpEL parameter substitution in XML files
+
+JAXB classes are generated from XSD schemas in `uPortal-io-jaxb`.
+
+### Soffit framework
+
+REST-based alternative to JSR-286 portlet development. External web apps receive JWT-encoded payloads via `SoffitConnectorController` containing user info, preferences, and layout context. Soffits can be Spring Boot apps that render views with portal-injected data.
+
+### Spring configuration
+
+Mixed XML and Java @Configuration:
+- XML contexts in `uPortal-webapp/src/main/resources/properties/contexts/` (datasource, persistence, groups, LDAP, portlet configs)
+- Java configs: `RenderingPipelineConfiguration`, `PersonDirectoryConfiguration`, `GroupServiceConfiguration`, `SoffitConnectorConfiguration`
+- Convention-based discovery: `RenderingPipelineBranchPoint`, `IPortalDataType`, and `IComponentGroupService` beans are auto-discovered
+
+### Key configuration files
+
+- `uPortal-webapp/src/main/resources/properties/portal.properties` — Main portal config (overridable via `${portal.home}/uPortal.properties`)
+- `uPortal-webapp/src/main/resources/properties/rdbm.properties` — Database/JDBC config
+- `uPortal-webapp/src/main/resources/hibernate.properties` — Hibernate/JPA settings
+- `gradle.properties` — 80+ dependency version declarations
+
+### Dependency coupling
+
+`uPortal-security-authn` is the most highly coupled module (depends on 23 subprojects). Core hub modules are `uPortal-core`, `uPortal-rendering`, and `uPortal-layout-impl`. Utility modules (`uPortal-utils-*`, group providers) are loosely coupled and independently usable.
 
 ## Code style and conventions
 
@@ -315,13 +507,16 @@ The rendering pipeline uses chained XSLT transformations to compose portal pages
 
 ### Banned patterns
 
+Source compiles under Java 11, so Java 9–11 language features and APIs (`var`, `List.of()`, `Map.of()`, `Optional.isEmpty()`, `String.isBlank()`, etc.) are all fair game. The ban line is **Java 12 and later**.
+
 | Pattern | Why | What to do instead |
 |---------|-----|--------------------|
-| `var` keyword | Java 9+ | Use explicit types |
-| `List.of()`, `Map.of()` | Java 9+ | Use `Collections.unmodifiableList(Arrays.asList(...))` or Guava `ImmutableList.of()` |
-| `Optional.isEmpty()` | Java 11+ | Use `!optional.isPresent()` |
-| `String.isBlank()` | Java 11+ | Use `StringUtils.isBlank()` (commons-lang3) |
-| Records, text blocks, sealed classes | Java 14+ | Use regular classes |
+| Switch expressions with `->` | Java 14+ | Use classic `switch` statements |
+| Text blocks (`"""..."""`) | Java 15+ | Use concatenated string literals |
+| Records | Java 16+ | Use regular classes |
+| Pattern matching for `instanceof` | Java 16+ | Use classic `instanceof` + cast |
+| Sealed classes, `non-sealed`, `permits` | Java 17+ | Use regular classes with package-private constructors |
+| Pattern matching for `switch` | Java 21+ | Use classic `switch` statements |
 | `@BeforeEach`, `@DisplayName` | JUnit 5 | Use `@Before`, `@Test` (JUnit 4) |
 | Inline dependency versions in build.gradle | Breaks version management | Add to `gradle.properties` |
 | `commons-logging` imports | Banned transitive | Use SLF4J (`org.slf4j.Logger`) |
@@ -333,7 +528,7 @@ The rendering pipeline uses chained XSLT transformations to compose portal pages
 [ ] Tests exist for the change (or I've explained why not)
 [ ] Tests pass: ./gradlew :module:test
 [ ] Java formatting passes: ./gradlew verGJF
-[ ] No Java 9+ language features or APIs used
+[ ] No Java 12+ language features or APIs used
 [ ] No new dependencies added without version in gradle.properties
 [ ] License header present on any new files
 [ ] No secrets, passwords, or hardcoded hostnames
@@ -350,4 +545,4 @@ The rendering pipeline uses chained XSLT transformations to compose portal pages
   - You are unsure how existing code works after reading it
   - A change would affect more than one module
   - You cannot write a test to verify your change
-- 🚫 **Never do:** Guess at requirements. Add features that weren't asked for. "Improve" code adjacent to your change. Use Java 9+ features or APIs. Commit secrets.
+- 🚫 **Never do:** Guess at requirements. Add features that weren't asked for. "Improve" code adjacent to your change. Use Java 12+ features or APIs. Commit secrets.

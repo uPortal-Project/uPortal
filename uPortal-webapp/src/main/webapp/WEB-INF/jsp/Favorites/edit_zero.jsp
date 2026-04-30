@@ -32,7 +32,7 @@
        got-no-favorites state through a user action that generated a message. --%>
   <c:if test="${not empty errorMessageCode}">
       <div class="alert alert-warning alert-dismissable">
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-hidden="true"></button>
           <spring:message
                   code="${errorMessageCode}"
                   text="Un-defined error message."
@@ -42,7 +42,7 @@
 
   <c:if test="${not empty successMessageCode}">
       <div class="alert alert-success alert-dismissable">
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-hidden="true"></button>
           <spring:message
                   code="${successMessageCode}"
                   text="Un-defined success message."
@@ -64,7 +64,7 @@
   <%-- Display short link to Marketplace if available, suppress otherwise --%>
   <%-- Included even though redundant with link above, for consistency with UI when user has favorites. --%>
   <c:if test="${not empty marketplaceUrl}">
-    <span class="pull-right">
+    <span class="float-end">
       <a href="${marketplaceUrl}">
         <spring:message code="favorites.invitation.to.marketplace.short" text="Visit Marketplace"/>
       </a>

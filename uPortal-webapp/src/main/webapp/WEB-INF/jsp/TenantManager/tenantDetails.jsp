@@ -40,23 +40,23 @@
     padding: 3px;
     margin: 0 5px;
 }
-#${n}tenantDetails .has-error div.field-error {
+#${n}tenantDetails .is-invalid div.field-error {
     display: block;
 }
 </style>
 
 <div id="${n}tenantDetails">
     <h2><spring:message code="tenant.details" /> <c:out value="${tenant.name}" /></h2>
-    <form id="updateTenantForm" role="form" class="form-horizontal" action="${doUpdateTenantUrl}" method="POST">
+    <form id="updateTenantForm" role="form" class="" action="${doUpdateTenantUrl}" method="POST">
         <c:forEach items="${tenantManagerAttributes}" var="attribute">
             <c:set var="errorCssClass">
                 <c:choose>
-                    <c:when test="${invalidFields[attribute.key] ne null}">has-error</c:when>
+                    <c:when test="${invalidFields[attribute.key] ne null}">is-invalid</c:when>
                     <c:otherwise></c:otherwise>
                 </c:choose>
             </c:set>
-            <div class="form-group ${errorCssClass}">
-                <label for="${attribute.key}" class="col-sm-2 control-label"><spring:message code="${attribute.value}" /></label>
+            <div class="row mb-3 ${errorCssClass}">
+                <label for="${attribute.key}" class="col-sm-2 col-form-label"><spring:message code="${attribute.value}" /></label>
                 <div class="col-sm-10">
                     <c:set var="previousValue">
                         <c:choose>
@@ -70,13 +70,13 @@
             </div>
         </c:forEach>
 
-        <div class="btn-group pull-right">
+        <div class="btn-group float-end">
             <c:forEach items="${operationsListenerAvailableActions}" var="listenerAction">
                 <portlet:actionURL var="listenerActionUrl">
                     <portlet:param name="action" value="doListenerAction"/>
                     <portlet:param name="fname" value="${listenerAction.fname}"/>
                 </portlet:actionURL>
-                <a class="btn btn-default up-tenant-listener-action" data-href="${listenerActionUrl}" href="javascript:void(0)" role="button"><spring:message code="${listenerAction.messageCode}" htmlEscape="false" /></a>
+                <a class="btn btn-secondary up-tenant-listener-action" data-href="${listenerActionUrl}" href="javascript:void(0)" role="button"><spring:message code="${listenerAction.messageCode}" htmlEscape="false" /></a>
             </c:forEach>
             <button class="btn btn-primary" type="submit" onclick="return confirm('<spring:message code="tenant.manager.update.attributes.confirm" arguments="${tenant.name}" />')"><spring:message code="tenant.manager.update.attributes" htmlEscape="false" /></button>
             <a class="btn btn-link" href="<portlet:renderURL />" role="button"><spring:message code="cancel" /></a>
@@ -87,7 +87,7 @@
 <script type="text/javascript">
 (function($) {
     // Tenant operations listener actions must be invoked with an actionURL and a POST...
-    $('#${n}tenantDetails a.up-tenant-listener-action').click(function() {
+    $('#${n}tenantDetails a.up-tenant-listener-action').on('click', function() {
         if (confirm('<spring:message code="tenant.manager.invoke.action.confirm" />')) {
             var url = $(this).attr('data-href');
             var form = $('<form />', {

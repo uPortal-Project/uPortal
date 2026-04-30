@@ -281,7 +281,7 @@
         <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}">
           <xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>
         </span>
-        <i class="fa fa-chevron-right visible-xs"></i>
+        <i class="fa fa-chevron-right d-sm-none"></i>
       </a> <!-- Navigation item link. -->
       <xsl:if test="$AUTHENTICATED='true' and not($PORTAL_VIEW='focused')">
         <xsl:if test="not(@dlm:moveAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
@@ -326,7 +326,7 @@
       <xsl:attribute name="id">portalSubnavigationToggle_<xsl:value-of select="@ID"/></xsl:attribute>
       <xsl:attribute name="href">javascript:void(0);</xsl:attribute>
       <xsl:attribute name="class">dropdown-toggle portal-navigation-dropdown</xsl:attribute>
-      <xsl:attribute name="data-toggle">dropdown</xsl:attribute>
+      <xsl:attribute name="data-bs-toggle">dropdown</xsl:attribute>
       <xsl:attribute name="role">button</xsl:attribute>
       <xsl:attribute name="aria-expanded">false</xsl:attribute>
       <xsl:attribute name="aria-haspopup">true</xsl:attribute>
@@ -335,7 +335,7 @@
       <xsl:element name="span"> <!-- Navigation dropdown toogle caret -->
        <xsl:attribute name="class">caret</xsl:attribute>
       </xsl:element>
-      <span class="sr-only">
+      <span class="visually-hidden">
        <xsl:value-of select="upMsg:getMessage('toggle.menu', $USER_LANG)"/>
       </span>
     </xsl:element>

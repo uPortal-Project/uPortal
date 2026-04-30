@@ -44,22 +44,22 @@
     padding: 3px;
     margin: 0 5px;
 }
-#${n}tenantManager .has-error .field-error {
+#${n}tenantManager .is-invalid .field-error {
     display: block;
 }
 </style>
 
 <div id="${n}tenantManager">
     <h2><spring:message code="tenant.manager.add" /></h2>
-    <form id="addTenantForm" role="form" class="form-horizontal" action="${doAddTenantUrl}" method="POST">
+    <form id="addTenantForm" role="form" class="" action="${doAddTenantUrl}" method="POST">
         <c:set var="errorCssClass">
             <c:choose>
-                <c:when test="${invalidFields['name'] ne null}">has-error</c:when>
+                <c:when test="${invalidFields['name'] ne null}">is-invalid</c:when>
                 <c:otherwise></c:otherwise>
             </c:choose>
         </c:set>
-        <div class="form-group ${errorCssClass}">
-            <label for="tenantName" class="col-sm-2 control-label"><spring:message code="tenant.manager.name" /></label>
+        <div class="row mb-3 ${errorCssClass}">
+            <label for="tenantName" class="col-sm-2 col-form-label"><spring:message code="tenant.manager.name" /></label>
             <div class="col-sm-10">
                 <c:set var="previousResponse">
                     <c:choose>
@@ -75,12 +75,12 @@
         <c:forEach items="${tenantManagerAttributes}" var="attribute">
             <c:set var="errorCssClass">
                 <c:choose>
-                    <c:when test="${invalidFields[attribute.key] ne null}">has-error</c:when>
+                    <c:when test="${invalidFields[attribute.key] ne null}">is-invalid</c:when>
                     <c:otherwise></c:otherwise>
                 </c:choose>
             </c:set>
-            <div class="form-group ${errorCssClass}">
-                <label for="${attribute.key}" class="col-sm-2 control-label"><spring:message code="${attribute.value}" /></label>
+            <div class="row mb-3 ${errorCssClass}">
+                <label for="${attribute.key}" class="col-sm-2 col-form-label"><spring:message code="${attribute.value}" /></label>
                 <div class="col-sm-10">
                     <c:set var="previousResponse">
                         <c:choose>
@@ -95,14 +95,14 @@
         </c:forEach>
 
         <c:if test="${not empty optionalOperationsListeners}">
-            <div class="form-group">
-                <label class="col-sm-2 control-label"><spring:message code="tenant.manager.optional.steps" /></label>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label"><spring:message code="tenant.manager.optional.steps" /></label>
                 <div class="col-sm-10">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="checkbox">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-check">
                                 <c:forEach items="${optionalOperationsListeners}" var="listener">
-                                    <label>
+                                    <label class="form-label">
                                         <input name="optionalListener" type="checkbox" value="${listener.fname}" checked="checked" /> <c:out value="${listener.name}" />
                                     </label>
                                 </c:forEach>
@@ -113,7 +113,7 @@
             </div>
         </c:if>
 
-        <div class="text-right">
+        <div class="text-end">
             <input type="hidden" name="fname" id="fname" value="">
             <button id="tenantFormSubmit" type="submit" class="btn btn-primary">Submit</button>
             <a href="<portlet:renderURL />" class="btn btn-link">Cancel</a>

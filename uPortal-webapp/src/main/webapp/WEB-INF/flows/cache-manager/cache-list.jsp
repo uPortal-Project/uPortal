@@ -26,10 +26,10 @@
 </portlet:renderURL>
 
 <!-- Portlet -->
-<div class="fl-widget portlet cache-mgr view-list" role="section">
+<div class="card portlet cache-mgr view-list" role="section">
 
   <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="card-header titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="uportal.cache.manager"/></h2>
         <div class="toolbar" role="toolbar">
             <a class="button btn btn-primary" href="${flushAllUrl}"><span><spring:message code="empty.all.caches" />&nbsp;&nbsp;<i class="fa fa-refresh"></i></span></a>
@@ -37,7 +37,7 @@
     </div> <!-- end: portlet-titlebar -->
 
   <!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content">
+  <div class="card-body content portlet-content">
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
     	<div class="titlebar">
@@ -49,7 +49,7 @@
       <div class="content">
         <p class="note" role="note"><spring:message code="select.cache.to.view.stats.and.clear.content"/></p>
 
-        <table class="portlet-table table-hover cache-table table table-condensed table-striped">
+        <table class="portlet-table table-hover cache-table table table-sm table-striped">
             <thead>
                 <tr>
                     <th><spring:message code="name"/></th>
