@@ -417,6 +417,7 @@ uPortal-webapp/out/
 # Project specific ignores
 /build.properties
 /data/
+/plans/
 
 ## Jekyll documentation
 
