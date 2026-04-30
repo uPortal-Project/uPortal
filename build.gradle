@@ -59,7 +59,7 @@ allprojects {
     }
 
     codenarc {
-        toolVersion = '3.7.0-groovy-4.0'
+        toolVersion = '3.7.0'
         reportFormat = 'console'
     }
 
