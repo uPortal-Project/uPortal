@@ -15,8 +15,19 @@ There are 3 prerequisites to cutting releases:
 4. [Set up public PGP key on a server](https://central.sonatype.org/pages/working-with-pgp-signatures.html)
     - Generate a key pair `gpg2 --gen-key`
     - If you choose to have an expiration date, edit the key via `gpg2 --edit-key {key ID}`
-    - Determine the key ID and keyring file `gpg2 --list-keys` (the key ID is the `pub` ID)
-    - Distribute your public key `gpg2 --keyserver hkp://keyserver.ubuntu.com --send-keys {key ID}`
+    - Determine the key ID and fingerprint via `gpg2 --list-keys` (the key ID is the `pub` ID; the fingerprint is the 40-char hex)
+    - **Publish your key on `keys.openpgp.org`** — the Central Publisher Portal queries this keyserver **first** when validating signatures. A key that is only on `keyserver.ubuntu.com` or other SKS-network servers will fail signature validation non-deterministically (verified against the [Maven portlet release guide](https://github.com/uPortal-Project/uportal-project.github.io/blob/master/manuals/en/uportal5-manual/developer/maven-release-process.md) during the 2026 portlet release cycle).
+        - `keys.openpgp.org` does not accept SKS-style API uploads. Export your public key with `gpg2 --export --armor {fingerprint} > pubkey.asc`, then paste the contents into the web form at <https://keys.openpgp.org/upload> and confirm via the email link they send to your key's UID address. Identity packets are gated behind email confirmation; without it the key publishes but searches against your email won't return it.
+        - Optionally also push to `keyserver.ubuntu.com` as a redundancy: `gpg2 --keyserver hkp://keyserver.ubuntu.com --send-keys {key ID}`
+        - The `pool.sks-keyservers.net` pool was decommissioned in 2021 — do not use it.
+    - **Verify your key is reachable on `keys.openpgp.org`** before every release session:
+
+        ```sh
+        $ curl -so /dev/null -w "%{http_code}\n" \
+            "https://keys.openpgp.org/vks/v1/by-fingerprint/{FINGERPRINT}"
+        ```
+
+        `200` = good. `404` = upload first.
 
 ## Setup
 
