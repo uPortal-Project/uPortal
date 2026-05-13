@@ -72,6 +72,21 @@ Ideally, dependencies in all of the above areas should be at the latest versions
 - `resourceServer13Version` - Only in uPortal-start. Should always be at the latest version
 - `personDirectoryVersion` - Should stay in sync across the dependency areas
 
+## Review NOTICE and License Headers
+
+Unlike the Maven-based components in the uPortal ecosystem (see [Maven release process for ecosystem components](https://github.com/uPortal-Project/uportal-project.github.io/blob/master/manuals/en/uportal5-manual/developer/maven-release-process.md)), uPortal's Gradle build does not currently regenerate `NOTICE` or enforce license headers. Until a Gradle equivalent of `mvn notice:generate` / `mvn license:format` is wired in, manually review the following before cutting a release:
+
+- `NOTICE` — copyright year range and contributor list are current
+- `LICENSE` — Apache License 2.0; should not change release-to-release
+- License headers on files added since the last release. A quick heuristic from the component root:
+
+    ```sh
+    $ git diff --name-only v{previous-version}..HEAD -- '*.java' '*.groovy' '*.xml' '*.jsp' | \
+        xargs -I {} sh -c 'head -3 "{}" | grep -q "Licensed to Apereo" || echo "MISSING header: {}"'
+    ```
+
+If anything drifts, commit the corrections — typically `chore: pre-release prep` — before continuing to Testing.
+
 ## Testing
 
 Build a clean version of `uPortal-start` with the quickstart data set and perform at least light testing, especially around features that have been fixed or enhanced.
