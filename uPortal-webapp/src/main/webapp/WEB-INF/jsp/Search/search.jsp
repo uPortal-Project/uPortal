@@ -140,7 +140,7 @@
     <c:set var="prepopulateAutoSuggestUrl" value="${pageContext.request.contextPath}${portletPreferencesValues['prepopulateAutoSuggestUrl'][0]}"/>
 </c:if>
 
-<script language="javascript" type="text/javascript"><rs:compressJs>
+<script language="javascript" type="text/javascript">
 (function($) {
 
     $(function() {
@@ -170,4 +170,4 @@
     });
 
 })(up.jQuery);
-</rs:compressJs></script>
+</script>

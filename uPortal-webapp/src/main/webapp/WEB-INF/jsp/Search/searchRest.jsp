@@ -56,7 +56,6 @@
      </div>
 </template>
 
-<script src="<rs:resourceURL value="/rs/lodash/4.17.4/lodash.min.js"/>"></script>
 <style>
     #search-results-tab-header {
         display: inline-block;
@@ -134,6 +133,22 @@
 <spring:message var="i18n_score" code="search.score" />
 
 <script language="javascript" type="text/javascript">
+// "peopleTab" -> "People Tab"; "portlets" -> "Portlets". Sufficient for
+// the camelCase JSON keys this page receives from the search API.
+function startCase(s) {
+    return s.replace(/([a-z])([A-Z])/g, '$1 $2')
+            .replace(/[-_]+/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+}
+// "peopleTab" -> "people-tab"
+function kebabCase(s) {
+    return s.replace(/([a-z])([A-Z])/g, '$1-$2')
+            .replace(/[\s_]+/g, '-')
+            .toLowerCase();
+}
+
 // This metadata object tells us which avatar (icon) and which
 // attribute to use as a primary display name for each result type
 var metadata = {
@@ -175,10 +190,11 @@ fetch('${searchApiUrl}', {credentials: 'same-origin'})
         return response.json();
     })
     .then(function (response) {
-        _.forEach(response, function (resultSet, tabProperty) {
+        Object.keys(response).forEach(function (tabProperty) {
+            var resultSet = response[tabProperty];
             // Generate formatted text
-            var tabName = _.startCase(tabProperty);
-            var tabId = _.kebabCase(tabProperty);
+            var tabName = startCase(tabProperty);
+            var tabId = kebabCase(tabProperty);
             // Setup tab header template
             var tabTemplate = document.getElementById('search-results-tab-header-template');
             var tabHeader = document.importNode(tabTemplate.content, true);
@@ -201,7 +217,7 @@ fetch('${searchApiUrl}', {credentials: 'same-origin'})
                 tabPanel.querySelector('div').appendChild(noResults);
             } else {
                 // add each result from the result set to the panel
-                _.forEach(resultSet, function (result) {
+                resultSet.forEach(function (result) {
                     // setup search result item template
                     var searchResultTemplate = document.getElementById('search-result-item-template');
                     var searchResult = document.importNode(searchResultTemplate.content, true);
@@ -214,15 +230,16 @@ fetch('${searchApiUrl}', {credentials: 'same-origin'})
                         searchResult.querySelector('.up-search-list-item-secondary-content').style.visibility = 'hidden';
                     }
                     var resultAttributeList = searchResult.querySelector('dl');
-                    _.forOwn(result, function(attributeValue, attributeName){
+                    Object.keys(result).forEach(function (attributeName) {
                         // We will only display the items in the i18n list
-                        if (i18n.hasOwnProperty(attributeName)) {
+                        if (Object.prototype.hasOwnProperty.call(i18n, attributeName)) {
+                            var attributeValue = result[attributeName];
                             var translatedAttributeName = i18n[attributeName];
                             // setup attribute pairing template
                             var attributePairTemplate = document.getElementById('search-result-item-detail-template');
                             var attributePair = document.importNode(attributePairTemplate.content, true);
                             // add values
-                            attributePair.querySelector('dt').textContent = _.startCase(translatedAttributeName) + ':';
+                            attributePair.querySelector('dt').textContent = startCase(translatedAttributeName) + ':';
                             attributePair.querySelector('dd').textContent = attributeValue;
                             // add attributes to the result
                             resultAttributeList.appendChild(attributePair);

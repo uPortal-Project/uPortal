@@ -52,7 +52,6 @@
     <li><a href=""><span class="title"></span></a></li>
 </template>
 
-<script src="<rs:resourceURL value="/rs/lodash/4.17.4/lodash.min.js"/>"></script>
 
 <%-- API URL for fetching layout details to build sitemap --%>
 <c:set value="${renderRequest.contextPath}" var="portalContextPath" />
@@ -71,10 +70,29 @@
     if (holder.dataset.sitemapInit) return;
     holder.dataset.sitemapInit = '1';
 
+    // hasPath('a.b.c', obj) — supports the dot-path semantics of lodash _.has
+    function hasPath(obj, dotPath) {
+        var parts = dotPath.split('.');
+        for (var i = 0; i < parts.length; i++) {
+            if (obj == null || typeof obj !== 'object' || !(parts[i] in obj)) {
+                return false;
+            }
+            obj = obj[parts[i]];
+        }
+        return true;
+    }
+    // Decode the small set of HTML entities lodash _.unescape covers.
+    var UNESCAPE_MAP = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&#96;': '`' };
+    function unescapeHtml(s) {
+        return String(s == null ? '' : s).replace(/&(amp|lt|gt|quot|#39|#96);/g, function (m) {
+            return UNESCAPE_MAP[m];
+        });
+    }
+
     // If a path check fails, it'll throw an error.
     function sitemapJsonCheck(jsonObj, pathChecks, errMsg) {
-        return !_.every(pathChecks, function(pathCheck) {
-            if(!_.has(jsonObj, pathCheck)) {
+        return !pathChecks.every(function (pathCheck) {
+            if (!hasPath(jsonObj, pathCheck)) {
                 console.log(errMsg + pathCheck);
                 return false;
             }
@@ -105,23 +123,23 @@
             // Begin tab row
             var tabRowTemplate = document.getElementById('sitemap-tab-row-template');
             var tabRow = document.importNode(tabRowTemplate.content, true).querySelector('div');
-            _.forEach(response.layout.navigation.tabs, function (tab, tabIndex) {
+            response.layout.navigation.tabs.forEach(function (tab, tabIndex) {
                 if (!sitemapJsonCheck(tab, ['name', 'externalId', 'content'], "Missing required object path [layout.navigation.tabs] > ")) {
                     // Setup tab link
                     var tabTemplate = document.getElementById('sitemap-tab-template');
                     var tabHeader = document.importNode(tabTemplate.content, true).querySelector('div');
                     // Add content to tab header template
                     var tabHeaderLink = tabHeader.querySelector('a');
-                    tabHeaderLink.textContent = _.unescape(tab.name);
+                    tabHeaderLink.textContent = unescapeHtml(tab.name);
                     tabHeaderLink.href = '${portalContextPath}/f/' + tab.externalId + '/normal/render.uP';
                     var portletList = tabHeader.querySelector('ul');
 
-                    _.forEach(tab.content, function (parentContent, parentContentIndex) {
+                    tab.content.forEach(function (parentContent, parentContentIndex) {
                         if (sitemapJsonCheck(parentContent, ['content'], "Missing required object path [layout.navigation.tabs] > content > ")) {
                             return;
                         }
 
-                        _.forEach(parentContent.content, function (portlet, portletIndex) {
+                        parentContent.content.forEach(function (portlet, portletIndex) {
                             if (sitemapJsonCheck(portlet, ['name', 'fname', 'ID'], "Missing required object path [layout.navigation.tabs] > content > content > ")) {
                                 return;
                             }
@@ -131,7 +149,7 @@
                             var portletListItem = document.importNode(portletTemplate.content, true).querySelector('li');
                             // Add content to portlet template
                             var portletTitle = portletListItem.querySelector('span');
-                            portletTitle.textContent = _.unescape(portlet.name);
+                            portletTitle.textContent = unescapeHtml(portlet.name);
                             var portletLink = portletListItem.querySelector('a');
                             portletLink.href = '${portalContextPath}/f/' + tab.externalId + '/p/' + portlet.fname + '.' + portlet.ID + '/max/render.uP';
                             if (portlet.parameters && portlet.parameters.alternativeMaximizedLink) {

@@ -152,7 +152,7 @@
   </div>
   <div class="ui-helper-clearfix"></div>
 
-  <script type="text/javascript"><rs:compressJs>
+  <script type="text/javascript">
   up.jQuery(function($) {
       up.TranslatorPortlet("#${ns}container",  {
           namespace: "<portlet:namespace />",
@@ -175,5 +175,5 @@
           }
       });
   });
-  </rs:compressJs></script>
+  </script>
 </div>

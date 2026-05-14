@@ -23,16 +23,16 @@
 
 <script type="text/javascript" src="//www.google.com/jsapi"></script>
 
-<rs:resourceURL var="rgbcolorScriptPath" value="/rs/canvg/r144/rgbcolor-r144.min.js"/>
+<c:set var="rgbcolorScriptPath" value="/resource-server/rs/canvg/r144/rgbcolor-r144.min.js"/>
 <script type="text/javascript" src="${rgbcolorScriptPath}"></script>
 
-<rs:resourceURL var="canvgScriptPath" value="/rs/canvg/r144/canvg-r144.min.js"/>
+<c:set var="canvgScriptPath" value="/resource-server/rs/canvg/r144/canvg-r144.min.js"/>
 <script type="text/javascript" src="${canvgScriptPath}"></script>
 
-<rs:resourceURL var="base64ScriptPath" value="/rs/canvas2image/base64-1.0.min.js"/>
+<c:set var="base64ScriptPath" value="/resource-server/rs/canvas2image/base64-1.0.min.js"/>
 <script type="text/javascript" src="${base64ScriptPath}"></script>
 
-<rs:resourceURL var="canvas2imageScriptPath" value="/rs/canvas2image/canvas2image-0.1.min.js"/>
+<c:set var="canvas2imageScriptPath" value="/resource-server/rs/canvas2image/canvas2image-0.1.min.js"/>
 <script type="text/javascript" src="${canvas2imageScriptPath}"></script>
 
 <!-- Portlet -->
@@ -114,7 +114,6 @@
 </div>
 
 <script type="text/javascript">
-<rs:compressJs>
 google.load("visualization", "1.0", {
    packages : [ "corechart", "charteditor" ]
 });
@@ -358,5 +357,4 @@ up.jQuery(function() {
    $("#${n}_reportForm select[name=interval]").change(validateIntervals);
 
 });
-</rs:compressJs>
 </script>
