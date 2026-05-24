@@ -9,9 +9,9 @@ plugins {
 
     // Sub project plugins
     id 'com.github.sherter.google-java-format' version '0.9' apply false
-    id 'nebula.lint' version '17.8.0' apply false
-    id 'net.ltgt.errorprone' version '4.4.0' apply false
-    id 'com.github.spotbugs' version '4.8.0' apply false
+    id 'nebula.lint' version '20.6.2' apply false
+    id 'net.ltgt.errorprone' version '5.1.0' apply false
+    id 'com.github.spotbugs' version '6.0.28' apply false
 }
 
 description = "Apereo uPortal $version"
@@ -54,7 +54,6 @@ allprojects {
 
     dependencies {
         errorprone 'com.google.errorprone:error_prone_core:2.3.4'
-        errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"
     }
 
     codenarc {
@@ -83,8 +82,8 @@ allprojects {
         enabled = gradle.startParameter.taskNames.contains(it.name)
         reports {
             html {
-                enabled = true
-                destination = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+                required = true
+                outputLocation = file("$buildDir/reports/spotbugs/main/spotbugs.html")
                 stylesheet = 'fancy-hist.xsl'
             }
         }
