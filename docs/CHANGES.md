@@ -13,6 +13,17 @@
   validation) was replaced with Ant-based XJC tasks in `uPortal-io-jaxb`
   and `uPortal-api-search`.
 
+- **Java formatter switched from the sherter google-java-format plugin
+  to Spotless.** The previous plugin (`com.github.sherter.google-java-format`
+  0.9) was last released in 2019 and was last tested against Gradle 6.5;
+  Spotless 7.2.1 takes its place and runs google-java-format 1.8 under
+  the AOSP profile. Task names contributors invoke have changed:
+  `./gradlew verGJF` → `./gradlew spotlessCheck`, `./gradlew goJF` →
+  `./gradlew spotlessApply`. Seven stray no-op empty statements (`;`
+  after a closing brace, e.g. `public UserProfile() {};`) were removed
+  to keep the diff small; google-java-format 1.8 would otherwise have
+  reformatted them onto their own line.
+
 ## v5.17.3
 
 - substantial frontend modernization landed in [#2915](https://github.com/uPortal-Project/uPortal/pull/2915):
