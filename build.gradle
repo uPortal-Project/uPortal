@@ -93,6 +93,15 @@ allprojects {
         options style: 'AOSP'
         exclude '**/generated-sources'
     }
+    // The root verifyGoogleJavaFormat scans the project tree which overlaps with
+    // the webapp's nodeSetup/npmInstall output directory.  Mirror the per-project
+    // fix in uPortal-webapp/build.gradle to satisfy Gradle 8's implicit-dependency
+    // validation.
+    if (project == rootProject) {
+        tasks.named('verifyGoogleJavaFormat') {
+            mustRunAfter ':uPortal-webapp:nodeSetup', ':uPortal-webapp:npmInstall'
+        }
+    }
 
     /*======== Aggregate Dependencies Report ========*/
     task dependenciesRecursive(type: DependencyReportTask) {
