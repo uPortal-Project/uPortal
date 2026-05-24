@@ -107,7 +107,7 @@ public abstract class BaseTransformerSource implements TransformerSource, Resour
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final long id = this.getStylesheetDescriptorId(preferencesManager);
         return this.stylesheetDescriptorDao.getStylesheetDescriptor(id);
-    };
+    }
 
     private Resource getStylesheetResource(HttpServletRequest request) {
         final IStylesheetDescriptor stylesheetDescriptor = this.getStylesheetDescriptor(request);

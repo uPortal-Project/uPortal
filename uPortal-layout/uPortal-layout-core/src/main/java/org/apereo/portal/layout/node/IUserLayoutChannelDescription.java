@@ -248,4 +248,4 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      */
     @Override
     Element getXML(Document root);
-};
+}

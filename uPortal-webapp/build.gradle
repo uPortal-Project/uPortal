@@ -30,10 +30,10 @@ apply plugin: 'com.github.node-gradle.node'
 
 description = "Apereo uPortal Webapp (WAR)"
 
-// The google-java-format plugin scans the project directory which overlaps with
-// the node plugin's nodeSetup/npmInstall output directory.  Declare ordering to
-// satisfy Gradle 8's implicit-dependency validation.
-tasks.named('verifyGoogleJavaFormat') {
+// Spotless scans the project directory which overlaps with the node plugin's
+// nodeSetup/npmInstall output directory.  Declare ordering to satisfy Gradle 8's
+// implicit-dependency validation.
+tasks.matching { it.name == 'spotlessJavaCheck' || it.name == 'spotlessJavaApply' }.configureEach {
     mustRunAfter tasks.named('nodeSetup'), tasks.named('npmInstall')
 }
 

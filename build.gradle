@@ -8,7 +8,7 @@ plugins {
     // id 'cz.malohlava.visteg' version '1.0.5'
 
     // Sub project plugins
-    id 'com.github.sherter.google-java-format' version '0.9' apply false
+    id 'com.diffplug.spotless' version '7.2.1' apply false
     id 'nebula.lint' version '20.6.2' apply false
     id 'net.ltgt.errorprone' version '5.1.0' apply false
     id 'com.github.spotbugs' version '6.0.28' apply false
@@ -41,7 +41,7 @@ allprojects {
     apply plugin: 'nebula.lint'
     apply plugin: 'groovy'
     apply plugin: 'codenarc'
-    apply plugin: 'com.github.sherter.google-java-format'
+    apply plugin: 'com.diffplug.spotless'
     apply plugin: 'net.ltgt.errorprone'
 
     configurations {
@@ -88,17 +88,21 @@ allprojects {
             }
         }
     }
-    googleJavaFormat {
-        toolVersion '1.7'
-        options style: 'AOSP'
-        exclude '**/generated-sources'
+    spotless {
+        java {
+            // 1.8 is the lowest version Spotless accepts on JVM 11; the previous
+            // sherter plugin pinned 1.7.  The two produce nearly identical output,
+            // diverging only when empty statements follow a closing brace.
+            googleJavaFormat('1.8').aosp()
+            targetExclude '**/generated-sources/**', '**/build/**'
+        }
     }
-    // The root verifyGoogleJavaFormat scans the project tree which overlaps with
-    // the webapp's nodeSetup/npmInstall output directory.  Mirror the per-project
-    // fix in uPortal-webapp/build.gradle to satisfy Gradle 8's implicit-dependency
+    // The root spotlessJavaCheck scans the project tree which overlaps with the
+    // webapp's nodeSetup/npmInstall output directory.  Order the root task to run
+    // after the webapp's node setup to satisfy Gradle 8's implicit-dependency
     // validation.
     if (project == rootProject) {
-        tasks.named('verifyGoogleJavaFormat') {
+        tasks.matching { it.name == 'spotlessJavaCheck' || it.name == 'spotlessJavaApply' }.configureEach {
             mustRunAfter ':uPortal-webapp:nodeSetup', ':uPortal-webapp:npmInstall'
         }
     }

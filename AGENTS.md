@@ -62,7 +62,7 @@ Run `./gradlew :module-name:test` to confirm. Do not claim "done" without runnin
 - **XSLT** rendering pipeline for portal page composition
 - **CAS 3.6.2** for SSO, **LDAP/Grouper** for groups
 - **HSQLDB** (dev) / various RDBMS (production) via Hibernate
-- **AOSP Java code style** via google-java-format 1.7
+- **AOSP Java code style** via google-java-format 1.8 (driven by Spotless 7.2.1)
 
 ### Java version details
 
@@ -272,10 +272,10 @@ npx playwright test --config=tests/uportal-pw.config.ts --debug
 ./gradlew install
 
 # Check Java formatting (AOSP style)
-./gradlew verGJF
+./gradlew spotlessCheck
 
 # Auto-format Java
-./gradlew goJF
+./gradlew spotlessApply
 
 # Lint JavaScript
 npx eslint . --report-unused-disable-directives --max-warnings 0
@@ -411,8 +411,8 @@ Mixed XML and Java @Configuration:
 ## Code style and conventions
 
 **Java:**
-- AOSP style (google-java-format 1.7): 4-space indent, same-line braces
-- Run `./gradlew verGJF` to check, `./gradlew goJF` to auto-fix
+- AOSP style (google-java-format 1.8 via Spotless): 4-space indent, same-line braces
+- Run `./gradlew spotlessCheck` to check, `./gradlew spotlessApply` to auto-fix
 - Package root: `org.apereo.portal`
 - Every file requires the Apereo Apache 2.0 license header
 
@@ -527,7 +527,7 @@ Source compiles under Java 11, so Java 9–11 language features and APIs (`var`,
 [ ] Every changed line traces to the stated task
 [ ] Tests exist for the change (or I've explained why not)
 [ ] Tests pass: ./gradlew :module:test
-[ ] Java formatting passes: ./gradlew verGJF
+[ ] Java formatting passes: ./gradlew spotlessCheck
 [ ] No Java 12+ language features or APIs used
 [ ] No new dependencies added without version in gradle.properties
 [ ] License header present on any new files
