@@ -1,10 +1,7 @@
 /*
- * Skip installing and uploading this level of the hierarchy;  it's merely a convenient grouping
+ * Skip publishing this level of the hierarchy; it's merely a convenient grouping
  * for submodules.
  */
-install {
-    enabled = false
-}
-uploadArchives {
-    enabled = false
-}
+install.enabled = false
+tasks.withType(PublishToMavenLocal).configureEach { enabled = false }
+tasks.withType(PublishToMavenRepository).configureEach { enabled = false }

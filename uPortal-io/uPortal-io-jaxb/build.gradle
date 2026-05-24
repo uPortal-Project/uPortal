@@ -1,22 +1,21 @@
-plugins {
-    id 'org.openrepose.gradle.plugins.jaxb' version '2.5.0'
-}
-
 description = 'Apereo uPortal Import/Export JAXB Data Model'
+
+configurations {
+    jaxb
+}
 
 ext {
     generatedSourcesDir = "${buildDir}/generated-sources/xjc"
 }
 
 dependencies {
-    // All 6 of the following are for the 'com.github.jacobono.jaxb' plugin
     jaxb 'com.sun.xml.bind:jaxb-xjc:2.3.9'
     jaxb 'com.sun.xml.bind:jaxb-impl:2.3.9'
     jaxb "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
     jaxb 'org.jvnet.jaxb2_commons:jaxb2-basics-ant:1.11.1'
     jaxb 'org.jvnet.jaxb2_commons:jaxb2-basics:1.11.1'
     jaxb 'org.jvnet.jaxb2_commons:jaxb2-basics-annotate:1.1.0'
-    compile "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
+    api "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
 }
 
 /*
@@ -28,24 +27,32 @@ dependencies {
 sourceSets {
     main {
         java {
-            // srcDir 'src/main/java'
             srcDir generatedSourcesDir
         }
     }
 }
 
-jaxb {
-    // Without the 'accessExternalSchema' setting, this module will not build on Java 8
-    System.setProperty('javax.xml.accessExternalSchema', 'all')
-    xsdDir = "${projectDir}/src/main/resources/xsd"
-    bindingsDir = "${projectDir}/src/main/binding"
-    bindings = ['bindings.xjb']
-    // Not sure of the role of episodes, but it's better to specify a location within build/
-    episodesDir = "${buildDir}/schema/episodes"
-    xjc {
-        taskClassname = 'org.jvnet.jaxb2_commons.xjc.XJC2Task'
-        destinationDir = generatedSourcesDir
-        producesDir = generatedSourcesDir
+task xjc {
+    inputs.dir "${projectDir}/src/main/resources/xsd"
+    inputs.dir "${projectDir}/src/main/binding"
+    outputs.dir generatedSourcesDir
+
+    doLast {
+        System.setProperty('javax.xml.accessExternalSchema', 'all')
+        mkdir generatedSourcesDir
+        ant.taskdef(
+            name: 'xjc',
+            classname: 'org.jvnet.jaxb2_commons.xjc.XJC2Task',
+            classpath: configurations.jaxb.asPath
+        )
+        ant.xjc(
+            destdir: generatedSourcesDir,
+            extension: 'true'
+        ) {
+            schema(dir: "${projectDir}/src/main/resources/xsd", includes: '**/*.xsd')
+            binding(dir: "${projectDir}/src/main/binding", includes: 'bindings.xjb')
+            classpath { path(path: configurations.jaxb.asPath) }
+        }
     }
 }
 

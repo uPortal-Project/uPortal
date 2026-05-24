@@ -1,5 +1,18 @@
 ## Next Release
 
+- **Gradle wrapper bumped from 6.9.4 to 8.5.** Contributors using a
+  system Gradle install (instead of the bundled wrapper) must move to
+  Gradle 8.5 or newer. The wrapper itself remains the recommended
+  entry point. Driven by the Spring 5/6 migration, which requires
+  Gradle 7+ for its plugin set and dependency-management tooling. The
+  build also dropped `jcenter()` (shut down in 2022); only
+  `mavenCentral()` is consulted now. Plugins bumped alongside the
+  wrapper: `nebula.lint` 17.8.0 → 20.6.2, `net.ltgt.errorprone`
+  4.4.0 → 5.1.0, `com.github.spotbugs` 4.8.0 → 6.0.28. The old
+  `org.openrepose` JAXB plugin (incompatible with Gradle 7+ task
+  validation) was replaced with Ant-based XJC tasks in `uPortal-io-jaxb`
+  and `uPortal-api-search`.
+
 ## v5.17.3
 
 - substantial frontend modernization landed in [#2915](https://github.com/uPortal-Project/uPortal/pull/2915):
