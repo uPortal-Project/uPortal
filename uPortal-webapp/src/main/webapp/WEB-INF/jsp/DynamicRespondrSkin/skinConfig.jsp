@@ -107,7 +107,6 @@
 </div>
 
 <script language="javascript" type="text/javascript">
-<rs:compressJs>
 (function() {
 
     // De-alias jQuery safely within this self-invoking function
@@ -176,5 +175,4 @@
     });
 
 })();
-</rs:compressJs>
 </script>

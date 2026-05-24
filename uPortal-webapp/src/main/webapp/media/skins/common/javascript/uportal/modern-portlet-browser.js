@@ -248,7 +248,7 @@ class PortletRegistry {
             iconUrl:
                 channel.iconUrl ||
                 channel.parameters?.iconUrl?.value ||
-                '/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png',
+                '/resource-server/rs/tango/0.8.90/32x32/categories/applications-other.png',
         };
     }
 
@@ -476,7 +476,7 @@ class PortletListView {
                 </a>
                 <div class="ri-content portlet-thumb-content ui-helper-clearfix">
                     <div class="ri-titlebar portlet-thumb-titlebar">${portlet.title}</div>
-                    <div class="ri-icon portlet-thumb-icon" style="background: url(${portlet.iconUrl || '/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png'}) top left no-repeat;"><span>Thumbnail</span></div>
+                    <div class="ri-icon portlet-thumb-icon" style="background: url(${portlet.iconUrl || '/resource-server/rs/tango/0.8.90/32x32/categories/applications-other.png'}) top left no-repeat;"><span>Thumbnail</span></div>
                     <div class="ri-description portlet-thumb-description">${portlet.description || ''}</div>
                 </div>
             </div>

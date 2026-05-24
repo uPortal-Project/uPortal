@@ -45,6 +45,6 @@
     </parameter>
     <parameter>
         <name>iconUrl</name>
-        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-system.png</value>
+        <value>/resource-server/rs/tango/0.8.90/32x32/categories/applications-system.png</value>
     </parameter>
 </portlet-definition>

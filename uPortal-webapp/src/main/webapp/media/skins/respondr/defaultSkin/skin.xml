@@ -25,13 +25,11 @@
 
   <css>https://fonts.googleapis.com/css?family=Oxygen</css>
 
-  <css included="plain">/ResourceServingWebapp/rs/normalize/2.1.2/normalize-2.1.2.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/normalize/2.1.2/normalize-2.1.2.min.css</css>
+  <!-- normalize.css removed 2026-05-06: Bootstrap 5's reboot.css covers
+       the same browser-default normalization for any BS5-baseline browser. -->
 
-
-
-  <css included="plain">/ResourceServingWebapp/rs/fontawesome/4.7.0/css/font-awesome.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/fontawesome/4.7.0/css/font-awesome.min.css</css>
+  <css included="plain">/resource-server/rs/fontawesome/4.7.0/css/font-awesome.css</css>
+  <css included="aggregated">/resource-server/rs/fontawesome/4.7.0/css/font-awesome.min.css</css>
 
 
 

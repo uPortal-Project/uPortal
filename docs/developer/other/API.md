@@ -85,7 +85,7 @@ Example response:
     "title": "Welcome to uPortal",
     "description": "Description of uPortal.",
     "url": null,
-    "iconUrl": "/ResourceServingWebapp/rs/tango/0.8.90/32x32/mimetypes/text-html.png",
+    "iconUrl": "/resource-server/rs/tango/0.8.90/32x32/mimetypes/text-html.png",
     "faIcon": null,
     "fname": "what-is-uportal",
     "target": null,
@@ -97,7 +97,7 @@ Example response:
     "pithyStaticContent": null,
     "parameters": {
       "mobileIconUrl": "/uPortal/media/skins/icons/mobile/feedback.png",
-      "iconUrl": "/ResourceServingWebapp/rs/tango/0.8.90/32x32/mimetypes/text-html.png",
+      "iconUrl": "/resource-server/rs/tango/0.8.90/32x32/mimetypes/text-html.png",
       "disableDynamicTitle": "true",
       "configurable": "true"
     },

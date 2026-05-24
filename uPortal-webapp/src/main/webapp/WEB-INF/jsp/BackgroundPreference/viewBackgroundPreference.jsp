@@ -108,7 +108,7 @@
     }
 
     #${n}background-edit-control .background-edit-button .edit-button-image {
-        background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/image_edit.png") no-repeat;
+        background: url("/resource-server/rs/famfamfam/silk/1.3/image_edit.png") no-repeat;
         height: 16px;
         width: 16px;
         display: inline-block;

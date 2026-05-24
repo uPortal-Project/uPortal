@@ -60,7 +60,6 @@
 
 <script src="<c:url value='/scripts/session-timeout.js'/>"></script>
 <script>
-    <rs:compressJs>
         up.SessionTimeoutInstance = up.SessionTimeout({
             enabled: ${enabled},
             sessionTimeoutMS: ${sessionTimeoutMS},
@@ -71,5 +70,4 @@
         });
 
         up.SessionTimeoutInstance.startTimer();
-    </rs:compressJs>
 </script>
