@@ -33,7 +33,7 @@ public class UserProfile implements Serializable, IUserProfile {
     private boolean system = false;
     private LocaleManager localeManager;
 
-    public UserProfile() {};
+    public UserProfile() {}
 
     public UserProfile(
             int id,

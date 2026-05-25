@@ -1914,7 +1914,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                                     @Override
                                     public String getMessage() {
                                         return "one <channel> element inside another";
-                                    };
+                                    }
                                 }
                             }));
 }

@@ -194,5 +194,5 @@ public class ModelAttributeServiceTest extends ModelAttributeService {
         public Class<? extends Annotation> annotationType() {
             return getClass();
         }
-    };
+    }
 }

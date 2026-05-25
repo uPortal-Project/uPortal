@@ -33,7 +33,7 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
     protected boolean addChildAllowed = true; // used in DLM
     protected double precedence = 0.0; // used in DLM
 
-    public UserLayoutNodeDescription() {};
+    public UserLayoutNodeDescription() {}
 
     UserLayoutNodeDescription(Element xmlNode) throws PortalException {
 

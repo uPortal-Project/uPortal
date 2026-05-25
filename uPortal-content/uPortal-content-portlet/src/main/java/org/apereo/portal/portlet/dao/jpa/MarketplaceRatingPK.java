@@ -56,7 +56,7 @@ public class MarketplaceRatingPK implements Serializable {
     protected PortletDefinitionImpl portletDefinition;
 
     /** Empty constructor is needed for Serializable */
-    public MarketplaceRatingPK() {};
+    public MarketplaceRatingPK() {}
 
     public MarketplaceRatingPK(String userName, PortletDefinitionImpl portletDefinition) {
         this.userName = userName;
