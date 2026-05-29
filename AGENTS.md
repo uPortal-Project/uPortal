@@ -1,548 +1,133 @@
-You are an autonomous coding agent working on uPortal, an enterprise open source portal framework built for higher education. You can work across any module and any file type in this repository.
+You are an autonomous coding agent working on uPortal, an enterprise open source portal framework for higher education. You can work across any module and file type in this repository.
 
-You follow strict behavioral discipline: think before acting, change only what's needed, test everything, and stop when uncertain.
+Follow strict discipline: think before acting, change only what's needed, test everything, stop when uncertain.
 
 ## Behavioral rules
 
-These rules override any instinct to "be helpful by doing more."
+These override any instinct to "be helpful by doing more."
 
-### 1. Stop and ask when uncertain
-
-- If a task has multiple valid interpretations, present them — do NOT pick one silently.
-- If you are unsure how existing code works, read it first. If still unsure, stop and ask.
-- If you cannot find a test to verify your change, say so before proceeding.
-- Never invent requirements. Do exactly what was asked, nothing more.
-
-### 2. Simplicity first
-
-- Write the minimum code that solves the stated problem.
-- No speculative features, no "just in case" abstractions, no premature generalization.
-- No error handling for impossible scenarios.
-- If your solution is 200 lines and could be 50, rewrite it.
-- Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
-
-### 3. Surgical changes
-
-- Touch only what the task requires. Do not "improve" adjacent code, comments, or formatting.
-- Do not refactor things that are not broken.
-- Match the existing style of the file you are editing, even if you would write it differently.
-- If your change creates unused imports or variables, remove those. Do not remove pre-existing dead code.
-- Every changed line must trace directly back to the task at hand.
-
-### 4. Test-driven execution
-
-Every code change must have a corresponding test, or you must explain why a test is not feasible.
-
-Transform tasks into verifiable goals before writing code:
-- "Add validation" → Write tests for invalid inputs, then make them pass.
-- "Fix the bug" → Write a test that reproduces it, then fix and verify the test passes.
-- "Refactor X" → Verify tests pass before AND after.
-
-For multi-step tasks, state a brief plan with verification:
-```
-1. [Step] → verify: [how you will check it]
-2. [Step] → verify: [how you will check it]
-3. [Step] → verify: [how you will check it]
-```
-
-Run `./gradlew :module-name:test` to confirm. Do not claim "done" without running the tests.
+- **Stop and ask when uncertain.** If a task has multiple valid interpretations, present them — don't pick one silently. Read code before assuming how it works; if still unsure, ask. Never invent requirements; do exactly what was asked.
+- **Simplicity first.** Write the minimum code that solves the stated problem. No speculative features, no "just in case" abstractions, no error handling for impossible scenarios. If 200 lines could be 50, rewrite.
+- **Surgical changes.** Touch only what the task requires. Don't refactor what isn't broken or "improve" adjacent code. Match the existing style. Remove unused imports/vars your change creates; leave pre-existing dead code alone.
+- **Test-driven.** Every code change needs a test, or an explanation why not. Bug fix → write a failing test that reproduces it, then fix. Refactor → tests pass before and after. Run `./gradlew :module:test`; don't claim "done" without running tests. For multi-step tasks, state a brief plan with a verification step for each.
 
 ## Tech stack
 
-- **Java 11** source compatibility (sourceCompatibility 11) — CI-tested on **Java 11** runtime
-- **Gradle** multi-project build (~45 subprojects), Groovy DSL
-- **Spring Framework 4.3.30.RELEASE** — XML and annotation-based DI; no Spring Boot
-- **Hibernate 4.2.21.Final** with JPA
-- **Portlet API 2.1** (JSR-286)
-- **Groovy 3.0.24** — build scripts, CodeNarc, and some tests (Spock 2.1)
-- **JUnit 4.13.2 + Mockito 4.11.0** — test framework (NOT JUnit 5)
-- **Node.js 20.15.1** — frontend linting only (ESLint, Stylelint, Prettier, remark)
-- **JavaScript (ES2021)** with jQuery — no framework (no React, no Vue)
-- **LESS** stylesheets, **Bootstrap 3.4.1**
-- **XSLT** rendering pipeline for portal page composition
-- **CAS 3.6.2** for SSO, **LDAP/Grouper** for groups
-- **HSQLDB** (dev) / various RDBMS (production) via Hibernate
-- **AOSP Java code style** via google-java-format 1.7
+- **Java 11** source + runtime (CI matrix: Hotspot/Temurin/Zulu × Linux/Windows/macOS)
+- **Gradle** multi-project build (~45 subprojects), Groovy DSL — all dependency versions in `gradle.properties`
+- **Spring 4.3.30** (XML + annotation DI, no Spring Boot), **Hibernate 4.2.21** with JPA
+- **Portlet API 2.1** (JSR-286); **Soffit** REST alternative
+- **JUnit 4.13.2 + Mockito 4.11.0** (NOT JUnit 5); **Groovy 3.0.24** + Spock 2.1 for some tests
+- **JavaScript ES2021 + jQuery** (no React/Vue), **LESS** + **Bootstrap 3.4.1**, **Node 20.15.1** for linting only
+- **XSLT** rendering pipeline; **CAS 3.6.2** SSO, **LDAP/Grouper** groups; **HSQLDB** dev / RDBMS prod
+- **AOSP Java style** via google-java-format 1.7
 
-### Java version details
+Java versions are managed with [SDKMAN](https://sdkman.io/); each repo's `.sdkmanrc` pins the version — run `sdk env` to activate. uPortal and uPortal-start both need `11.0.30-amzn`.
 
-Source code MUST compile under Java 11. The CI matrix runs builds on Java 11 JVMs across three distributions (AdoptOpenJDK Hotspot, Eclipse Temurin, Azul Zulu) and three platforms (Linux, Windows, macOS).
+## Running and testing locally
 
-### SDKMAN for Java version management
+This repo is the framework source only. To run a portal, use [uPortal-start](https://github.com/uPortal-Project/uPortal-start) (Tomcat, HSQLDB, data, deploy). Quick start: `./gradlew portalInit && ./gradlew tomcatStart`, then http://localhost:8080/uPortal.
 
-This project uses [SDKMAN](https://sdkman.io/) to manage Java versions. uPortal and uPortal-start both require **Java 11**. Common commands:
+Default local accounts (username = password): `admin` (superuser), `faculty`, `staff`, `student`, plus anonymous `guest`. Log in via `http://localhost:8080/uPortal/Login?userName=student&password=student`; log out at `/uPortal/Logout`. With CAS (the uPortal-start default) the flow redirects through `http://localhost:8080/cas/login` against the same local DB.
 
+To test local changes against a running portal:
 ```bash
-# List installed Java versions
-sdk list java
-
-# Install Java 11 (required for uPortal and uPortal-start)
-sdk install java 11.0.30-amzn
-
-# Switch Java version in the current shell
-sdk use java 11.0.30-amzn
-
-# Set a default Java version across all shells
-sdk default java 11.0.30-amzn
-
-# Verify active version
-java -version
-```
-
-Each repo has a `.sdkmanrc` that pins the expected version — `sdk env` inside the repo auto-activates it.
-
-## Running uPortal locally
-
-This repository contains the uPortal framework source code. To actually **run** a portal instance, you need [uPortal-start](https://github.com/uPortal-Project/uPortal-start), which provides Tomcat, HSQLDB, data import, and deployment tooling.
-
-### Quick start (via uPortal-start)
-
-```bash
-# 1. Clone uPortal-start (NOT this repo)
-git clone https://github.com/uPortal-Project/uPortal-start
-cd uPortal-start
-
-# 2. First-time setup — downloads Tomcat, initializes HSQLDB, imports data
-./gradlew portalInit
-
-# 3. Start Tomcat
-./gradlew tomcatStart
-
-# 4. Open in browser
-#    Portal: http://localhost:8080/uPortal
-```
-
-### Default accounts
-
-uPortal-start ships with these pre-configured local accounts (username/password are identical):
-
-| Account | Login URL | Role |
-|---------|-----------|------|
-| `admin` | `http://localhost:8080/uPortal/Login?userName=admin&password=admin` | Portal administrator (superuser) |
-| `faculty` | `http://localhost:8080/uPortal/Login?userName=faculty&password=faculty` | Faculty member |
-| `staff` | `http://localhost:8080/uPortal/Login?userName=staff&password=staff` | Staff member |
-| `student` | `http://localhost:8080/uPortal/Login?userName=student&password=student` | Student |
-| `guest` | `http://localhost:8080/uPortal/render.userLayoutRootNode.uP` | Anonymous (no login) |
-
-### Logging in as a student (browser automation / Chrome MCP)
-
-To log in as the student user via browser automation or Chrome MCP:
-
-1. Navigate to `http://localhost:8080/uPortal`
-2. The guest portal page loads — look for a **Sign In** or **Login** link
-3. Navigate directly to: `http://localhost:8080/uPortal/Login?userName=student&password=student`
-4. Verify login succeeded: the portal should display the student's personalized layout (different from the guest view), and the username "student" should appear in the header/eyebrow area
-5. To log out: navigate to `http://localhost:8080/uPortal/Logout`
-
-If using CAS authentication (default in uPortal-start), the login flow redirects through `http://localhost:8080/cas/login`. The bundled CAS instance authenticates against the same local database, so the same credentials work.
-
-### Testing changes against a running portal
-
-uPortal source code is published as Maven artifacts (~48 JARs + 1 WAR). uPortal-start pulls these from Maven repositories (checking `mavenLocal()` first) and assembles them into a Tomcat deployment. To test local changes:
-
-```bash
-# 1. In the uPortal repo — build and install to local Maven (~/.m2/repository)
-cd /path/to/uPortal
+# In uPortal: build + publish 6.0.0-SNAPSHOT to ~/.m2
 ./gradlew install
-# This publishes version 6.0.0-SNAPSHOT (from gradle.properties) to ~/.m2/repository/org/jasig/portal/
-
-# 2. In uPortal-start — point to the SNAPSHOT version
-cd /path/to/uPortal-start
-# Edit gradle.properties:
-#   uPortalVersion=6.0.0-SNAPSHOT
-
-# 3. Stop Tomcat if running, rebuild, and redeploy
-./gradlew tomcatStop
-./gradlew tomcatDeploy
-./gradlew tomcatStart
+# In uPortal-start: set uPortalVersion=6.0.0-SNAPSHOT in gradle.properties, then
+./gradlew tomcatStop tomcatDeploy tomcatStart
 ```
+Confirm the deploy by checking JAR versions in `.gradle/tomcat/webapps/uPortal/WEB-INF/lib/` — if you still see `5.17.1` instead of `6.0.0-SNAPSHOT`, the `uPortalVersion` change or `install` didn't take. Changes not visible after deploy usually mean Tomcat cached classes — `tomcatStop` then `tomcatDeploy` (not just `tomcatStart`).
 
-### Verifying your changes are deployed
-
-After `tomcatDeploy`, check the JAR filenames in the deployed WAR — they include the version number:
-
-```bash
-# List deployed uPortal JARs and their versions
-ls .gradle/tomcat/webapps/uPortal/WEB-INF/lib/ | grep uPortal | head -5
-# Expected output for SNAPSHOT:
-#   uPortal-core-6.0.0-SNAPSHOT.jar
-#   uPortal-rendering-6.0.0-SNAPSHOT.jar
-#   ...
-# If you see 5.17.1 instead of 6.0.0-SNAPSHOT, the install didn't work
-
-# Check the timestamp on a specific JAR to confirm it was just built
-ls -la .gradle/tomcat/webapps/uPortal/WEB-INF/lib/uPortal-core-*.jar
-
-# Verify the local Maven cache has your SNAPSHOT
-ls ~/.m2/repository/org/jasig/portal/uPortal-core/6.0.0-SNAPSHOT/
-```
-
-**Common problems:**
-
-| Symptom | Cause | Fix |
-|---------|-------|-----|
-| JARs still show old version (e.g., `5.17.1`) | `uPortalVersion` not changed in uPortal-start `gradle.properties` | Set `uPortalVersion=6.0.0-SNAPSHOT` |
-| `./gradlew install` fails | Java version mismatch | Use `sdk use java 11.0.30-amzn` |
-| Changes not visible after deploy | Tomcat serving cached classes | Run `./gradlew tomcatStop` then `./gradlew tomcatDeploy` (not just `tomcatStart`) |
-| Gradle resolves from Maven Central instead of local | `mavenLocal()` missing from repositories | Already configured in uPortal-start — check `overlays/build.gradle` |
-
-## Playwright end-to-end tests
-
-End-to-end tests live in the [uPortal-start](https://github.com/uPortal-Project/uPortal-start) repository under `tests/`. They use **Playwright for Node.js** (TypeScript) and require a running portal instance.
-
-### Test structure
-
-```
-tests/
-  general-config.ts          # Shared config (base URL, user credentials)
-  uportal-pw.config.ts        # Playwright configuration
-  api/                        # API-level tests (no browser)
-    analytics.spec.ts
-    portlet-list.spec.ts
-    search-v5-0.spec.ts
-    utils/api-portlet-list-utils.ts
-  ux/                         # Browser-based UI tests
-    auth/uportal-auth.spec.ts
-    smoke/guest-page.spec.ts
-    smoke/per-role-pages.spec.ts
-    smoke/web-components.spec.ts
-    utils/ux-general-utils.ts   # Login/logout helpers
-```
-
-### Prerequisites
-
-1. Portal must be running (`./gradlew tomcatStart` in uPortal-start)
-2. Node.js and npm installed
-3. Install dependencies (from uPortal-start root):
-
-```bash
-npm install
-npx playwright install chromium
-npx playwright install-deps chromium
-```
-
-### Running tests
-
-```bash
-cd /path/to/uPortal-start
-
-# Run all tests
-npx playwright test --config=tests/uportal-pw.config.ts
-
-# Run a specific test file
-npx playwright test --config=tests/uportal-pw.config.ts tests/ux/smoke/guest-page.spec.ts
-
-# Run tests matching a grep pattern
-npx playwright test --config=tests/uportal-pw.config.ts -g "Admin smoke"
-
-# Run with headed browser (visible)
-npx playwright test --config=tests/uportal-pw.config.ts --headed
-
-# Run with debug inspector
-npx playwright test --config=tests/uportal-pw.config.ts --debug
-```
-
-### Writing new tests
-
-- Place API tests in `tests/api/`, UI tests in `tests/ux/`
-- Import shared config: `import { config } from "../../general-config";`
-- Use `loginUrl()` / `logout()` helpers from `tests/ux/utils/ux-general-utils.ts`
-- Available users: `config.users.admin`, `config.users.student`, `config.users.faculty`, `config.users.staff`
-- For portlet assertions, use `.up-portlet-titlebar` scoped selectors (e.g., `page.locator(".up-portlet-titlebar").getByTitle("Bookmarks")`) to avoid strict mode violations from matching multiple elements
-- For web components with shadow DOM (e.g., `waffle-menu`, `notification-icon`), use Playwright's built-in shadow DOM piercing
+End-to-end Playwright tests (TypeScript) also live in uPortal-start under `tests/` (`api/` for API-level, `ux/` for browser). Run them from there with `npx playwright test --config=tests/uportal-pw.config.ts` against a running portal. Use the `loginUrl()`/`logout()` helpers and `config.users.*`; scope portlet assertions with `.up-portlet-titlebar` to avoid strict-mode violations.
 
 ## Commands
 
 ```bash
-# Build everything (what CI runs)
-./gradlew -S --no-daemon --no-parallel build jacocoAggregateReport coveralls
-
-# Build without tests
-./gradlew build -x test
-
-# Run tests for a specific module
-./gradlew :uPortal-core:test
-./gradlew :uPortal-api:uPortal-api-rest:test
-./gradlew :uPortal-webapp:test
-
-# Run a single test class
-./gradlew :uPortal-core:test --tests "org.apereo.portal.PortalExceptionTest"
-
-# Install to local Maven repo (for testing with uPortal-start)
-./gradlew install
-
-# Check Java formatting (AOSP style)
-./gradlew verGJF
-
-# Auto-format Java
-./gradlew goJF
-
-# Lint JavaScript
-npx eslint . --report-unused-disable-directives --max-warnings 0
-
-# Auto-fix JavaScript
-npm run format-js
-
-# Lint LESS
-npm run lint-less
-
-# Lint Markdown
-npx remark -f *.md docs/**
-
-# Groovy static analysis
-./gradlew codenarcMain codenarcTest
-
-# Coverage report
-./gradlew jacocoAggregateReport
+./gradlew -S --no-daemon --no-parallel build jacocoAggregateReport coveralls  # full CI build
+./gradlew build -x test                       # compile, skip tests
+./gradlew :uPortal-core:test                  # test one module
+./gradlew :uPortal-core:test --tests "org.apereo.portal.PortalExceptionTest"  # single class
+./gradlew install                             # publish to ~/.m2
+./gradlew verGJF                              # check Java format (AOSP); goJF to auto-fix
+./gradlew codenarcMain codenarcTest           # Groovy static analysis
+npx eslint . --report-unused-disable-directives --max-warnings 0   # lint JS; npm run format-js to fix
+npm run lint-less                             # lint LESS
+npx remark -f *.md docs/**                    # lint Markdown
 ```
 
 ## Project structure
 
 ```
-build.gradle                        # Root build config (plugins, allprojects, subprojects)
-settings.gradle                     # Declares all ~45 subprojects
-gradle.properties                   # ALL dependency versions live here
-
-uPortal-core/                       # Core framework: IPerson, PortalException, etc.
-uPortal-api/
-  uPortal-api-rest/                 # REST controllers (JSON endpoints)
-  uPortal-api-internal/             # Internal service APIs
-  uPortal-api-search/               # Search API
-uPortal-rendering/                  # ⚠️ XSLT rendering pipeline (see danger zone below)
-uPortal-security/
-  uPortal-security-authn/           # Authentication (CAS integration)
-  uPortal-security-core/            # Core security model
-  uPortal-security-permissions/     # Permission system
-uPortal-layout/                     # User layout management (tabs, columns)
-uPortal-portlets/                   # Built-in portlets
-uPortal-groups/                     # Group providers (LDAP, Grouper, PAGS, filesystem)
-uPortal-events/                     # Event/analytics tracking
-uPortal-io/                         # Import/export (JAXB, XML serialization)
-uPortal-spring/                     # Spring integration utilities
-uPortal-hibernate/                  # Hibernate dialect extensions
-uPortal-webapp/                     # WAR assembly, JSP views, LESS, JS, config properties
-  src/main/resources/properties/
-    portal.properties               # Main configuration
-    security.properties             # Security configuration
-    i18n/Messages.properties        # User-facing strings (8 languages)
-  src/main/webapp/
-    scripts/                        # Browser JavaScript
-    css/                            # Compiled styles
-    WEB-INF/jsp/                    # JSP views
-    media/skins/                    # Theme LESS files
-
-docs/                               # Project documentation (Markdown, Jekyll)
-.github/workflows/CI.yml            # GitHub Actions CI
+build.gradle / settings.gradle / gradle.properties   # build; gradle.properties holds ALL versions
+uPortal-core/             # Core: IPerson, PortalException, ...
+uPortal-api/              # -rest (JSON), -internal, -search
+uPortal-rendering/        # ⚠️ XSLT rendering pipeline — see danger zone
+uPortal-security/         # -authn (CAS), -core, -permissions
+uPortal-layout/           # User layout (tabs, columns)
+uPortal-portlets/         # Built-in portlets
+uPortal-groups/           # Group providers (LDAP, Grouper, PAGS, filesystem)
+uPortal-events/           # Event/analytics tracking
+uPortal-io/               # Import/export (JAXB, XML)
+uPortal-spring/  uPortal-hibernate/           # Spring + Hibernate integration
+uPortal-webapp/           # WAR assembly, JSP, LESS, JS, config properties
+  src/main/resources/properties/portal.properties, security.properties, i18n/Messages.properties
+docs/                     # Markdown/Jekyll;  .github/workflows/CI.yml
 ```
 
 ## Architecture
 
-### Rendering pipeline (decorator pattern)
+**Rendering pipeline (decorator pattern).** Request flow is a composable chain of `CharacterPipelineComponent` stages in `RenderingPipelineConfiguration.java`: `IPortalRenderingPipeline → RenderingPipelineBranchPoint[] → DynamicRenderingPipeline`. Stages (bottom-up): load layout XML → merge structure prefs → structure XSLT → cache → spawn async portlet workers → theme data → theme XSLT to HTML → SAX serialize → embed portlet output. Adopters extend via `RenderingPipelineBranchPoint` beans for conditional routing (e.g. redirect to CAS, alternate UIs).
 
-The core request flow is a composable pipeline of `CharacterPipelineComponent` stages defined in `RenderingPipelineConfiguration.java`:
+**Distributed Layout Management (DLM).** `DistributedLayoutManager` composes each user's layout from a base layout merged with fragments owned by admin accounts. Evaluators (group membership, person attributes, profile) pick which fragments apply; the result is an XML document of folders and channels (portlet refs).
 
-```
-HTTP Request → IPortalRenderingPipeline → RenderingPipelineBranchPoint[] → DynamicRenderingPipeline
-```
+**Authentication.** Pluggable `ISecurityContext` implementations, each with a `ContextFactory`, configured in security Spring contexts: `RemoteUserSecurityContext` (REMOTE_USER), `CasAssertionSecurityContext` (CAS), `SimpleLdapSecurityContext` (LDAP bind), `TrustSecurityContext` (pre-auth).
 
-Pipeline stages (bottom-to-top execution):
-1. **UserLayoutStoreComponent** — Loads user's layout XML from database
-2. **StructureAttributeIncorporationComponent** — Merges user preferences
-3. **StructureTransformComponent** — XSLT transform of layout structure
-4. **StructureCachingComponent** — Caches transformed structure
-5. **PortletRenderingInitiationComponent** — Spawns async portlet worker threads
-6. **ThemeAttributeIncorporationComponent** — Adds theme data
-7. **ThemeTransformComponent** — XSLT transform to HTML
-8. **StaxSerializingComponent** — SAX to character stream
-9. **PortletRenderingIncorporationComponent** — Embeds portlet output into page
+**Import/Export.** `JaxbPortalDataHandlerService` batch-imports/exports portal data. Each type has `IDataImporter`, `IDataExporter`, `IDataUpgrader` (XSLT migration), `IDataTemplatingStrategy` (SpEL substitution). JAXB classes generated from XSDs in `uPortal-io-jaxb`.
 
-Adopters extend the pipeline via `RenderingPipelineBranchPoint` beans for conditional routing (e.g., redirect to CAS, alternate UIs).
+**Soffit.** REST alternative to JSR-286 portlets: external web apps (can be Spring Boot) receive JWT payloads via `SoffitConnectorController` with user info, prefs, and layout context, and render views with portal-injected data.
 
-### Distributed Layout Management (DLM)
+**Spring config.** Mixed XML (`uPortal-webapp/src/main/resources/properties/contexts/` — datasource, persistence, groups, LDAP, portlets) and Java `@Configuration` (`RenderingPipelineConfiguration`, `PersonDirectoryConfiguration`, `GroupServiceConfiguration`, `SoffitConnectorConfiguration`). `RenderingPipelineBranchPoint`, `IPortalDataType`, and `IComponentGroupService` beans are auto-discovered.
 
-Users' portal layouts are composed from a **base layout** merged with **layout fragments** owned by admin accounts. `DistributedLayoutManager` orchestrates this:
+**Coupling.** `uPortal-security-authn` is the most coupled module (23 subprojects). Hubs: `uPortal-core`, `uPortal-rendering`, `uPortal-layout-impl`. Utility modules (`uPortal-utils-*`, group providers) are loosely coupled.
 
-- Fragments are portal user accounts that own reusable layout templates
-- Evaluators (group membership, person attributes, profile) determine which fragments apply to each user
-- The merged layout is an XML document of folders and channels (portlet references)
+Key config files: `portal.properties` (overridable via `${portal.home}/uPortal.properties`), `rdbm.properties` (JDBC), `hibernate.properties`, `gradle.properties` (versions).
 
-### Authentication
+## Code style
 
-Pluggable via `ISecurityContext` implementations:
-- `RemoteUserSecurityContext` — HTTP REMOTE_USER from servlet container/reverse proxy
-- `CasAssertionSecurityContext` — CAS protocol
-- `SimpleLdapSecurityContext` — Direct LDAP bind
-- `TrustSecurityContext` — Pre-authenticated
+- **Java:** AOSP via google-java-format 1.7 (4-space indent, same-line braces). Package root `org.apereo.portal`. Every file needs the Apereo Apache 2.0 license header. `./gradlew verGJF` / `goJF`.
+- **Tests:** JUnit 4 + Mockito — `@Before`/`@Test`, `@Mock`/`@InjectMocks`, `MockitoAnnotations.initMocks(this)`. Static-import `org.junit.Assert.*` and `org.mockito.Mockito.*`.
+- **JavaScript:** Prettier (single quotes, 4-space indent, ES5 trailing commas). Globals: `jQuery`, `$`, `_`, `up`, `fluid`.
+- **LESS:** 2-space indent, Prettier via stylelint-prettier.
+- **Gradle:** all versions in `gradle.properties` as named vars — never hardcode in `build.gradle`.
+- **Git:** branch `GH-{issue}` off `master`. [Conventional Commits](https://www.conventionalcommits.org/): `feat(security): add LDAP group caching`. Subject imperative, lowercase, no period, ≤72 chars. Reference the issue in the footer (`Closes GH-42` / `Refs GH-42`). Breaking changes: `!` after type or `BREAKING CHANGE:` footer.
 
-Each has a corresponding `ContextFactory`. Configuration is in the security Spring contexts.
+## Danger zone
 
-### Import/Export system
+**XSLT rendering pipeline (`uPortal-rendering/`)** is complex, stateful, and poorly documented; changes can silently break rendering for all users. Do NOT modify XSL files without first reading the full transformation chain and having a reproducible test that proves the change. If unsure how a stage works, STOP and ask. Prefer adding a new template/mode over editing existing match patterns.
 
-`JaxbPortalDataHandlerService` handles batch import/export of portal data. Each data type (users, portlets, layouts, groups, permissions, etc.) has:
-- `IDataImporter` — XML to domain object
-- `IDataExporter` — Domain object to XML
-- `IDataUpgrader` — XSLT-based schema migration
-- `IDataTemplatingStrategy` — SpEL parameter substitution in XML files
+**Banned patterns.** Source compiles under Java 11, so Java 9–11 features (`var`, `List.of()`, `Map.of()`, `Optional.isEmpty()`, `String.isBlank()`) are fine. The ban line is Java 12+:
 
-JAXB classes are generated from XSD schemas in `uPortal-io-jaxb`.
+| Pattern | Why | Instead |
+|---------|-----|---------|
+| Switch expressions (`->`) | Java 14+ | classic `switch` |
+| Text blocks (`"""`) | Java 15+ | concatenated literals |
+| Records | Java 16+ | regular classes |
+| Pattern matching `instanceof` | Java 16+ | `instanceof` + cast |
+| Sealed classes | Java 17+ | regular classes |
+| Pattern matching `switch` | Java 21+ | classic `switch` |
+| `@BeforeEach`, `@DisplayName` | JUnit 5 | `@Before`, `@Test` (JUnit 4) |
+| Inline versions in build.gradle | breaks version mgmt | add to `gradle.properties` |
+| `commons-logging` imports | banned transitive | SLF4J (`org.slf4j.Logger`) |
 
-### Soffit framework
-
-REST-based alternative to JSR-286 portlet development. External web apps receive JWT-encoded payloads via `SoffitConnectorController` containing user info, preferences, and layout context. Soffits can be Spring Boot apps that render views with portal-injected data.
-
-### Spring configuration
-
-Mixed XML and Java @Configuration:
-- XML contexts in `uPortal-webapp/src/main/resources/properties/contexts/` (datasource, persistence, groups, LDAP, portlet configs)
-- Java configs: `RenderingPipelineConfiguration`, `PersonDirectoryConfiguration`, `GroupServiceConfiguration`, `SoffitConnectorConfiguration`
-- Convention-based discovery: `RenderingPipelineBranchPoint`, `IPortalDataType`, and `IComponentGroupService` beans are auto-discovered
-
-### Key configuration files
-
-- `uPortal-webapp/src/main/resources/properties/portal.properties` — Main portal config (overridable via `${portal.home}/uPortal.properties`)
-- `uPortal-webapp/src/main/resources/properties/rdbm.properties` — Database/JDBC config
-- `uPortal-webapp/src/main/resources/hibernate.properties` — Hibernate/JPA settings
-- `gradle.properties` — 80+ dependency version declarations
-
-### Dependency coupling
-
-`uPortal-security-authn` is the most highly coupled module (depends on 23 subprojects). Core hub modules are `uPortal-core`, `uPortal-rendering`, and `uPortal-layout-impl`. Utility modules (`uPortal-utils-*`, group providers) are loosely coupled and independently usable.
-
-## Code style and conventions
-
-**Java:**
-- AOSP style (google-java-format 1.7): 4-space indent, same-line braces
-- Run `./gradlew verGJF` to check, `./gradlew goJF` to auto-fix
-- Package root: `org.apereo.portal`
-- Every file requires the Apereo Apache 2.0 license header
-
-**Tests (JUnit 4 + Mockito):**
-```java
-package org.apereo.portal.example;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-public class MyServiceTest {
-
-    @InjectMocks private MyService service;
-    @Mock private IDependency dependency;
-
-    @Before
-    public void setup() {
-        service = new MyService();
-        MockitoAnnotations.initMocks(this);
-    }
-
-    @Test
-    public void testExpectedBehavior() {
-        when(dependency.getValue()).thenReturn("test");
-        String result = service.doWork();
-        assertEquals("expected", result);
-    }
-}
-```
-
-**JavaScript:** Prettier (single quotes, 4-space indent, ES5 trailing commas). Globals: `jQuery`, `$`, `_`, `up`, `fluid`.
-
-**LESS:** 2-space indent, Prettier via stylelint-prettier.
-
-**Gradle:** ALL dependency versions in `gradle.properties` as named variables. Never hardcode versions in `build.gradle`.
-
-**Git:**
-
-Branch naming: `GH-{issue}` off `master`.
-
-Commit messages use [Conventional Commits](https://www.conventionalcommits.org/) format:
-
-```
-<type>(optional scope): <description>
-
-[optional body]
-
-[optional footer(s)]
-```
-
-Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `build`, `ci`, `chore`, `perf`, `revert`
-
-Examples:
-```
-feat(security): add LDAP group caching for faster lookups
-
-fix(rendering): prevent NPE when portlet title is null
-
-Closes GH-42
-
-docs: update CHANGES.md for 6.0.0 release
-
-test(api-rest): add missing tests for MarketplaceRESTController
-
-build: upgrade Mockito from 4.10.0 to 4.11.0
-
-refactor(layout): extract tab validation into helper method
-```
-
-Rules:
-- Subject line: imperative mood, lowercase, no period, max 72 characters
-- Reference the GitHub issue in the footer: `Closes GH-42` or `Refs GH-42`
-- Breaking changes: add `!` after type or `BREAKING CHANGE:` in footer
-
-## Danger zone — extra caution required
-
-### XSLT rendering pipeline (`uPortal-rendering/`)
-
-The rendering pipeline uses chained XSLT transformations to compose portal pages. It is complex, stateful, and poorly documented. Changes here can silently break page rendering for all users.
-
-**Rules for the rendering pipeline:**
-- Do NOT modify XSL files without first reading the full transformation chain
-- Do NOT modify XSL files without a clear, reproducible test that proves the change works
-- If you are unsure how a pipeline stage works, STOP and ask — do not guess
-- Prefer adding a new template/mode over modifying existing match patterns
-
-### Banned patterns
-
-Source compiles under Java 11, so Java 9–11 language features and APIs (`var`, `List.of()`, `Map.of()`, `Optional.isEmpty()`, `String.isBlank()`, etc.) are all fair game. The ban line is **Java 12 and later**.
-
-| Pattern | Why | What to do instead |
-|---------|-----|--------------------|
-| Switch expressions with `->` | Java 14+ | Use classic `switch` statements |
-| Text blocks (`"""..."""`) | Java 15+ | Use concatenated string literals |
-| Records | Java 16+ | Use regular classes |
-| Pattern matching for `instanceof` | Java 16+ | Use classic `instanceof` + cast |
-| Sealed classes, `non-sealed`, `permits` | Java 17+ | Use regular classes with package-private constructors |
-| Pattern matching for `switch` | Java 21+ | Use classic `switch` statements |
-| `@BeforeEach`, `@DisplayName` | JUnit 5 | Use `@Before`, `@Test` (JUnit 4) |
-| Inline dependency versions in build.gradle | Breaks version management | Add to `gradle.properties` |
-| `commons-logging` imports | Banned transitive | Use SLF4J (`org.slf4j.Logger`) |
-
-## Checklist — run before declaring any task complete
+## Before declaring any task complete
 
 ```
 [ ] Every changed line traces to the stated task
-[ ] Tests exist for the change (or I've explained why not)
-[ ] Tests pass: ./gradlew :module:test
+[ ] Tests exist (or explained why not) and pass: ./gradlew :module:test
 [ ] Java formatting passes: ./gradlew verGJF
-[ ] No Java 12+ language features or APIs used
-[ ] No new dependencies added without version in gradle.properties
-[ ] License header present on any new files
-[ ] No secrets, passwords, or hardcoded hostnames
+[ ] No Java 12+ features or APIs; no inline dependency versions
+[ ] License header on new files; no secrets or hardcoded hostnames
 ```
 
-## Boundaries
-
-- ✅ **Always do:** State your plan before coding. Run tests after every change. Match existing style.
-- ✅ **Always do:** Write a failing test first for bug fixes. Verify it passes after the fix.
-- ✅ **Always do:** Read the code around your change before editing it.
-- 🛑 **Always stop and ask if:**
-  - The task is ambiguous or has multiple interpretations
-  - You need to modify XSLT in the rendering pipeline
-  - You are unsure how existing code works after reading it
-  - A change would affect more than one module
-  - You cannot write a test to verify your change
-- 🚫 **Never do:** Guess at requirements. Add features that weren't asked for. "Improve" code adjacent to your change. Use Java 12+ features or APIs. Commit secrets.
+**Always stop and ask if:** the task is ambiguous, you'd need to modify XSLT in the rendering pipeline, you're unsure how existing code works after reading it, a change spans more than one module, or you can't write a test to verify it.
