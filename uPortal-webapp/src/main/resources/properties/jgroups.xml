@@ -43,12 +43,16 @@
     />
 
     <!-- User database for discovery;  initialize_sql to blank prevents
-         table creation, which we handle with Hibernate via dbloader -->
+         table creation, which we handle with Hibernate via dbloader.
+         clear_table_on_view_change has the coordinator wipe the table on
+         each view change so live members re-register and rows left behind
+         by abruptly terminated (e.g. kill -9) nodes do not accumulate. -->
     <JDBC_PING
             connection_url="${jgroups.connection.url}"
             connection_username="${jgroups.connection.username}"
             connection_password="${jgroups.connection.password}"
             connection_driver="${jgroups.connection.driver_class}"
+            clear_table_on_view_change="true"
             initialize_sql=""
     />
     <MERGE3  min_interval="5000"
