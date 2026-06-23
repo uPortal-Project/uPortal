@@ -57,17 +57,19 @@
      |        </portlet-preference>
      +-->
     <!--
-    <bean id="amazonS3Client" class="com.amazonaws.services.s3.AmazonS3Client">
+    <bean id="amazonS3Client" class="software.amazon.awssdk.services.s3.S3Client" factory-method="create" />
     -->
         <!--
-         | Uncomment this only if the aws-credentials.properties file (or an overrides.properties file) will be used to retrieve the
-         | credentials. Otherwise, the default behavior (which searches a number of sources) will be used.
-         | See: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/AmazonS3Client.html#AmazonS3Client()
+         | The bean above (AWS SDK v2) uses the default credentials and region provider chains
+         | (environment, system properties, profile, container/instance metadata). Note: v2 resolves
+         | the region strictly and fails fast if none is found, so ensure AWS_REGION (or the
+         | aws.region system property) is set. To supply credentials from the dynamic-skin.aws.*
+         | properties instead, build the client in a @Configuration class with a
+         | StaticCredentialsProvider wrapping the awsCredentialsConfig bean, e.g.
+         |   S3Client.builder()
+         |       .credentialsProvider(StaticCredentialsProvider.create(awsCredentialsConfig))
+         |       .build();
          +-->
-         <!--<constructor-arg ref="awsCredentialsConfig" />-->
-    <!--
-    </bean>
-    -->
 
     <bean parent="primaryPropertyPlaceholderConfigurer" />
 

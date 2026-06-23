@@ -5,7 +5,7 @@ dependencies {
     api project(':uPortal-tenants')
     api project(':uPortal-web')
 
-    implementation "com.amazonaws:aws-java-sdk-s3:${awsVersion}"
+    implementation "software.amazon.awssdk:s3:${awsVersion}"
     implementation "javax.mail:mail:${javaxMailVersion}"
     implementation("net.sf.json-lib:json-lib-ext-spring:${jsonLibExtSpringVersion}") {
         exclude group: 'javax.servlet', module: 'servlet-api'

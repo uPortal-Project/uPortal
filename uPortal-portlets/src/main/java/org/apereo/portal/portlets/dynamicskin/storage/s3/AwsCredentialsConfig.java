@@ -14,24 +14,21 @@
  */
 package org.apereo.portal.portlets.dynamicskin.storage.s3;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.AWSCredentialsProviderChain;
-import com.amazonaws.services.s3.AmazonS3Client;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 
 /**
  * Class to encapsulate the AWS credential properties, with the properties read in from a properties
- * file and auto-injected by Spring. This class implements the {@link AWSCredentials} interface and
- * can therefore be injected as credentials into a {@link AmazonS3Client}. If a credential property
- * has no value in the properties file, then it's value will be set to null so that this class can
- * be returned by a {@link AWSCredentialsProvider} as part of a {@link AWSCredentialsProviderChain},
- * which expects null values to be returned when the provider is unable to find credentials.
+ * file and auto-injected by Spring. This class implements the {@link AwsCredentials} interface and
+ * can therefore be supplied as credentials to an S3 client via an {@link AwsCredentialsProvider}.
+ * The credential properties are optional; when unset they resolve to null so the default provider
+ * chain can be used instead.
  */
 @Component
-public class AwsCredentialsConfig implements AWSCredentials {
+public class AwsCredentialsConfig implements AwsCredentials {
 
     @Value("${dynamic-skin.aws.access-key-id:#{null}}")
     private String accessKeyId;
@@ -39,26 +36,18 @@ public class AwsCredentialsConfig implements AWSCredentials {
     @Value("${dynamic-skin.aws.secret-access-key:#{null}}")
     private String secretAccessKey;
 
-    public String getAccessKey() {
+    @Override
+    public String accessKeyId() {
         return this.accessKeyId;
     }
 
-    public String getSecretAccessKey() {
+    @Override
+    public String secretAccessKey() {
         return this.secretAccessKey;
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
-    }
-
-    @Override
-    public String getAWSAccessKeyId() {
-        return this.accessKeyId;
-    }
-
-    @Override
-    public String getAWSSecretKey() {
-        return this.secretAccessKey;
     }
 }
