@@ -50,6 +50,7 @@ allprojects {
         all*.exclude group: 'commons-logging', module: 'commons-logging'
         all*.exclude group: 'commons-logging', module: 'commons-logging-api'
         all*.exclude group: 'log4j', module: 'log4j'
+        all*.exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
         all*.exclude group: 'org.hamcrest', module: 'hamcrest-core'
     }
 
