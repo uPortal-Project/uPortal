@@ -14,21 +14,13 @@
  */
 package org.apereo.portal.portlets.dynamicskin.storage.s3;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.AmazonWebServiceRequest;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
-import javax.portlet.PortletPreferences;
 import net.sf.ehcache.Cache;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -46,6 +38,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.SdkRequest;
+import software.amazon.awssdk.core.exception.SdkException;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 /** {@link DynamicSkinService} implementation that saves the CSS to an AWS S3 bucket. */
 @Service("awsS3DynamicSkinService")
@@ -66,13 +68,13 @@ public class AwsS3DynamicSkinService extends AbstractDynamicSkinService {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private AmazonS3 amazonS3Client;
+    private S3Client amazonS3Client;
     private DynamicSkinAwsS3BucketConfig awsS3BucketConfig;
     private Map<String, String> awsObjectUserMetadata;
 
     @Autowired
     public AwsS3DynamicSkinService(
-            final AmazonS3 client,
+            final S3Client client,
             final DynamicSkinAwsS3BucketConfig config,
             final DynamicSkinUniqueTokenGenerator uniqueTokenGenerator,
             final DynamicSkinCssFileNamer namer,
@@ -111,7 +113,7 @@ public class AwsS3DynamicSkinService extends AbstractDynamicSkinService {
                 ATTEMPTING_TO_GET_FILE_METADATA_FROM_AWS_S3_LOG_MSG,
                 this.awsS3BucketConfig.getBucketName(),
                 objectKey);
-        final ObjectMetadata metadata = this.getMetadataFromAwsS3Bucket(objectKey);
+        final HeadObjectResponse metadata = this.getMetadataFromAwsS3Bucket(objectKey);
         log.info(
                 FILE_METADATA_RETRIEVED_FROM_AWS_S3_LOG_MSG,
                 this.awsS3BucketConfig.getBucketName(),
@@ -119,28 +121,33 @@ public class AwsS3DynamicSkinService extends AbstractDynamicSkinService {
         if (metadata == null) {
             return false;
         } else {
+            // S3 returns user-metadata keys lower-cased, so look up with the lower-cased key.
             final String uniqueTokenFromS3 =
-                    metadata.getUserMetaDataOf(SKIN_UNIQUE_TOKEN_METADATA_KEY);
+                    metadata.metadata()
+                            .get(SKIN_UNIQUE_TOKEN_METADATA_KEY.toLowerCase(Locale.ROOT));
             return this.getUniqueToken(data).equals(uniqueTokenFromS3);
         }
     }
 
-    private ObjectMetadata getMetadataFromAwsS3Bucket(final String objectKey) {
-        final GetObjectMetadataRequest request =
-                new GetObjectMetadataRequest(this.awsS3BucketConfig.getBucketName(), objectKey);
+    private HeadObjectResponse getMetadataFromAwsS3Bucket(final String objectKey) {
+        final HeadObjectRequest request =
+                HeadObjectRequest.builder()
+                        .bucket(this.awsS3BucketConfig.getBucketName())
+                        .key(objectKey)
+                        .build();
         try {
-            return this.amazonS3Client.getObjectMetadata(request);
-        } catch (AmazonServiceException ase) {
-            if (ase.getStatusCode() == 404) {
+            return this.amazonS3Client.headObject(request);
+        } catch (NoSuchKeyException nske) {
+            return null;
+        } catch (S3Exception se) {
+            if (se.statusCode() == 404) {
                 return null;
             }
-            this.logAmazonServiceException(ase, request);
-            throw new DynamicSkinException(
-                    "AWS S3 'get object metadata' failure for: " + request, ase);
-        } catch (AmazonClientException ace) {
-            this.logAmazonClientException(ace, request);
-            throw new DynamicSkinException(
-                    "AWS S3 'get object metadata' failure for: " + request, ace);
+            this.logAwsServiceException(se, request);
+            throw new DynamicSkinException("AWS S3 'head object' failure for: " + request, se);
+        } catch (SdkException sdke) {
+            this.logSdkException(sdke, request);
+            throw new DynamicSkinException("AWS S3 'head object' failure for: " + request, sdke);
         }
     }
 
@@ -161,105 +168,104 @@ public class AwsS3DynamicSkinService extends AbstractDynamicSkinService {
 
     private void saveContentToAwsS3Bucket(
             final String objectKey, final String content, final DynamicSkinInstanceData data) {
-        final InputStream inputStream = IOUtils.toInputStream(content);
-        final ObjectMetadata objectMetadata = this.createObjectMetadata(content, data);
         final PutObjectRequest putObjectRequest =
-                this.createPutObjectRequest(objectKey, inputStream, objectMetadata);
+                this.createPutObjectRequest(objectKey, content, data);
         log.info(
                 ATTEMPTING_TO_SAVE_FILE_TO_AWS_S3_LOG_MSG,
                 this.awsS3BucketConfig.getBucketName(),
                 objectKey);
-        this.saveContentToAwsS3Bucket(putObjectRequest);
+        this.saveContentToAwsS3Bucket(putObjectRequest, content);
         log.info(FILE_SAVED_TO_AWS_S3_LOG_MSG, this.awsS3BucketConfig.getBucketName(), objectKey);
     }
 
-    private ObjectMetadata createObjectMetadata(
-            final String content, final DynamicSkinInstanceData data) {
-        final ObjectMetadata metadata = new ObjectMetadata();
-        this.addContentMetadata(metadata, content);
-        this.addUserMetatadata(metadata);
-        this.addPortletPreferenceMetadata(metadata, data.getPortletRequest().getPreferences());
-        this.addDynamicSkinMetadata(metadata, data);
-        return metadata;
-    }
-
     private PutObjectRequest createPutObjectRequest(
-            final String objectKey,
-            final InputStream inputStream,
-            final ObjectMetadata objectMetadata) {
-        return new PutObjectRequest(
-                this.awsS3BucketConfig.getBucketName(), objectKey, inputStream, objectMetadata);
+            final String objectKey, final String content, final DynamicSkinInstanceData data) {
+        final byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
+        final PutObjectRequest.Builder builder =
+                PutObjectRequest.builder()
+                        .bucket(this.awsS3BucketConfig.getBucketName())
+                        .key(objectKey)
+                        .contentType("text/css")
+                        .contentLength((long) contentBytes.length)
+                        .contentMD5(this.calculateBase64EncodedMd5Digest(contentBytes))
+                        .metadata(this.buildUserMetadata(data));
+        final String cacheControl = this.resolveCacheControl(data);
+        if (cacheControl != null) {
+            builder.cacheControl(cacheControl);
+        }
+        return builder.build();
     }
 
-    private void saveContentToAwsS3Bucket(final PutObjectRequest putObjectRequest) {
+    private void saveContentToAwsS3Bucket(
+            final PutObjectRequest putObjectRequest, final String content) {
         try {
-            this.amazonS3Client.putObject(putObjectRequest);
-        } catch (AmazonServiceException ase) {
-            this.logAmazonServiceException(ase, putObjectRequest);
+            this.amazonS3Client.putObject(
+                    putObjectRequest, RequestBody.fromString(content, StandardCharsets.UTF_8));
+        } catch (S3Exception se) {
+            this.logAwsServiceException(se, putObjectRequest);
             throw new DynamicSkinException(
-                    "AWS S3 'put object' failure for: " + putObjectRequest, ase);
-        } catch (AmazonClientException ace) {
-            this.logAmazonClientException(ace, putObjectRequest);
+                    "AWS S3 'put object' failure for: " + putObjectRequest, se);
+        } catch (SdkException sdke) {
+            this.logSdkException(sdke, putObjectRequest);
             throw new DynamicSkinException(
-                    "AWS S3 'put object' failure for: " + putObjectRequest, ace);
+                    "AWS S3 'put object' failure for: " + putObjectRequest, sdke);
         }
     }
 
-    private void addContentMetadata(final ObjectMetadata metadata, final String content) {
-        metadata.setContentMD5(this.calculateBase64EncodedMd5Digest(content));
-        metadata.setContentLength(content.length());
-        metadata.setContentType("text/css");
-        final String cacheControl = this.awsS3BucketConfig.getObjectCacheControl();
-        if (StringUtils.isNotEmpty(cacheControl)) {
-            metadata.setCacheControl(cacheControl);
-        }
-    }
-
-    private String calculateBase64EncodedMd5Digest(final String content) {
+    private String calculateBase64EncodedMd5Digest(final byte[] content) {
         final byte[] md5DigestAs16ElementByteArray = DigestUtils.md5(content);
         return new String(Base64.encodeBase64(md5DigestAs16ElementByteArray));
     }
 
-    private void addUserMetatadata(final ObjectMetadata metadata) {
+    private Map<String, String> buildUserMetadata(final DynamicSkinInstanceData data) {
+        final Map<String, String> userMetadata = new HashMap<>();
         if (this.awsObjectUserMetadata != null) {
-            for (Entry<String, String> entry : this.awsObjectUserMetadata.entrySet()) {
-                metadata.addUserMetadata(entry.getKey(), entry.getValue());
-            }
+            userMetadata.putAll(this.awsObjectUserMetadata);
         }
+        userMetadata.put(SKIN_UNIQUE_TOKEN_METADATA_KEY, this.getUniqueToken(data));
+        return userMetadata;
     }
 
-    private void addPortletPreferenceMetadata(
-            final ObjectMetadata metadata, final PortletPreferences portletPreferences) {
+    /**
+     * Resolves the cache-control value to apply: the bucket config value when non-empty, overridden
+     * by the per-portlet preference when that preference is set. Returns null when neither applies.
+     */
+    private String resolveCacheControl(final DynamicSkinInstanceData data) {
+        String cacheControl = null;
+        final String configCacheControl = this.awsS3BucketConfig.getObjectCacheControl();
+        if (StringUtils.isNotEmpty(configCacheControl)) {
+            cacheControl = configCacheControl;
+        }
         final String contentCacheControl =
-                portletPreferences.getValue(CONTENT_CACHE_CONTROL_PORTLET_PREF_NAME, null);
+                data.getPortletRequest()
+                        .getPreferences()
+                        .getValue(CONTENT_CACHE_CONTROL_PORTLET_PREF_NAME, null);
         if (contentCacheControl != null) {
-            metadata.setCacheControl(contentCacheControl);
+            cacheControl = contentCacheControl;
         }
+        return cacheControl;
     }
 
-    private void addDynamicSkinMetadata(
-            final ObjectMetadata metadata, final DynamicSkinInstanceData data) {
-        metadata.addUserMetadata(SKIN_UNIQUE_TOKEN_METADATA_KEY, this.getUniqueToken(data));
-    }
-
-    private void logAmazonClientException(
-            final AmazonClientException exception, final AmazonWebServiceRequest request) {
+    private void logSdkException(final SdkException exception, final SdkRequest request) {
         log.info(
-                "Caught an AmazonClientException, which means the client encountered a serious internal problem "
+                "Caught an SdkException, which means the client encountered a serious internal problem "
                         + "while trying to communicate with S3, such as not being able to access the network.");
         log.info("Error Message: {}", exception.getMessage());
     }
 
-    private void logAmazonServiceException(
-            final AmazonServiceException exception, final AmazonWebServiceRequest request) {
+    private void logAwsServiceException(
+            final AwsServiceException exception, final SdkRequest request) {
         log.info(
-                "Caught an AmazonServiceException, which means your request made it "
+                "Caught an AwsServiceException, which means your request made it "
                         + "to Amazon S3, but was rejected with an error response for some reason.");
         log.info("Error Message:    {}", exception.getMessage());
-        log.info("HTTP Status Code: {}", exception.getStatusCode());
-        log.info("AWS Error Code:   {}", exception.getErrorCode());
-        log.info("Error Type:       {}", exception.getErrorType());
-        log.info("Request ID:       {}", exception.getRequestId());
+        log.info("HTTP Status Code: {}", exception.statusCode());
+        log.info(
+                "AWS Error Code:   {}",
+                exception.awsErrorDetails() != null
+                        ? exception.awsErrorDetails().errorCode()
+                        : null);
+        log.info("Request ID:       {}", exception.requestId());
     }
 
     public void setAwsObjectUserMetadata(final Map<String, String> metadata) {
