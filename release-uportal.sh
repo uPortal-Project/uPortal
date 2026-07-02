@@ -104,7 +104,9 @@ CURRENT=$(git rev-parse --abbrev-ref HEAD)
 [[ "$CURRENT" == "$BRANCH" ]] || fail "on '$CURRENT', expected '$BRANCH'"
 ok "on branch $BRANCH"
 
-git fetch upstream "$BRANCH" --tags --quiet
+# --force so a stale local tag (e.g. one re-cut on upstream during an earlier
+# release) can't fail the fetch and silently abort the script under `set -e`.
+git fetch upstream "$BRANCH" --tags --force --quiet
 LOCAL_HEAD=$(git rev-parse HEAD)
 UPSTREAM_HEAD=$(git rev-parse "upstream/$BRANCH")
 if [[ "$LOCAL_HEAD" != "$UPSTREAM_HEAD" ]]; then
@@ -227,10 +229,14 @@ HTTP=$(curl -s -o /tmp/release-ossrh.out -w "%{http_code}" -X POST \
 [[ "$HTTP" == "200" ]] || fail "OSSRH POST HTTP $HTTP (see /tmp/release-ossrh.out)"
 ok "OSSRH POST: HTTP 200"
 
-# 9. Push tag to upstream — the Gradle release plugin only pushes to origin
-hdr "Push v$RELEASE tag to upstream"
+# 9. Push tag + branch to upstream — the Gradle release plugin only pushes to
+#    origin (the fork), so without this upstream gets the tag but not the two
+#    release commits, leaving upstream/$BRANCH behind and mis-basing the next
+#    release's version. Push both.
+hdr "Push v$RELEASE tag + $BRANCH to upstream"
 git push upstream "v$RELEASE"
-ok "v$RELEASE tag on upstream"
+git push upstream "$BRANCH"
+ok "v$RELEASE tag + $BRANCH on upstream"
 
 # 10. Next steps
 cat <<EOF
