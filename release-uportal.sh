@@ -57,7 +57,7 @@ Phases:
      -Prelease.useAutomaticVersion=true / -Prelease.releaseVersion=<X.Y.Z>
      / -Prelease.newVersion=<X.Y.Z+1>-SNAPSHOT
   8. OSSRH POST — push staged repo into Central Portal staging UI
-  9. Push tag to upstream — the Gradle release plugin only pushes to origin
+  9. Push tag + branch to upstream — the Gradle release plugin only pushes to origin
  10. Print next steps (Publish in Portal UI, watch propagation)
 
 NOTE on NOTICE/license tooling: uPortal's Gradle build does not currently
