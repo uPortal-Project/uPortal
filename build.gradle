@@ -186,6 +186,13 @@ subprojects {
         required { gradle.taskGraph.hasTask('uploadArchives') }
         sign configurations.archives
     }
+    // `useGpgCmd()` makes the gpg command an always-present signatory, so the Sign
+    // tasks would otherwise run on CI (gpg is installed) with no key and fail. `required`
+    // only governs enforcement, not execution — gate the tasks themselves so they run
+    // only when a release is actually uploading artifacts.
+    tasks.withType(Sign).configureEach {
+        onlyIf { gradle.taskGraph.hasTask('uploadArchives') }
+    }
     tasks.withType(Javadoc).all {
         // disable JavaDocs until we start using them again in our website
         enabled = false
