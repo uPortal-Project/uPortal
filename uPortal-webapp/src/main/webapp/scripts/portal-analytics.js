@@ -116,18 +116,7 @@
 
                 const existingInstance = bootstrap.Dropdown.getInstance(toggle);
                 if (existingInstance) existingInstance.dispose();
-                const instance = new bootstrap.Dropdown(toggle);
-
-                // Add click handler to override conflicting JavaScript
-                toggle.addEventListener(
-                    'click',
-                    function (event_) {
-                        event_.preventDefault();
-                        event_.stopPropagation();
-                        instance.toggle();
-                    },
-                    true
-                );
+                new bootstrap.Dropdown(toggle);
             }
         }, 100);
     });
