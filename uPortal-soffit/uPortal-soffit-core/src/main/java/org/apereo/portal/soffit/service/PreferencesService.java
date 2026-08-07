@@ -34,7 +34,7 @@ public class PreferencesService extends AbstractJwtService {
     public Preferences createPreferences(
             Map<String, List<String>> preferencesMap, String username, Date expires) {
 
-        final Claims claims = createClaims(Preferences.class, username, expires);
+        final Map<String, Object> claims = createClaims(Preferences.class, username, expires);
 
         // PreferencesMap
         for (Map.Entry<String, List<String>> y : preferencesMap.entrySet()) {
@@ -48,10 +48,10 @@ public class PreferencesService extends AbstractJwtService {
 
         final Jws<Claims> claims = parseEncryptedToken(preferencesToken, Preferences.class);
 
-        final String username = claims.getBody().getSubject();
+        final String username = claims.getPayload().getSubject();
 
         final Map<String, List<String>> preferencesMap = new HashMap<>();
-        for (Map.Entry<String, Object> y : claims.getBody().entrySet()) {
+        for (Map.Entry<String, Object> y : claims.getPayload().entrySet()) {
             final String key = y.getKey();
             if (JwtClaims.forName(key) != null) {
                 // Skip these;  we handle these differently

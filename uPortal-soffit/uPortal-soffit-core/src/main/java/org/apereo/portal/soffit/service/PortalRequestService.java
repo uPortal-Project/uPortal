@@ -37,7 +37,7 @@ public class PortalRequestService extends AbstractJwtService {
             String username,
             Date expires) {
 
-        final Claims claims = createClaims(PortalRequest.class, username, expires);
+        final Map<String, Object> claims = createClaims(PortalRequest.class, username, expires);
 
         // Properties
         claims.put(JwtClaims.PROPERTIES.getName(), properties);
@@ -56,22 +56,22 @@ public class PortalRequestService extends AbstractJwtService {
 
         final Jws<Claims> claims = parseEncryptedToken(portalRequestToken, PortalRequest.class);
 
-        final String username = claims.getBody().getSubject();
+        final String username = claims.getPayload().getSubject();
 
         // Properties
         @SuppressWarnings("unchecked")
         final Map<String, String> properties =
-                (Map<String, String>) claims.getBody().get(JwtClaims.PROPERTIES.getName());
+                (Map<String, String>) claims.getPayload().get(JwtClaims.PROPERTIES.getName());
 
         // Attributes
         @SuppressWarnings("unchecked")
         final Map<String, List<String>> attributes =
-                (Map<String, List<String>>) claims.getBody().get(JwtClaims.ATTRIBUTES.getName());
+                (Map<String, List<String>>) claims.getPayload().get(JwtClaims.ATTRIBUTES.getName());
 
         // Parameters
         @SuppressWarnings("unchecked")
         final Map<String, List<String>> parameters =
-                (Map<String, List<String>>) claims.getBody().get(JwtClaims.PARAMETERS.getName());
+                (Map<String, List<String>>) claims.getPayload().get(JwtClaims.PARAMETERS.getName());
 
         PortalRequest result =
                 new PortalRequest(portalRequestToken, properties, attributes, parameters);
