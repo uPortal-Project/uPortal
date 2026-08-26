@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import org.hibernate.HibernateException;
@@ -83,17 +84,17 @@ public class FixedDatabaseMetadata extends DatabaseMetadata {
                             || (!isQuoted && meta.storesUpperCaseIdentifiers())) {
                         rs =
                                 meta.getTables(
-                                        StringHelper.toUpperCase(catalog),
-                                        StringHelper.toUpperCase(schema),
-                                        StringHelper.toUpperCase(name),
+                                        catalog == null ? null : catalog.toUpperCase(Locale.ROOT),
+                                        schema == null ? null : schema.toUpperCase(Locale.ROOT),
+                                        name.toUpperCase(Locale.ROOT),
                                         TYPES);
                     } else if ((isQuoted && meta.storesLowerCaseQuotedIdentifiers())
                             || (!isQuoted && meta.storesLowerCaseIdentifiers())) {
                         rs =
                                 meta.getTables(
-                                        StringHelper.toLowerCase(catalog),
-                                        StringHelper.toLowerCase(schema),
-                                        StringHelper.toLowerCase(name),
+                                        catalog == null ? null : catalog.toLowerCase(Locale.ROOT),
+                                        schema == null ? null : schema.toLowerCase(Locale.ROOT),
+                                        name.toLowerCase(Locale.ROOT),
                                         TYPES);
                     } else {
                         rs = meta.getTables(catalog, schema, name, TYPES);
