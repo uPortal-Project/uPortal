@@ -60,37 +60,48 @@
         </property>
     </bean>
 
+    <!--
+      | Hibernate 4.3 removed org.hibernate.jmx.StatisticsService. The
+      | org.hibernate.stat.Statistics interface (obtained from
+      | SessionFactory.getStatistics()) is itself a management interface and is
+      | registered directly with the MBean server below. Statistics collection
+      | is enabled per SessionFactory via the statisticsEnabled factory beans.
+    +-->
+
     <!-- Hibernate persistence statistics -->
-    <bean id="hibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
-        <property name="statisticsEnabled" value="true"/>
-        <property name="sessionFactory">
-            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                <property name="targetObject" ref="PortalDbEntityManagerFactory" />
-                <property name="targetMethod" value="getSessionFactory" />
-            </bean>
-        </property>
+    <bean id="hibernateSessionFactory" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="PortalDbEntityManagerFactory" />
+        <property name="targetMethod" value="getSessionFactory" />
+    </bean>
+    <bean id="hibernateStatisticsMBean" factory-bean="hibernateSessionFactory" factory-method="getStatistics" />
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="hibernateStatisticsMBean" />
+        <property name="targetMethod" value="setStatisticsEnabled" />
+        <property name="arguments"><value>true</value></property>
     </bean>
 
     <!-- Hibernate Raw Events persistence statistics -->
-    <bean id="rawEventsHibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
-        <property name="statisticsEnabled" value="true"/>
-        <property name="sessionFactory">
-            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                <property name="targetObject" ref="RawEventsDbEntityManagerFactory" />
-                <property name="targetMethod" value="getSessionFactory" />
-            </bean>
-        </property>
+    <bean id="rawEventsSessionFactory" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="RawEventsDbEntityManagerFactory" />
+        <property name="targetMethod" value="getSessionFactory" />
     </bean>
-    
+    <bean id="rawEventsHibernateStatisticsMBean" factory-bean="rawEventsSessionFactory" factory-method="getStatistics" />
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="rawEventsHibernateStatisticsMBean" />
+        <property name="targetMethod" value="setStatisticsEnabled" />
+        <property name="arguments"><value>true</value></property>
+    </bean>
+
     <!-- Hibernate Aggr Events persistence statistics -->
-    <bean id="aggrEventsHibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
-        <property name="statisticsEnabled" value="true"/>
-        <property name="sessionFactory">
-            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                <property name="targetObject" ref="AggrEventsDbEntityManagerFactory" />
-                <property name="targetMethod" value="getSessionFactory" />
-            </bean>
-        </property>
+    <bean id="aggrEventsSessionFactory" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="AggrEventsDbEntityManagerFactory" />
+        <property name="targetMethod" value="getSessionFactory" />
+    </bean>
+    <bean id="aggrEventsHibernateStatisticsMBean" factory-bean="aggrEventsSessionFactory" factory-method="getStatistics" />
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="aggrEventsHibernateStatisticsMBean" />
+        <property name="targetMethod" value="setStatisticsEnabled" />
+        <property name="arguments"><value>true</value></property>
     </bean>
 
     <!-- uPortal framework statistics -->
