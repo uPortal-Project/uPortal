@@ -56,40 +56,43 @@ public class CounterStoreTest {
 
     @Test
     public void testCounterSingleThread() {
+        // Values reflect the POOLED_LO optimizer (Hibernate 4.3): the persisted
+        // UP_SEQUENCE value is the next low value to hand out, so the table
+        // advances one increment (3) ahead of the issued IDs rather than two.
         // Get until DB has to increment
-        this.getValue(this.counterStoreOne, "Test1", 1, 7, 1);
+        this.getValue(this.counterStoreOne, "Test1", 1, 4, 1);
 
-        this.getValue(this.counterStoreTwo, "Test1", 1, 10, 4);
+        this.getValue(this.counterStoreTwo, "Test1", 1, 7, 4);
 
-        this.getValue(this.counterStoreOne, "Test1", 1, 10, 2);
+        this.getValue(this.counterStoreOne, "Test1", 1, 7, 2);
 
-        this.getValue(this.counterStoreTwo, "Test1", 1, 10, 5);
+        this.getValue(this.counterStoreTwo, "Test1", 1, 7, 5);
 
-        this.getValue(this.counterStoreOne, "Test1", 1, 10, 3);
+        this.getValue(this.counterStoreOne, "Test1", 1, 7, 3);
 
-        this.getValue(this.counterStoreTwo, "Test1", 1, 10, 6);
+        this.getValue(this.counterStoreTwo, "Test1", 1, 7, 6);
 
-        this.getValue(this.counterStoreOne, "Test1", 1, 13, 7);
+        this.getValue(this.counterStoreOne, "Test1", 1, 10, 7);
 
-        this.getValue(this.counterStoreTwo, "Test1", 1, 16, 10);
+        this.getValue(this.counterStoreTwo, "Test1", 1, 13, 10);
 
-        this.getValue(this.counterStoreOne, "Test1", 1, 16, 8);
+        this.getValue(this.counterStoreOne, "Test1", 1, 13, 8);
 
-        this.getValue(this.counterStoreTwo, "Test1", 1, 16, 11);
+        this.getValue(this.counterStoreTwo, "Test1", 1, 13, 11);
 
-        this.getValue(this.counterStoreOne, "Test1", 1, 16, 9);
+        this.getValue(this.counterStoreOne, "Test1", 1, 13, 9);
 
-        this.getValue(this.counterStoreOne, "Test1", 1, 19, 13);
+        this.getValue(this.counterStoreOne, "Test1", 1, 16, 13);
 
-        this.getValue(this.counterStoreOne, "Test2", 2, 7, 1);
+        this.getValue(this.counterStoreOne, "Test2", 2, 4, 1);
 
-        this.getValue(this.counterStoreTwo, "Test2", 2, 10, 4);
+        this.getValue(this.counterStoreTwo, "Test2", 2, 7, 4);
 
         assertEquals(
                 "rowCount", 2, JdbcTestUtils.countRowsInTable(this.jdbcTemplate, "UP_SEQUENCE"));
         assertEquals(
                 "Test1 counter value",
-                19,
+                16,
                 (int)
                         jdbcTemplate.queryForObject(
                                 "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME=?",
@@ -97,7 +100,7 @@ public class CounterStoreTest {
                                 "Test1"));
         assertEquals(
                 "Test2 counter value",
-                10,
+                7,
                 (int)
                         jdbcTemplate.queryForObject(
                                 "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME=?",

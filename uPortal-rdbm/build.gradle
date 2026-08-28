@@ -6,7 +6,7 @@ dependencies {
     implementation "com.google.guava:guava:${guavaVersion}"
     api "org.apache.commons:commons-math3:${commonsMath3Version}"
     implementation "org.hibernate:hibernate-core:${hibernateVersion}"
-    implementation "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"
+    implementation "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final"
     api "org.jasig.portlet.utils:portlet-jdbc-util:${apereoPortletUtilsVersion}"
     implementation "org.springframework:spring-context:${springVersion}"
     implementation "org.springframework:spring-jdbc:${springVersion}"
