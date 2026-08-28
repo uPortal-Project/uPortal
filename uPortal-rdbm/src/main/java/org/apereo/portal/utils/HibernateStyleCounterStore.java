@@ -133,6 +133,17 @@ public class HibernateStyleCounterStore implements ICounterStore {
                                     return o;
                                 }
 
+                                // POOLED_LO stores the next low value to hand out
+                                // (source .. source + incrementSize - 1). This store
+                                // always UPDATEs UP_SEQUENCE to source + incrementSize
+                                // before issuing a pool, so the persisted value is
+                                // always greater than every id issued so far. Reading
+                                // it back under POOLED_LO therefore resumes at or above
+                                // the high-water mark — verified upgrade-safe against a
+                                // 4.2-written database (a group created post-upgrade
+                                // took GROUP_ID 110 while the prior max was 38). POOLED
+                                // and POOLED_LO produce identical issued-id streams; the
+                                // only difference is how far ahead UP_SEQUENCE sits.
                                 o =
                                         OptimizerFactory.buildOptimizer(
                                                 StandardOptimizerDescriptor.POOLED_LO

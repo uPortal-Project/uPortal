@@ -56,6 +56,9 @@ public class CounterStoreTest {
 
     @Test
     public void testCounterSingleThread() {
+        // Values reflect the POOLED_LO optimizer (Hibernate 4.3): the persisted
+        // UP_SEQUENCE value is the next low value to hand out, so the table
+        // advances one increment (3) ahead of the issued IDs rather than two.
         // Get until DB has to increment
         this.getValue(this.counterStoreOne, "Test1", 1, 4, 1);
 
