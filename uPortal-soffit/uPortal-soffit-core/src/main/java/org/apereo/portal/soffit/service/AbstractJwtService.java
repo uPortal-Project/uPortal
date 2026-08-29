@@ -17,9 +17,14 @@ package org.apereo.portal.soffit.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
+import javax.crypto.SecretKey;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.soffit.ITokenizable;
 import org.slf4j.Logger;
@@ -51,9 +56,9 @@ public class AbstractJwtService {
     @Value("${" + SIGNATURE_KEY_PROPERTY + ":" + DEFAULT_SIGNATURE_KEY + "}")
     private String signatureKey;
 
-    @Autowired private JwtEncryptor jwtEncryptor;
+    private SecretKey secretKey;
 
-    @Autowired private JwtSignatureAlgorithmFactory algorithmFactory;
+    @Autowired private JwtEncryptor jwtEncryptor;
 
     @PostConstruct
     public void init() {
@@ -67,33 +72,26 @@ public class AbstractJwtService {
                     "Property {} is using the deafult value;  please change it",
                     SIGNATURE_KEY_PROPERTY);
         }
+        secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(signatureKey));
     }
 
-    protected Claims createClaims(
+    protected Map<String, Object> createClaims(
             Class<? extends ITokenizable> clazz, String username, Date expires) {
 
-        // Registered claims
-        final Claims result =
-                Jwts.claims()
-                        .setIssuer(JWT_ISSUER)
-                        .setSubject(username)
-                        .setExpiration(expires)
-                        .setIssuedAt(new Date())
-                        .setId(UUID.randomUUID().toString());
-
-        // Deserialization class
+        final Map<String, Object> result = new HashMap<>();
+        result.put(Claims.ISSUER, JWT_ISSUER);
+        result.put(Claims.SUBJECT, username);
+        result.put(Claims.EXPIRATION, expires);
+        result.put(Claims.ISSUED_AT, new Date());
+        result.put(Claims.ID, UUID.randomUUID().toString());
         result.put(JwtClaims.CLASS.getName(), clazz.getName());
 
         return result;
     }
 
-    protected String generateEncryptedToken(Claims claims) {
+    protected String generateEncryptedToken(Map<String, Object> claims) {
 
-        final String jwt =
-                Jwts.builder()
-                        .setClaims(claims)
-                        .signWith(algorithmFactory.getAlgorithm(), signatureKey)
-                        .compact();
+        final String jwt = Jwts.builder().claims().add(claims).and().signWith(secretKey).compact();
 
         return jwtEncryptor.encryptIfConfigured(jwt);
     }
@@ -103,17 +101,18 @@ public class AbstractJwtService {
 
         String jwt = jwtEncryptor.decryptIfConfigured(encryptedToken);
 
-        final Jws<Claims> result = Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(jwt);
+        final Jws<Claims> result =
+                Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(jwt);
 
         // Token expired?
-        final Date expires = result.getBody().getExpiration();
+        final Date expires = result.getPayload().getExpiration();
         if (expires.before(new Date())) {
             final String msg = "The specified token is expired:  " + result;
             throw new SecurityException(msg);
         }
 
         // Sanity check
-        final String s = (String) result.getBody().get(JwtClaims.CLASS.getName());
+        final String s = (String) result.getPayload().get(JwtClaims.CLASS.getName());
         if (!clazz.getName().equals(s)) {
             // Opportunity for future versioning of the data model... needs work
             String msg =

@@ -17,8 +17,11 @@ package org.apereo.portal.soffit.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import java.util.Collections;
 import java.util.List;
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.soffit.Headers;
@@ -55,12 +58,14 @@ public class SoffitApiPreAuthenticatedProcessingFilter
                     + ".userDetailsRequestAttribute";
 
     private final String signatureKey;
+    private final SecretKey secretKey;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public SoffitApiPreAuthenticatedProcessingFilter(String signatureKey) {
         // Key for signing JWT.  Must match the provider (typically the portal).
         this.signatureKey = signatureKey;
+        this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(signatureKey));
         if (AbstractJwtService.DEFAULT_SIGNATURE_KEY.equals(signatureKey)) {
             logger.warn(
                     "A custom value for '{}' has not been specified;  the default value will be "
@@ -87,15 +92,15 @@ public class SoffitApiPreAuthenticatedProcessingFilter
         try {
             // Validate & parse the JWT
             final Jws<Claims> claims =
-                    Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(bearerToken);
+                    Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(bearerToken);
 
             logger.debug("Found the following pre-authenticated user:  {}", claims.toString());
 
-            final List<String> groupsClaim = claims.getBody().get("groups", List.class);
+            final List<String> groupsClaim = claims.getPayload().get("groups", List.class);
             final List<String> groupsList =
                     groupsClaim != null ? groupsClaim : Collections.emptyList();
             final UserDetails result =
-                    new SoffitApiUserDetails(claims.getBody().getSubject(), groupsList);
+                    new SoffitApiUserDetails(claims.getPayload().getSubject(), groupsList);
             request.setAttribute(USER_DETAILS_REQUEST_ATTRIBUTE, result);
             return result;
         } catch (Exception e) {
