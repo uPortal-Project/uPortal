@@ -1,3 +1,19 @@
+buildscript {
+    // The nebula.lint plugin pulls commons-lang3:3.8.1 transitively (via
+    // maven-artifact) onto the plugin classpath, which is a parent of every
+    // subproject buildscript classloader. Parent-first class loading means
+    // that 3.8.1 shadows the newer commons-lang3 declared on subproject
+    // buildscript classpaths (e.g. the resource aggregator used by
+    // uPortal-webapp:aggregateRespondrSkins). 3.8.1 predates
+    // StringUtils.getIfEmpty (added in lang3 3.10), which commons-compress
+    // 1.28+ calls, so force a modern lang3 on the plugin classpath.
+    configurations.classpath {
+        resolutionStrategy {
+            force "org.apache.commons:commons-lang3:${commonsLang3Version}"
+        }
+    }
+}
+
 plugins {
     // Top level plugins
     id 'com.github.kt3k.coveralls' version '2.12.2'
