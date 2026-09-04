@@ -19,6 +19,9 @@
     "stylelint-config-standard-scss": "^13.1.0",
     "stylelint-prettier": "^5.0.0"
   },
+  "overrides": {
+    "fast-uri": "^3.1.6"
+  },
   "workspaces": [
     "uPortal-webapp/"
   ],
