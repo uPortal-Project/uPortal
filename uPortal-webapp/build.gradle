@@ -95,11 +95,7 @@ dependencies {
     
     webjars "org.jasig.resourceserver:resource-server-content:${resourceServerVersion}"
     webjars "org.webjars.npm:bootstrap:${bootstrapVersion}"
-    webjars "org.webjars.npm:core-js-bundle:${coreJsBundleVersion}"
     webjars "org.webjars.npm:jstree:${jstreeVersion}"
-    webjars "org.webjars.npm:regenerator-runtime:${regeneratorRuntimeVersion}"
-    webjars "org.webjars.npm:webcomponents__webcomponentsjs:${webComponentPolyfillVersion}"
-    webjars "org.webjars.npm:whatwg-fetch:${whatwgFetchPolyfillVersion}"
 
 }
 
