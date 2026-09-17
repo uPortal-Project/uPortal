@@ -177,8 +177,21 @@ subprojects {
         publishingRepositoryUrlSnapshot = project.hasProperty('ossrhUrlSnapshot') ? project.getProperty('ossrhUrlSnapshot') : "https://central.sonatype.com/repository/maven-snapshots/"
     }
     signing {
+        // Sign via the gpg command + gpg-agent (like the Maven ecosystem components),
+        // rather than reading an in-process secring.gpg. gpg-agent supplies the
+        // passphrase (pinentry), so no signing.password is stored in a properties file,
+        // and the modern GnuPG keystore is used. Select the key with the
+        // `signing.gnupg.keyName` Gradle property (e.g. in ~/.gradle/gradle.properties).
+        useGpgCmd()
         required { gradle.taskGraph.hasTask('uploadArchives') }
         sign configurations.archives
+    }
+    // `useGpgCmd()` makes the gpg command an always-present signatory, so the Sign
+    // tasks would otherwise run on CI (gpg is installed) with no key and fail. `required`
+    // only governs enforcement, not execution — gate the tasks themselves so they run
+    // only when a release is actually uploading artifacts.
+    tasks.withType(Sign).configureEach {
+        onlyIf { gradle.taskGraph.hasTask('uploadArchives') }
     }
     tasks.withType(Javadoc).all {
         // disable JavaDocs until we start using them again in our website
