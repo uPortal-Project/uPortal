@@ -128,15 +128,9 @@ public class JpaVersionDao extends BasePortalJpaDao implements VersionDao {
         }
 
         // Pull out the maj/min/pat values
-        final Integer major =
-                coreNumbers.get(
-                        VersionImpl_.major.getName(), VersionImpl_.major.getBindableJavaType());
-        final Integer minor =
-                coreNumbers.get(
-                        VersionImpl_.minor.getName(), VersionImpl_.minor.getBindableJavaType());
-        final Integer patch =
-                coreNumbers.get(
-                        VersionImpl_.patch.getName(), VersionImpl_.patch.getBindableJavaType());
+        final Integer major = coreNumbers.get(VersionImpl_.major.getName(), Integer.class);
+        final Integer minor = coreNumbers.get(VersionImpl_.minor.getName(), Integer.class);
+        final Integer patch = coreNumbers.get(VersionImpl_.patch.getName(), Integer.class);
 
         // See if the optional local version value exists
         Integer local;

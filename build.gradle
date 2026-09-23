@@ -1,3 +1,19 @@
+buildscript {
+    // The nebula.lint plugin pulls commons-lang3:3.8.1 transitively (via
+    // maven-artifact) onto the plugin classpath, which is a parent of every
+    // subproject buildscript classloader. Parent-first class loading means
+    // that 3.8.1 shadows the newer commons-lang3 declared on subproject
+    // buildscript classpaths (e.g. the resource aggregator used by
+    // uPortal-webapp:aggregateRespondrSkins). 3.8.1 predates
+    // StringUtils.getIfEmpty (added in lang3 3.10), which commons-compress
+    // 1.28+ calls, so force a modern lang3 on the plugin classpath.
+    configurations.classpath {
+        resolutionStrategy {
+            force "org.apache.commons:commons-lang3:${commonsLang3Version}"
+        }
+    }
+}
+
 plugins {
     // Top level plugins
     id 'com.github.kt3k.coveralls' version '2.12.2'
@@ -60,7 +76,7 @@ allprojects {
     }
 
     codenarc {
-        toolVersion = '3.7.0-groovy-4.0'
+        toolVersion = '3.7.0'
         reportFormat = 'console'
     }
 
@@ -77,7 +93,7 @@ allprojects {
 
     /*======== Static Analysis ========*/
     spotbugs {
-        toolVersion = '4.9.8'
+        toolVersion = '4.10.4'
         // allow build to continue to other sub projects
         ignoreFailures = true
     }
@@ -177,8 +193,21 @@ subprojects {
         publishingRepositoryUrlSnapshot = project.hasProperty('ossrhUrlSnapshot') ? project.getProperty('ossrhUrlSnapshot') : "https://central.sonatype.com/repository/maven-snapshots/"
     }
     signing {
+        // Sign via the gpg command + gpg-agent (like the Maven ecosystem components),
+        // rather than reading an in-process secring.gpg. gpg-agent supplies the
+        // passphrase (pinentry), so no signing.password is stored in a properties file,
+        // and the modern GnuPG keystore is used. Select the key with the
+        // `signing.gnupg.keyName` Gradle property (e.g. in ~/.gradle/gradle.properties).
+        useGpgCmd()
         required { gradle.taskGraph.hasTask('uploadArchives') }
         sign configurations.archives
+    }
+    // `useGpgCmd()` makes the gpg command an always-present signatory, so the Sign
+    // tasks would otherwise run on CI (gpg is installed) with no key and fail. `required`
+    // only governs enforcement, not execution — gate the tasks themselves so they run
+    // only when a release is actually uploading artifacts.
+    tasks.withType(Sign).configureEach {
+        onlyIf { gradle.taskGraph.hasTask('uploadArchives') }
     }
     tasks.withType(Javadoc).all {
         // disable JavaDocs until we start using them again in our website

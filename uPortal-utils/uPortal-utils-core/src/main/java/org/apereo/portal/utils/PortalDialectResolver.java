@@ -14,24 +14,23 @@
  */
 package org.apereo.portal.utils;
 
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
 import org.apereo.portal.utils.hibernate4.dialects.MySQL5InnoDBCompressedDialect;
 import org.apereo.portal.utils.hibernate4.dialects.Oracle12ForceClobDialect;
 import org.apereo.portal.utils.hibernate4.dialects.PostgreSQL81Dialect;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.SQLServer2005Dialect;
-import org.hibernate.service.jdbc.dialect.internal.AbstractDialectResolver;
+import org.hibernate.engine.jdbc.dialect.spi.DialectResolutionInfo;
+import org.hibernate.engine.jdbc.dialect.spi.DialectResolver;
 
 /** */
-public class PortalDialectResolver extends AbstractDialectResolver {
+public class PortalDialectResolver implements DialectResolver {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected final Dialect resolveDialectInternal(DatabaseMetaData metaData) throws SQLException {
-        final String databaseName = metaData.getDatabaseProductName();
-        final int databaseMajorVersion = metaData.getDatabaseMajorVersion();
-        final int databaseMinorVersion = metaData.getDatabaseMinorVersion();
+    public Dialect resolveDialect(DialectResolutionInfo info) {
+        final String databaseName = info.getDatabaseName();
+        final int databaseMajorVersion = info.getDatabaseMajorVersion();
+        final int databaseMinorVersion = info.getDatabaseMinorVersion();
 
         if ("MySQL".equals(databaseName) && 5 == databaseMajorVersion) {
             return new MySQL5InnoDBCompressedDialect();
