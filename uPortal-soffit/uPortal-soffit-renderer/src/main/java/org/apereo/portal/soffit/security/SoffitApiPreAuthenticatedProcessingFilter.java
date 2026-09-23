@@ -17,8 +17,6 @@ package org.apereo.portal.soffit.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import java.util.Collections;
 import java.util.List;
 import javax.crypto.SecretKey;
@@ -65,7 +63,7 @@ public class SoffitApiPreAuthenticatedProcessingFilter
     public SoffitApiPreAuthenticatedProcessingFilter(String signatureKey) {
         // Key for signing JWT.  Must match the provider (typically the portal).
         this.signatureKey = signatureKey;
-        this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(signatureKey));
+        this.secretKey = AbstractJwtService.deriveKey(signatureKey);
         if (AbstractJwtService.DEFAULT_SIGNATURE_KEY.equals(signatureKey)) {
             logger.warn(
                     "A custom value for '{}' has not been specified;  the default value will be "

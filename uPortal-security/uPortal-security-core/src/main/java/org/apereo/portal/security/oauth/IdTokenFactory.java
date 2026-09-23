@@ -18,8 +18,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +38,7 @@ import org.apereo.portal.services.GroupService;
 import org.apereo.portal.soffit.Headers;
 import org.apereo.portal.soffit.service.AbstractJwtService;
 import org.apereo.portal.soffit.service.JwtEncryptor;
+import org.apereo.portal.soffit.service.JwtSignatureAlgorithmFactory;
 import org.apereo.portal.url.IAuthUrlCustomizer;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -74,6 +73,8 @@ public class IdTokenFactory {
                     + AbstractJwtService.DEFAULT_SIGNATURE_KEY
                     + "}")
     private String signatureKey;
+
+    @Autowired private JwtSignatureAlgorithmFactory algorithmFactory;
 
     @Value("${org.apereo.portal.security.oauth.IdTokenFactory.timeoutSeconds:300}")
     private long timeoutSeconds;
@@ -265,7 +266,7 @@ public class IdTokenFactory {
         logger.info("Using the following custom claims:  {}", customClaims);
 
         // Derive the SecretKey from the Base64-encoded signature key
-        secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(signatureKey));
+        secretKey = AbstractJwtService.deriveKey(signatureKey);
     }
 
     public String createUserInfo(HttpServletRequest request, String username) {
@@ -337,7 +338,8 @@ public class IdTokenFactory {
                 .filter(claim -> claim.getClaimValue() != null)
                 .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
 
-        final String result = builder.signWith(secretKey).compact();
+        final String result =
+                builder.signWith(secretKey, algorithmFactory.getAlgorithm()).compact();
 
         logger.debug("Produced the following JWT for username='{}':  {}", username, result);
 

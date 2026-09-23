@@ -19,6 +19,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.WeakKeyException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,6 +61,8 @@ public class AbstractJwtService {
 
     @Autowired private JwtEncryptor jwtEncryptor;
 
+    @Autowired private JwtSignatureAlgorithmFactory algorithmFactory;
+
     @PostConstruct
     public void init() {
 
@@ -72,7 +75,26 @@ public class AbstractJwtService {
                     "Property {} is using the deafult value;  please change it",
                     SIGNATURE_KEY_PROPERTY);
         }
-        secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(signatureKey));
+        secretKey = deriveKey(signatureKey);
+    }
+
+    /**
+     * Derives the HMAC signing key, translating jjwt's key-strength failure into a message that
+     * names the offending property. Since jjwt 0.12 the key is derived eagerly (here, at context
+     * startup) rather than lazily on first token use, so an undersized key now prevents the portal
+     * from starting -- and jjwt's own message does not mention {@value #SIGNATURE_KEY_PROPERTY}.
+     */
+    public static SecretKey deriveKey(String signatureKey) {
+        try {
+            return Keys.hmacShaKeyFor(Decoders.BASE64.decode(signatureKey));
+        } catch (WeakKeyException e) {
+            throw new IllegalStateException(
+                    "The value of property "
+                            + SIGNATURE_KEY_PROPERTY
+                            + " is too short;  it must be at least 256 bits (32 bytes) once"
+                            + " BASE64-decoded",
+                    e);
+        }
     }
 
     protected Map<String, Object> createClaims(
@@ -91,7 +113,13 @@ public class AbstractJwtService {
 
     protected String generateEncryptedToken(Map<String, Object> claims) {
 
-        final String jwt = Jwts.builder().claims().add(claims).and().signWith(secretKey).compact();
+        final String jwt =
+                Jwts.builder()
+                        .claims()
+                        .add(claims)
+                        .and()
+                        .signWith(secretKey, algorithmFactory.getAlgorithm())
+                        .compact();
 
         return jwtEncryptor.encryptIfConfigured(jwt);
     }
