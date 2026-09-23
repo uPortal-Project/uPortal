@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.groups.IEntityGroup;
@@ -72,6 +73,8 @@ public class IdTokenFactory {
                     + AbstractJwtService.DEFAULT_SIGNATURE_KEY
                     + "}")
     private String signatureKey;
+
+    @Autowired private JwtSignatureAlgorithmFactory algorithmFactory;
 
     @Value("${org.apereo.portal.security.oauth.IdTokenFactory.timeoutSeconds:300}")
     private long timeoutSeconds;
@@ -196,7 +199,7 @@ public class IdTokenFactory {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired private JwtSignatureAlgorithmFactory algorithmFactory;
+    private SecretKey secretKey;
 
     @Autowired private JwtEncryptor jwtEncryptor;
 
@@ -261,6 +264,9 @@ public class IdTokenFactory {
                                 .filter(item -> item.length() != 0)
                                 .collect(Collectors.toSet()));
         logger.info("Using the following custom claims:  {}", customClaims);
+
+        // Derive the SecretKey from the Base64-encoded signature key
+        secretKey = AbstractJwtService.deriveKey(signatureKey);
     }
 
     public String createUserInfo(HttpServletRequest request, String username) {
@@ -280,11 +286,13 @@ public class IdTokenFactory {
 
         final JwtBuilder builder =
                 Jwts.builder()
-                        .setIssuer(iss)
-                        .setSubject(username)
-                        .setAudience(iss)
-                        .setExpiration(expires)
-                        .setIssuedAt(now);
+                        .issuer(iss)
+                        .subject(username)
+                        .audience()
+                        .add(iss)
+                        .and()
+                        .expiration(expires)
+                        .issuedAt(now);
 
         final IPersonAttributes person = personAttributeDao.getPerson(username, null);
 
@@ -331,7 +339,7 @@ public class IdTokenFactory {
                 .forEach(claim -> builder.claim(claim.getClaimName(), claim.getClaimValue()));
 
         final String result =
-                builder.signWith(algorithmFactory.getAlgorithm(), signatureKey).compact();
+                builder.signWith(secretKey, algorithmFactory.getAlgorithm()).compact();
 
         logger.debug("Produced the following JWT for username='{}':  {}", username, result);
 
@@ -361,7 +369,7 @@ public class IdTokenFactory {
     public Jws<Claims> parseBearerToken(String bearerToken) {
         try {
             final String jwt = jwtEncryptor.decryptIfInvalidFormat(bearerToken);
-            return Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(jwt);
+            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(jwt);
         } catch (Exception e) {
             logger.warn("Unsupported bearerToken:  {}", bearerToken);
             logger.debug("Stack trace", e);
