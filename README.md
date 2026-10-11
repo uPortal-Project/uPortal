@@ -60,26 +60,36 @@
 
 ## About
 
-uPortal is the leading open source enterprise portal framework built by and for
-the higher education community. uPortal continues to evolve through
-contributions from its global community and is supported by resources, grants,
-donations, and memberships fees from academic institutions, commercial
-affiliates, and non-profit foundations. uPortal is built on open standards-based
-technologies such as Java and XML, and enables easy, standards-based integration
-with authentication and security infrastructures, single sign-on secure access,
-campus applications, web-based content, and end user customization. uPortal can
-easily integrate with other enterprise systems and can be customized for
-specific local needs.
+When students sign in to a uPortal site, they see campus announcements,
+upcoming events, news, and alerts, next to links to the applications they use.
+Faculty and staff sign in at the same address and see the content meant for
+them.
 
-### Forever Free!
+Schools build these sites with uPortal, an open source framework.
 
-You may [download uPortal](https://github.com/uPortal-Project/uPortal/releases) and use it
-on your site at no cost. Unlike our competitors, uPortal is 100% free open
-source software managed by [Apereo](https://www.apereo.org/content/about). Our
-community has access to all releases of the uPortal software with absolutely no
-costs. We welcome
-[contributions from our community](https://github.com/uPortal-Project/uPortal/graphs/contributors)
-of all types and sizes.
+- Sign-in: uPortal uses the school's existing sign-in service. Options include
+  Central Authentication Service (CAS) single sign-on, a directory server, and
+  Shibboleth. Groups from the directory or from Grouper decide who gets which
+  content.
+- Customization: each school sets its own theme, layout, and content. People
+  can rearrange their own pages and add content from a catalog.
+- Custom components: developers add features as web components on the portal
+  page. A component can call campus APIs as the signed-in user, through the
+  portal's OpenID Connect support.
+
+This repository holds the framework source code. To set up a portal, start with
+[uPortal-start][].
+
+### Open source and funding
+
+uPortal is free to [download](https://github.com/uPortal-Project/uPortal/releases)
+and use under the [Apache License 2.0](LICENSE). The
+[Apereo Foundation](https://www.apereo.org/content/about), a nonprofit, hosts
+the project. Developers from schools and companies that use uPortal
+[maintain it](https://github.com/uPortal-Project/uPortal/graphs/contributors),
+and contributions of any size are welcome. Grants, donations, and membership
+fees from academic institutions, commercial affiliates, and nonprofit
+foundations fund the project.
 
 ### Accessible
 
@@ -124,14 +134,25 @@ Additional information about uPortal is available in the Manual.
 -   JDK 11 - The JRE alone is NOT sufficient, a full JDK is required
 -   GIT
 
-## uPortal-start
+## Related projects
 
-uPortal is now meant to be deployed via [uPortal-start][], which is responsible for
-servlet container (ie Tomcat), DB, and portal configurations. uPortal-start
-deals with the low-level configurations and setup, while letting the adopter
-focus on the business configuration side of the deployment. However, it is
-possible to run uPortal without uPortal-start. The [uPortal manual][latest uportal manual] explains
-how.
+A running portal combines this repository with the following projects.
+
+- uPortal, this repository: the Java framework. It handles sign-in, user
+  layouts, groups and permissions, page rendering, and data import and export.
+  Releases ship to Maven Central.
+- [uPortal-start][]: the starting point for a new portal. It packages uPortal
+  with Tomcat, a database, a Central Authentication Service (CAS) server, and a
+  set of portlets. A portlet is a small application that fills one block on the
+  page. The bundled portlets include Announcements, Calendar, News Reader,
+  Notifications, Bookmarks, and Web Proxy. A school copies uPortal-start and
+  keeps its own configuration, skin, and data there.
+- [uPortal-web-components][]: browser components for the portal page, such as
+  the `waffle-menu` app launcher and the content carousel. uPortal-start
+  delivers them to the browser through its resource server.
+
+You can run uPortal without uPortal-start. The
+[uPortal manual][latest uportal manual] explains how.
 
 ## Building and Deploying
 
@@ -145,3 +166,4 @@ For a full list of Gradle tasks run `./gradlew tasks` from the root directory.
 
 [latest uportal manual]: https://uportal-project.github.io/uPortal
 [uportal-start]: https://github.com/uPortal-Project/uPortal-start
+[uportal-web-components]: https://github.com/uPortal-Project/uPortal-web-components
