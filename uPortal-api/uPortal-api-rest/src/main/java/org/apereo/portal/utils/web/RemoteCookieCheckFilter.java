@@ -81,6 +81,9 @@ public class RemoteCookieCheckFilter implements Filter {
     }
 
     private boolean userAgentInIgnoreList(String userAgent) {
+        if (userAgent == null) {
+            return false;
+        }
         for (Pattern ignorePattern : regexIgnoredUserAgents) {
             if (ignorePattern.matcher(userAgent).matches()) {
                 return true;
