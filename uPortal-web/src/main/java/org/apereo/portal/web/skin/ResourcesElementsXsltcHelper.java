@@ -25,6 +25,8 @@ import org.apereo.portal.utils.cache.CacheKey;
 import org.jasig.resourceserver.aggr.om.Resources;
 import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.NodeList;
 
 /**
@@ -55,8 +57,36 @@ public class ResourcesElementsXsltcHelper extends TransformerConfigurationSource
         return this.resourcesElementsProvider.getResourcesParameter(request, skinXml, name);
     }
 
+    /**
+     * The skin's head elements, as a copy that only the caller reads.
+     *
+     * <p>When aggregation is on, {@code ResourcesElementsProviderImpl} builds the elements of a
+     * skin once and returns the same {@code DocumentFragment} to every request. The JDK's DOM is
+     * not safe to read from two threads: {@code NodeList.item(int)} moves a cursor that the
+     * document keeps for its node lists. Two pages that copied the skin's elements at the same
+     * moment ({@code xsl:copy-of} in {@code resourcesTemplates.xsl}) could read {@code null} for an
+     * element, and the render failed with a {@code NullPointerException} in XSLTC's {@code
+     * BasisLibrary.nodeList2Iterator}. The copy is made while holding the shared list's lock.
+     */
     public NodeList getResourcesXmlFragment(HttpServletRequest request, String skinXml) {
-        return this.resourcesElementsProvider.getResourcesXmlFragment(request, skinXml);
+        final NodeList shared =
+                this.resourcesElementsProvider.getResourcesXmlFragment(request, skinXml);
+        synchronized (shared) {
+            final int length = shared.getLength();
+            if (length == 0) {
+                return shared;
+            }
+            final Document document =
+                    shared.item(0)
+                            .getOwnerDocument()
+                            .getImplementation()
+                            .createDocument(null, null, null);
+            final DocumentFragment copy = document.createDocumentFragment();
+            for (int i = 0; i < length; i++) {
+                copy.appendChild(document.importNode(shared.item(i), true));
+            }
+            return copy.getChildNodes();
+        }
     }
 
     @Override
