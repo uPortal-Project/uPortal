@@ -62,7 +62,10 @@ import org.w3c.dom.Node;
  * each save the merged layout. Under snapshot isolation a write to a row that another transaction
  * changed after this one first read fails: MariaDB 11.6 and later do that by default under
  * REPEATABLE READ (innodb_snapshot_isolation), with error 1020 "Record has changed since last read
- * in table 'up_layout_param'".
+ * in table 'up_layout_param'". A save deletes the user's rows and inserts the new ones, and two
+ * saves whose deletes run before either commits insert the same keys: on PostgreSQL the second
+ * save's insert failed with a duplicate key on up_layout_param_pkey. A save locks the user's
+ * profile rows first, so the second one waits for the first one's commit.
  *
  * <p>The test's connections default to SERIALIZABLE (rdbmUserLayoutStoreTestContext.xml), so a save
  * that doesn't ask for READ COMMITTED itself shows up on every database, HSQLDB included.
@@ -158,8 +161,8 @@ public class RDBMUserLayoutStoreConcurrencyTest {
 
     /**
      * A reads the user's layout id and stops before its write, and B starts to save meanwhile. On
-     * MariaDB 11.6+ under REPEATABLE READ, B committed and A's delete then failed with 1020. Under
-     * READ COMMITTED A replaces the rows B committed: both save, and A's layout remains.
+     * MariaDB 11.6+ under REPEATABLE READ, B committed and A's delete then failed with 1020. B now
+     * waits for A's lock: both save, and B's layout remains.
      */
     @Test
     public void testLayoutSavedBetweenReadAndWrite() throws Exception {
@@ -169,6 +172,107 @@ public class RDBMUserLayoutStoreConcurrencyTest {
                 "DELETE FROM UP_LAYOUT_PARAM",
                 () -> store.setUserLayout(person, profile, layout("A"), false),
                 () -> store.setUserLayout(person, profile, layout("B"), false));
+
+        assertStoredLayout("B");
+        assertSavedUnderReadCommitted();
+    }
+
+    /**
+     * A deletes the user's rows and stops before its inserts, and B starts to save meanwhile. On
+     * PostgreSQL, B's delete waited for A's and then skipped the rows A had inserted, and B's
+     * insert failed with a duplicate key on up_layout_param_pkey. B now waits for A's lock and
+     * replaces A's rows.
+     */
+    @Test
+    public void testLayoutSavedBetweenDeleteAndInsert() throws Exception {
+        store.setUserLayout(person, profile, layout("first"), false);
+
+        runPausedAt(
+                "INSERT INTO UP_LAYOUT_STRUCT",
+                () -> store.setUserLayout(person, profile, layout("A"), false),
+                () -> store.setUserLayout(person, profile, layout("B"), false));
+
+        assertStoredLayout("B");
+        assertSavedUnderReadCommitted();
+    }
+
+    /**
+     * The user's first layout, such as two sign-ins at once of a new user: the profile has no
+     * layout id and there are no rows to delete, so both saves inserted the same keys on every
+     * database. B now waits for A's lock, reads the layout id A recorded and replaces A's rows.
+     */
+    @Test
+    public void testFirstLayoutSavedTwiceAtOnce() throws Exception {
+        makeNewUser();
+
+        runPausedAt(
+                "INSERT INTO UP_LAYOUT_STRUCT",
+                () -> store.setUserLayout(person, profile, layout("A"), false),
+                () -> store.setUserLayout(person, profile, layout("B"), false));
+
+        assertStoredLayout("B");
+        assertFirstLayoutRecorded();
+        assertSavedUnderReadCommitted();
+    }
+
+    /**
+     * The first layout of a user with two profiles, saved from both at once, such as a desktop and
+     * a mobile session. The profiles share the layout id, so the lock has to cover every profile
+     * row of the user, not only the saved profile's row.
+     */
+    @Test
+    public void testFirstLayoutOfTwoProfilesSavedAtOnce() throws Exception {
+        jdbcTemplate.update(
+                "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, LAYOUT_ID) VALUES (?, ?, ?)",
+                USER_ID,
+                PROFILE_ID + 1,
+                LAYOUT_ID);
+        makeNewUser();
+        final IUserProfile otherProfile = mock(IUserProfile.class);
+        when(otherProfile.getProfileId()).thenReturn(PROFILE_ID + 1);
+
+        runPausedAt(
+                "INSERT INTO UP_LAYOUT_STRUCT",
+                () -> store.setUserLayout(person, profile, layout("A"), false),
+                () -> store.setUserLayout(person, otherProfile, layout("B"), false));
+
+        assertStoredLayout("B");
+        assertFirstLayoutRecorded();
+        assertSavedUnderReadCommitted();
+    }
+
+    /**
+     * A takes the save's lock and stops, and B takes a structure id meanwhile, as updateNode does
+     * while it holds the layout manager's monitor. B must not wait for A: a save that joins a
+     * caller's transaction keeps its lock after the monitor is released, and the two would wait for
+     * each other where the database can't see it.
+     */
+    @Test
+    public void testStructIdTakenWhileALayoutSaves() throws Exception {
+        final AtomicReference<String> idOfB = new AtomicReference<>();
+
+        final boolean bWaited =
+                runPausedAt(
+                        "DELETE FROM UP_LAYOUT_PARAM",
+                        () -> store.setUserLayout(person, profile, layout("A"), false),
+                        () -> idOfB.set(store.getNextStructId(person, "s")),
+                        20);
+
+        assertFalse("B waited for A's save", bWaited);
+        assertEquals("s1", idOfB.get());
+        assertStoredLayout("A");
+        assertSavedUnderReadCommitted();
+    }
+
+    /**
+     * A user whose session has an id without profile rows, such as a user deleted while signed in:
+     * there is no row to lock, and the save goes on as before.
+     */
+    @Test
+    public void testUserWithoutProfileRowStillSaves() {
+        jdbcTemplate.update("DELETE FROM UP_USER_PROFILE WHERE USER_ID=?", USER_ID);
+
+        store.setUserLayout(person, profile, layout("A"), false);
 
         assertStoredLayout("A");
         assertSavedUnderReadCommitted();
@@ -242,6 +346,28 @@ public class RDBMUserLayoutStoreConcurrencyTest {
                 Integer.valueOf(1),
                 jdbcTemplate.queryForObject(
                         "SELECT COUNT(*) FROM UP_LAYOUT_STRUCT WHERE USER_ID=?",
+                        Integer.class,
+                        USER_ID));
+    }
+
+    /** A user who never saved a layout: no layout id in the profiles and no UP_USER_LAYOUT row. */
+    private void makeNewUser() {
+        jdbcTemplate.update("UPDATE UP_USER_PROFILE SET LAYOUT_ID=NULL WHERE USER_ID=?", USER_ID);
+        jdbcTemplate.update("DELETE FROM UP_USER_LAYOUT WHERE USER_ID=?", USER_ID);
+    }
+
+    /** Every profile of the user has the layout id, and the user has one UP_USER_LAYOUT row. */
+    private void assertFirstLayoutRecorded() {
+        assertEquals(
+                Collections.singletonList(LAYOUT_ID),
+                jdbcTemplate.queryForList(
+                        "SELECT DISTINCT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=?",
+                        Integer.class,
+                        USER_ID));
+        assertEquals(
+                Integer.valueOf(1),
+                jdbcTemplate.queryForObject(
+                        "SELECT COUNT(*) FROM UP_USER_LAYOUT WHERE USER_ID=?",
                         Integer.class,
                         USER_ID));
     }

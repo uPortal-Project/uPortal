@@ -24,7 +24,8 @@
     manager, which the layout store's JDBC transactions run under in the portal.
 
     The test runs on an HSQLDB database of its own with MVCC transactions, as uPortal-start's
-    HSQLDB server runs.
+    HSQLDB server runs. With HSQLDB's default table locks, two first saves of a layout run one
+    after the other without the store's lock.
 
     The connections default to SERIALIZABLE (8), so a save that doesn't ask for READ COMMITTED
     itself shows up on HSQLDB as it does on MariaDB 11.6 and later.
