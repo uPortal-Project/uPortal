@@ -7,6 +7,7 @@ dependencies {
     implementation project(':uPortal-security:uPortal-security-core')
     implementation project(':uPortal-spring')
 
+    testImplementation "${portletApiDependency}"
     testImplementation "${servletApiDependency}"
 
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
