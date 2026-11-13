@@ -14,15 +14,17 @@
  */
 package org.apereo.portal.soffit.service;
 
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.MacAlgorithm;
+import io.jsonwebtoken.security.SecureDigestAlgorithm;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * Factory that returns an JWT {@code SignatureAlgorithm} based on configuration. Provides a default
- * if the configuration value is invalid.
+ * Factory that returns the JWT {@code MacAlgorithm} to sign with, based on configuration. Provides
+ * a default if the configuration value is invalid or unsupported.
  *
  * @since 5.6.1
  */
@@ -37,19 +39,23 @@ public class JwtSignatureAlgorithmFactory {
     @Value("${" + SIGNATURE_ALGORITHM_PROPERTY + ":" + SIGNATURE_ALGORITHM_DEFAULT + "}")
     private String algorithmStr;
 
-    private SignatureAlgorithm algorithm = SignatureAlgorithm.HS512;
+    private MacAlgorithm algorithm = Jwts.SIG.HS512;
 
     @PostConstruct
     public void init() {
-        try {
-            algorithm = SignatureAlgorithm.forName(algorithmStr);
-        } catch (Exception e) {
-            log.warn(e.getMessage());
+        final SecureDigestAlgorithm<?, ?> configured = Jwts.SIG.get().get(algorithmStr);
+        if (configured instanceof MacAlgorithm) {
+            algorithm = (MacAlgorithm) configured;
+        } else {
+            log.warn(
+                    "Value '{}' of property {} is not a supported HMAC algorithm",
+                    algorithmStr,
+                    SIGNATURE_ALGORITHM_PROPERTY);
             log.warn("Default JWT signature algorithm is {}", SIGNATURE_ALGORITHM_DEFAULT);
         }
     }
 
-    public SignatureAlgorithm getAlgorithm() {
+    public MacAlgorithm getAlgorithm() {
         return algorithm;
     }
 }

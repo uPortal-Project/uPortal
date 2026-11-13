@@ -39,7 +39,7 @@ public class DefinitionService extends AbstractJwtService {
             String username,
             Date expires) {
 
-        final Claims claims = createClaims(Definition.class, username, expires);
+        final Map<String, Object> claims = createClaims(Definition.class, username, expires);
 
         // Title
         claims.put(JwtClaims.TITLE.getName(), title);
@@ -64,26 +64,27 @@ public class DefinitionService extends AbstractJwtService {
 
         final Jws<Claims> claims = parseEncryptedToken(definitionToken, Definition.class);
 
-        final String username = claims.getBody().getSubject();
+        final String username = claims.getPayload().getSubject();
 
         // Title
-        final String title = (String) claims.getBody().get(JwtClaims.TITLE.getName());
+        final String title = (String) claims.getPayload().get(JwtClaims.TITLE.getName());
 
         // FName
-        final String fname = (String) claims.getBody().get(JwtClaims.FNAME.getName());
+        final String fname = (String) claims.getPayload().get(JwtClaims.FNAME.getName());
 
         // Description
-        final String description = (String) claims.getBody().get(JwtClaims.DESCRIPTION.getName());
+        final String description =
+                (String) claims.getPayload().get(JwtClaims.DESCRIPTION.getName());
 
         // Categories
         @SuppressWarnings("unchecked")
         final List<String> categories =
-                (List<String>) claims.getBody().get(JwtClaims.CATEGORIES.getName());
+                (List<String>) claims.getPayload().get(JwtClaims.CATEGORIES.getName());
 
         // Parameters
         @SuppressWarnings("unchecked")
         final Map<String, List<String>> parameters =
-                (Map<String, List<String>>) claims.getBody().get(JwtClaims.PARAMETERS.getName());
+                (Map<String, List<String>>) claims.getPayload().get(JwtClaims.PARAMETERS.getName());
 
         Definition result =
                 new Definition(definitionToken, title, fname, description, categories, parameters);

@@ -34,7 +34,7 @@ public class BearerService extends AbstractJwtService {
             List<String> groups,
             Date expires) {
 
-        final Claims claims = createClaims(Bearer.class, username, expires);
+        final Map<String, Object> claims = createClaims(Bearer.class, username, expires);
 
         /*
          * User attributes; attribute names that match registered attributes
@@ -68,10 +68,10 @@ public class BearerService extends AbstractJwtService {
 
         final Jws<Claims> claims = parseEncryptedToken(bearerToken, Bearer.class);
 
-        final String username = claims.getBody().getSubject();
+        final String username = claims.getPayload().getSubject();
 
         final Map<String, List<String>> attributes = new HashMap<>();
-        for (Map.Entry<String, Object> y : claims.getBody().entrySet()) {
+        for (Map.Entry<String, Object> y : claims.getPayload().entrySet()) {
             final String key = y.getKey();
             if (JwtClaims.forName(key) != null) {
                 // Skip these;  we handle these differently
@@ -90,7 +90,8 @@ public class BearerService extends AbstractJwtService {
         }
 
         @SuppressWarnings("unchecked")
-        final List<String> groups = (List<String>) claims.getBody().get(JwtClaims.GROUPS.getName());
+        final List<String> groups =
+                (List<String>) claims.getPayload().get(JwtClaims.GROUPS.getName());
 
         Bearer result = new Bearer(bearerToken, username, attributes, groups);
         logger.debug("Produced the following Bearer for user '{}':  {}", username, result);
