@@ -28,8 +28,8 @@
   <!-- normalize.css removed 2026-05-06: Bootstrap 5's reboot.css covers
        the same browser-default normalization for any BS5-baseline browser. -->
 
-  <css included="plain">/resource-server/rs/fontawesome/4.7.0/css/font-awesome.css</css>
-  <css included="aggregated">/resource-server/rs/fontawesome/4.7.0/css/font-awesome.min.css</css>
+  <css included="plain">/resource-server/webjars/font-awesome/css/font-awesome.css</css>
+  <css included="aggregated">/resource-server/webjars/font-awesome/css/font-awesome.min.css</css>
 
 
 
