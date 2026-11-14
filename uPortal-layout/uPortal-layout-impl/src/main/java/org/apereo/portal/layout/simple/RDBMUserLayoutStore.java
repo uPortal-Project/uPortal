@@ -64,6 +64,7 @@ import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -118,7 +119,16 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     public void setPlatformTransactionManager(
             @Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
                     PlatformTransactionManager platformTransactionManager) {
-        transactionOperations = new TransactionTemplate(platformTransactionManager);
+        final TransactionTemplate layoutTransactionTemplate =
+                new TransactionTemplate(platformTransactionManager);
+        /*
+         * A layout save deletes the user's rows and writes them again, and two requests of the
+         * same user may save at once: the later save must replace the rows the earlier one
+         * committed, as READ COMMITTED does everywhere. Under REPEATABLE READ, MariaDB 11.6+ by
+         * default refuses that with "Record has changed since last read" (error 1020) instead.
+         */
+        layoutTransactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
+        transactionOperations = layoutTransactionTemplate;
 
         final DefaultTransactionDefinition nextStructTransactionDefinition =
                 new DefaultTransactionDefinition();
@@ -1117,6 +1127,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                             int layoutId;
                                             ResultSet rs;
 
+                                            lockUserProfiles(con, userId);
+
                                             // Eventually we want to be able to just get layoutId
                                             // from
                                             // the
@@ -1335,6 +1347,38 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                     "setUserLayout(): Layout document for user {} took {} milliseconds to save",
                     userId,
                     timeTook);
+        }
+    }
+
+    /*
+     * Locks the user's profile rows until the save commits, so that two saves of one user run
+     * one after the other: the later one reads the layout id and deletes the rows of the earlier
+     * one after its commit. Without the lock, both deleted before either inserted (a first
+     * layout), or, on PostgreSQL, the later delete waited for the earlier one and then skipped
+     * the rows it had inserted. Either way an insert failed on the primary key.
+     *
+     * The lock takes every profile row of the user, not only the saved profile's row: a user has
+     * a row per profile, such as a desktop and a mobile one, and the profiles share one layout id,
+     * so two sessions that save different profiles write the same layout rows. A reset of all
+     * profiles (UserLayoutHelperImpl) takes the rows with this same statement first.
+     *
+     * The profile rows give the layout id. The UP_USER row would order the saves as well, but
+     * getNextStructId takes it while the layout manager's monitor is held (updateNode), and a
+     * save that joins a caller's transaction keeps its locks after the monitor is released. The
+     * two could wait for each other where the database can't see it.
+     */
+    private void lockUserProfiles(Connection con, int userId) throws SQLException {
+        final String sql = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=LAYOUT_ID WHERE USER_ID=?";
+        try (PreparedStatement pstmt = con.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            logger.debug(sql);
+            if (pstmt.executeUpdate() == 0) {
+                // Such as a user deleted while signed in: the save goes on, without the lock
+                logger.warn(
+                        "No UP_USER_PROFILE row for user id {} to lock; saving the layout"
+                                + " without the lock",
+                        userId);
+            }
         }
     }
 
