@@ -63,7 +63,7 @@
     },
     {
       "groupName": "JAXB2",
-      "matchPackageNames": ["/^org.jvnet.jaxb2_commons/"]
+      "matchPackageNames": ["/^org.jvnet.jaxb/"]
     },
     {
       "groupName": "Resource Server",
