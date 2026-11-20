@@ -162,10 +162,14 @@
      | where propagationBehavior=Propagation.REQUIRES_NEW because it's the only
      | class that touches this table, and because failure elsewhere in a shared
      | transaction is orthogonal to fetching a new batch of sequence numbers.
+     | READ COMMITTED: the store reads the counter, then updates it where it is
+     | unchanged and tries again when another server changed it. Under
+     | REPEATABLE READ, MariaDB 11.6+ refuses that update with error 1020 instead.
      +-->
     <bean id="counterStoreTransactionOperations" class="org.springframework.transaction.support.TransactionTemplate">
         <property name="transactionManager" ref="transactionManager" />
         <property name="propagationBehavior" value="#{T(org.springframework.transaction.TransactionDefinition).PROPAGATION_REQUIRES_NEW}" />
+        <property name="isolationLevel" value="#{T(org.springframework.transaction.TransactionDefinition).ISOLATION_READ_COMMITTED}" />
     </bean>
 
 </beans>
