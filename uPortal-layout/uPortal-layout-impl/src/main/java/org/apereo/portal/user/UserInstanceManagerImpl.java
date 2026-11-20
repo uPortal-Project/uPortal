@@ -110,25 +110,24 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
             return userInstance;
         }
 
-        final IPerson person;
-        try {
-            // Retrieve the person object that is associated with the request
-            person = this.personManager.getPerson(request);
-        } catch (Exception e) {
-            logger.error("Exception while retrieving IPerson!", e);
-            throw new PortalSecurityException("Could not retrieve IPerson", e);
-        }
-
-        if (person == null) {
-            throw new PortalSecurityException(
-                    "PersonManager returned null person for this request.  With no user, there's no UserInstance.  Is PersonManager misconfigured?  RDBMS access misconfigured?");
-        }
+        // A logout on another request can end the session between the two reads below. The person
+        // then comes from the ended session and getSession() starts a new one. Storing that
+        // person's UserInstance there would keep rendering the user's layout after the logout.
+        final HttpSession personSession = request.getSession(false);
+        IPerson person = this.getPerson(request);
 
         final HttpSession session = request.getSession();
         if (session == null) {
             throw new IllegalStateException(
                     "HttpServletRequest.getSession() returned a null session for request: "
                             + request);
+        }
+
+        if (personSession != null && personSession != session) {
+            // The session the person came from has ended: read the person of the new session.
+            // Compared by identity, since the container may give the new session the same ID
+            // while a portlet application still has a session with it.
+            person = this.getPerson(request);
         }
 
         // Return the UserInstance object if it's in the session
@@ -165,6 +164,23 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
 
         // Return the new UserInstance
         return userInstance;
+    }
+
+    private IPerson getPerson(HttpServletRequest request) {
+        final IPerson person;
+        try {
+            // Retrieve the person object that is associated with the request
+            person = this.personManager.getPerson(request);
+        } catch (Exception e) {
+            logger.error("Exception while retrieving IPerson!", e);
+            throw new PortalSecurityException("Could not retrieve IPerson", e);
+        }
+
+        if (person == null) {
+            throw new PortalSecurityException(
+                    "PersonManager returned null person for this request.  With no user, there's no UserInstance.  Is PersonManager misconfigured?  RDBMS access misconfigured?");
+        }
+        return person;
     }
 
     protected IUserProfile getUserProfile(
