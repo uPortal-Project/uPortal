@@ -374,33 +374,30 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                     public String doInConnection(Connection con)
                                             throws SQLException, DataAccessException {
 
+                                        /*
+                                         * Increment first, then read: the update locks the row
+                                         * until the commit, so two requests of the same user
+                                         * never get the same id, and no read comes before the
+                                         * write.
+                                         */
                                         try (Statement stmt = con.createStatement()) {
+                                            String sUpdate =
+                                                    "UPDATE UP_USER SET NEXT_STRUCT_ID=NEXT_STRUCT_ID+1"
+                                                            + " WHERE USER_ID="
+                                                            + userId;
+                                            logger.debug("getNextStructId(): {}", sUpdate);
+                                            if (stmt.executeUpdate(sUpdate) != 1) {
+                                                throw new SQLException(
+                                                        "no row updated by [" + sUpdate + "]");
+                                            }
                                             String sQuery =
                                                     "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID="
                                                             + userId;
                                             logger.debug("getNextStructId(): {}", sQuery);
-                                            int currentStructId;
                                             try (ResultSet rs = stmt.executeQuery(sQuery)) {
-                                                if (rs.next()) {
-                                                    currentStructId = rs.getInt(1);
-                                                } else {
-                                                    throw new SQLException(
-                                                            "no rows returned for query ["
-                                                                    + sQuery
-                                                                    + "]");
-                                                }
+                                                rs.next();
+                                                return prefix + rs.getInt(1);
                                             }
-                                            int nextStructId = currentStructId + 1;
-                                            String sUpdate =
-                                                    "UPDATE UP_USER SET NEXT_STRUCT_ID="
-                                                            + nextStructId
-                                                            + " WHERE USER_ID="
-                                                            + userId
-                                                            + " AND NEXT_STRUCT_ID="
-                                                            + currentStructId;
-                                            logger.debug("getNextStructId(): {}", sUpdate);
-                                            stmt.executeUpdate(sUpdate);
-                                            return prefix + nextStructId;
                                         }
                                     }
                                 }));
