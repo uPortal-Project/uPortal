@@ -241,7 +241,7 @@ public class PortalPreAuthenticatedProcessingFilter
          */
         final Jws<Claims> userinfo = idTokenFactory.getUserInfo(request);
         if (userinfo != null) {
-            final String username = userinfo.getBody().getSubject();
+            final String username = userinfo.getPayload().getSubject();
             logger.debug(
                     "Processing authentication for username='{}' based on OIDC Id token in the {} header",
                     username,

@@ -124,7 +124,7 @@ public class BasePersonManager implements IPersonManager {
 
         final Jws<Claims> claims = idTokenFactory.getUserInfo(request);
         if (claims != null) {
-            final String username = claims.getBody().getSubject();
+            final String username = claims.getPayload().getSubject();
             logger.debug("Found OIDC Id token for username='{}'", username);
             final IPerson result = new PersonImpl();
             result.setAttribute(IPerson.USERNAME, username);
