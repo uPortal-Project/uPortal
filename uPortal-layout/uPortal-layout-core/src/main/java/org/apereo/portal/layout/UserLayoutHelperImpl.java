@@ -15,6 +15,7 @@
 package org.apereo.portal.layout;
 
 import java.util.Hashtable;
+import java.util.Objects;
 import javax.sql.DataSource;
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.IUserProfile;
@@ -41,6 +42,9 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 public class UserLayoutHelperImpl extends JdbcDaoSupport implements IUserLayoutHelper {
 
     protected static final String DEFAULT_LAYOUT_FNAME = "default";
+
+    static final String LOCK_USER_PROFILES =
+            "UPDATE UP_USER_PROFILE SET LAYOUT_ID=LAYOUT_ID WHERE USER_ID=?";
 
     private IUserIdentityStore userIdentityStore;
 
@@ -86,6 +90,14 @@ public class UserLayoutHelperImpl extends JdbcDaoSupport implements IUserLayoutH
         // get the integer uid into the person object without creating any new person data
         int uid = userIdentityStore.getPortalUID(person, false);
         person.setID(uid);
+
+        /*
+         * A layout save locks all of the user's profile rows in one statement
+         * (RDBMUserLayoutStore). Lock them the same way before updating them one at a time, in
+         * the map's order: taking them in another order than the save could deadlock with it.
+         */
+        Objects.requireNonNull(getJdbcTemplate(), "No DataSource for the profile lock")
+                .update(LOCK_USER_PROFILES, uid);
 
         final Hashtable<Integer, UserProfile> map = userLayoutStore.getUserProfileList(person);
         for (UserProfile profile : map.values()) {
