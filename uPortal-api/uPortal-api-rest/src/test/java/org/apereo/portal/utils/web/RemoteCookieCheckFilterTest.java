@@ -15,6 +15,7 @@
 package org.apereo.portal.utils.web;
 
 import java.io.IOException;
+import java.util.Set;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -46,5 +47,17 @@ public class RemoteCookieCheckFilterTest {
         remoteCookieCheckFilter.doFilter(req, res, chain);
         String attribute = (String) req.getSession().getAttribute("COOKIE_CHECK_REFERER");
         Assert.assertNull(attribute);
+    }
+
+    @Test
+    public void testDoFilterNullUserAgent() throws IOException, ServletException {
+        var requestURI = "requestURI";
+        remoteCookieCheckFilter.setRegexIgnoredUserAgents(Set.of(""));
+        req.setMethod("GET");
+        req.setRequestURI(requestURI);
+
+        remoteCookieCheckFilter.doFilter(req, res, new MockFilterChain());
+
+        Assert.assertEquals(requestURI, req.getSession().getAttribute("COOKIE_CHECK_REFERER"));
     }
 }
