@@ -17,7 +17,7 @@ package org.apereo.portal.utils;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
-import org.jvnet.jaxb2_commons.lang.Validate;
+import java.util.Objects;
 
 /** */
 public class TableFormatter {
@@ -27,8 +27,8 @@ public class TableFormatter {
         private final String conversion;
 
         public TableEntry(T value, String flags, String conversion) {
-            Validate.notNull(flags);
-            Validate.notNull(conversion);
+            Objects.requireNonNull(flags);
+            Objects.requireNonNull(conversion);
 
             this.value = value;
             this.flags = flags;
@@ -83,7 +83,7 @@ public class TableFormatter {
     }
 
     private TableFormatter(Formatter f, TableEntry<?> firstHeading, TableEntry<?>... headings) {
-        Validate.notNull(firstHeading);
+        Objects.requireNonNull(firstHeading);
 
         // Setup scratch objects used for formatting data
         this.scratchBuilder = new StringBuilder();
@@ -102,7 +102,7 @@ public class TableFormatter {
     }
 
     public void addRow(TableEntry<?> firstValue, TableEntry<?>... values) {
-        Validate.notNull(firstValue);
+        Objects.requireNonNull(firstValue);
         if (1 + values.length != this.columnWidths.size()) {
             throw new IllegalArgumentException(
                     "Inconsistent column count. Expected "

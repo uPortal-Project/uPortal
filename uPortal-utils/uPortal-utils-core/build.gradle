@@ -33,7 +33,7 @@ dependencies {
         exclude group: 'org.springframework', module: 'spring-tx'
     }
     api "org.jgroups:jgroups:${jgroupsVersion}"
-    api "org.jvnet.jaxb2_commons:jaxb2-basics-runtime:${jaxb2basicsVersion}"
+    api "org.jvnet.jaxb:jaxb2-basics-runtime:${jaxb2basicsVersion}"
     api "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
     api "org.springframework:spring-beans:${springVersion}"
     api "org.springframework:spring-context:${springVersion}"
